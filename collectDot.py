@@ -8,7 +8,6 @@ items = {'~/.config': ['i3', 'scripts', 'nvim/init.vim', 'termite'],
               '.vimperator/colors/gruvbox.vimp'],
          '~/.ncmpcpp': ['config']}
 dotfileDir = os.path.expanduser('~/Documents/Git/dotfiles')
-fileName = 'collectDot.py'
 
 
 def itemScrapper():
@@ -34,11 +33,12 @@ def itemScrapper():
 
 
 def wallReader():
-    i3Config = open('.config/i3/config')
+    os.chdir(dotfileDir)
+    i3Config = open('./.config/i3/config')
     fehEx = re.compile(r'\bfeh\b(.*)?')
     mo = fehEx.search(i3Config.read())
     wallPath = os.path.expanduser(mo.group().split()[2])
     shutil.copy(wallPath, dotfileDir)
 
 itemScrapper()
-# wallReader()
+wallReader()
