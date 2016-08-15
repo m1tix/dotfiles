@@ -1,0 +1,182 @@
+# Variables
+set $FONT pango: Fira Mono 9
+set $BORDER_SIZE            0
+set $COLOR_ACCENT           #458588
+set $COLOR_HIGHLIGHT        #F0554C
+set $COLOR_NORMAL           #222222
+set $COLOR_INDICATOR        #458588
+set $TEXT_COLOR             #FFD7AF
+set $I_TEXT_COLOR           #676E7D
+set $SEPERATOR_COLOR        #83a598
+#------------------------------------#
+
+set $mod Mod4
+font $FONT
+floating_modifier $mod
+
+# Bindings
+
+bindsym $mod+Return exec termite
+bindsym $mod+Shift+q kill
+
+bindsym $mod+h focus left
+bindsym $mod+j focus down
+bindsym $mod+k focus up
+bindsym $mod+l focus right
+
+bindsym $mod+Shift+h move left
+bindsym $mod+Shift+j move down
+bindsym $mod+Shift+k move up
+bindsym $mod+Shift+l move right
+
+bindsym $mod+semicolon split h
+bindsym $mod+v split v
+
+bindsym $mod+f fullscreen toggle
+bindsym $mod+s layout stacking
+bindsym $mod+w layout tabbed
+bindsym $mod+e layout toggle split
+
+bindsym $mod+Shift+space floating toggle
+bindsym $mod+space focus mode_toggle
+bindsym $mod+a focus parent
+
+bindsym $mod+r mode "resize"
+bindsym $mod+Ctrl+h resize shrink width 1 px or 1 ppt
+bindsym $mod+Ctrl+j resize grow height 1 px or 1 ppt
+bindsym $mod+Ctrl+k resize shrink height 1 px or 1 ppt
+bindsym $mod+Ctrl+l resize grow width 1 px or 1 ppt
+
+bindsym $mod+Shift+c reload
+bindsym $mod+Shift+r restart
+bindsym $mod+Shift+e exec --no-startup-id "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
+
+bindsym $mod+y gaps inner current minus 6
+bindsym $mod+u gaps inner current plus 6
+bindsym $mod+Shift+y gaps outer current minus 6
+bindsym $mod+Shift+u gaps outer current plus 6
+
+
+bindsym XF86AudioRaiseVolume exec pactl set-sink-volume 1 +5% #increase sound volume
+bindsym XF86AudioLowerVolume exec pactl set-sink-volume 1 -5% #decrease sound volume
+bindsym XF86AudioMute exec pactl set-sink-mute 1 toggle # mute sound
+
+bindsym $mod+shift+x exec ~/.config/scripts/lock.sh
+bindsym $mod+d exec --no-startup-id rofi -show run
+bindsym $mod+shift+s exec firefox
+bindsym $mod+shift+w exec Thunar
+#bindsym Print exec scrot -e 'mv $f ~/Pictures/'
+bindsym Print exec --no-startup-id imgur-screenshot
+
+### Workspace Configuration ###
+
+
+set $workspace1 "I"
+set $workspace2 "II"
+set $workspace3 "III"
+set $workspace4 "IV"
+set $workspace5 "V"
+set $workspace6 "VI"
+set $workspace7 "VII"
+set $workspace8 "VIII"
+set $workspace9 "IX"
+set $workspace10 "X"
+
+workspace $workspace1 output DVI-0
+workspace $workspace2 output DVI-1
+workspace $workspace3 output DVI-0
+workspace $workspace4 output DVI-1
+
+bindsym $mod+1 workspace $workspace1
+bindsym $mod+2 workspace $workspace2
+bindsym $mod+3 workspace $workspace3
+bindsym $mod+4 workspace $workspace4
+bindsym $mod+5 workspace $workspace5
+bindsym $mod+6 workspace $workspace6
+bindsym $mod+7 workspace $workspace7
+bindsym $mod+8 workspace $workspace8
+bindsym $mod+9 workspace $workspace9
+bindsym $mod+0 workspace $workspace10
+
+bindsym $mod+Shift+1 move container to workspace $workspace1
+bindsym $mod+Shift+2 move container to workspace $workspace2
+bindsym $mod+Shift+3 move container to workspace $workspace3
+bindsym $mod+Shift+4 move container to workspace $workspace4
+bindsym $mod+Shift+5 move container to workspace $workspace5
+bindsym $mod+Shift+6 move container to workspace $workspace6
+bindsym $mod+Shift+7 move container to workspace $workspace7
+bindsym $mod+Shift+8 move container to workspace $workspace8
+bindsym $mod+Shift+9 move container to workspace $workspace9
+bindsym $mod+Shift+0 move container to workspace $workspace10
+
+assign [class="Steam"] $workspace3
+assign [class="mpv"] $workspace4
+
+for_window [class="mpv"] floating enable
+for_window [class="Steam"] floating enable
+for_window [class="^Steam$" title=".* - Chat"] floating disable, move container to workspace $workspace2
+for_window [class="^Steam$" title="^Friends$"] floating disable, move container to workspace $workspace2
+for_window [class="Binding of Isaac: Afterbirth"] floating enable
+for_window [class="Thunar"] floating enable
+
+for_window [instance="Places" class="Firefox"] floating enable
+for_window [instance="Toplevel" class="Firefox"] floating enable
+for_window [class='VirtualBox'] floating enable
+###  Modes ###
+
+mode "resize" {
+    # These bindings trigger as soon as you enter the resize mode
+    # Pressing left will shrink the window’s width.
+    # Pressing right will grow the window’s width.
+    # Pressing up will shrink the window’s height.
+    # Pressing down will grow the window’s height.
+    bindsym h resize shrink width 10 px or 10 ppt
+    bindsym j resize grow height 10 px or 10 ppt
+    bindsym k resize shrink height 10 px or 10 ppt
+    bindsym l resize grow width 10 px or 10 ppt
+    # back to normal: Enter or Escape
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+
+# Window Colors
+#                       border          background      text           indicator
+client.focused          $COLOR_ACCENT   $COLOR_ACCENT   $TEXT_COLOR    $COLOR_INDICATOR
+client.focused_inactive $COLOR_NORMAL   $COLOR_NORMAL   $TEXT_COLOR    $COLOR_INDICATOR
+client.unfocused        $COLOR_NORMAL   $COLOR_NORMAL   $TEXT_COLOR    $COLOR_INDICATOR
+client.urgent           $COLOR_NORMAL   $COLOR_NORMAL   $TEXT_COLOR    $COLOR_INDICATOR
+hide_edge_borders both
+
+
+### Bar configuration ###
+#
+#bar {
+#    status_command i3blocks -c ~/.config/i3/i3blocks.conf
+#	tray_output none
+#	font pango:Source Sans Pro-10 9
+#    height 17
+#	colors {
+#        background $COLOR_NORMAL
+#        separator  $SEPERATOR_COLOR
+#        #                  border             background         text
+#        focused_workspace  $COLOR_NORMAL     $COLOR_NORMAL       $TEXT_COLOR
+#        active_workspace   $COLOR_NORMAL     $COLOR_NORMAL       $TEXT_COLOR
+#        inactive_workspace $COLOR_NORMAL     $COLOR_NORMAL       $I_TEXT_COLOR
+#        urgent_workspace   $COLOR_HIGHLIGHT  $COLOR_HIGHLIGHT    $TEXT_COLOR
+#    }
+#}
+
+
+### Random things at last ###
+for_window [class="^.*"] border pixel $BORDER_SIZE
+gaps inner 12
+smart_borders on
+smart_gaps on
+
+exec_always --no-startup-id compton -f
+exec_always --no-startup-id feh --bg-scale ~/Pictures/wallpaper-japan.jpg
+exec --no-startup-id steam
+exec --no-startup-id mpd
+exec xrandr --output DVI-0 --primary --mode 1920x1080 --refresh 144 --output DVI-1 --mode 1920x1080 --left-of DVI-0
+exec --no-startup-id redshift
+exec --no-startup-id ~/.config/scripts/ownBar.py

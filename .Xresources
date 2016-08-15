@@ -1,0 +1,53 @@
+! ------------------------------------------------------------------------------
+! URxvt Settings
+! ------------------------------------------------------------------------------
+! No Scrollbar
+URxvt.scrollBar: false
+! Xft Settings
+Xft.dpi: 96
+Xft.autohint: 0
+Xft.lcdfilter: lcddefault
+Xft.hinting: 1
+Xft.hintstyle: hintslight
+Xft.antialias: 1
+Xft.rgba: rgb
+
+! fuck letterspacing
+URxvt.letterSpace: -1
+! font!
+URxvt*font: xft:Source\ Code\ Pro:size=12:antialias=true:hinting=true
+
+
+! ------------------------------------------------------------------------------
+! ROFI settings
+! ------------------------------------------------------------------------------
+#define ROFI_BG     #282828
+#define ROFI_FG     #ebdbb2
+#define ROFI_hi_fg  #A89984
+#define ROFI_sep    ROFI_BG
+#define ROFI_border ROFI_hi_fg
+
+
+rofi.color-enabled: true
+rofi.color-window: ROFI_BG, ROFI_border, ROFI_sep
+rofi.color-normal: ROFI_BG, ROFI_FG, ROFI_BG, ROFI_hi_fg, ROFI_BG
+rofi.color-active: ROFI_BG, ROFI_FG, ROFI_BG, ROFI_BG, ROFI_hi_fg
+rofi.color-urgent: ROFI_BG, ROFI_FG, ROFI_BG, ROFI_BG, ROFI_hi_fg
+rofi.hide-scrollbar: true
+
+rofi.font: dejavu sans mono 10
+rofi.lines: 10
+rofi.opacity: 98
+rofi.modi: window,run
+rofi.width: 33
+rofi.columns: 1
+rofi.bw: 3
+rofi.terminal: urxvt
+!rofi.fullscreen: true
+!rofi.font: terminus 12
+!rofi.modi: run,ssh,window
+!rofi.lines: 8
+!rofi.eh: 2
+!rofi.padding: 400
+!rofi.opacity: 90
+!rofi.show-run: true
