@@ -7,6 +7,7 @@ call vundle#begin('~/.config/nvim/bundle')
 Plugin 'gmarik/Vundle.vim'
 Plugin 'morhetz/gruvbox'
 Plugin 'joshdick/onedark.vim'
+Plugin 'joshdick/airline-onedark.vim'
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
 " Plugin 'vim-scripts/indentpython.vim'
@@ -21,9 +22,11 @@ let $NVIM_TUI_ENABLE_TRUE_COLOR=1
 let g:gruvbox_contrast_dark = 'medium'
 set background=dark
 let python_highlight_all=1
-syntax on
 filetype plugin indent on
+let g:onedark_termcolors=16
+syntax on
 colorscheme gruvbox
+
 
 " Set relative numbers to the side
 set relativenumber
