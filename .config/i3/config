@@ -49,7 +49,8 @@ bindsym $mod+Ctrl+l resize grow width 1 px or 1 ppt
 
 bindsym $mod+Shift+c reload
 bindsym $mod+Shift+r restart
-bindsym $mod+Shift+e exec --no-startup-id "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
+# bindsym $mod+Shift+e exec --no-startup-id "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
+bindsym $mod+Shift+e exec oblogout
 
 bindsym $mod+y gaps inner current minus 6
 bindsym $mod+u gaps inner current plus 6
@@ -121,7 +122,8 @@ for_window [class="Thunar"] floating enable
 
 for_window [instance="Places" class="Firefox"] floating enable
 for_window [instance="Toplevel" class="Firefox"] floating enable
-for_window [class='VirtualBox'] floating enable
+for_window [class='Oblogout'] floating enable
+for_window [instance="oblogout" class='Oblogout'] fullscreen enable
 ###  Modes ###
 
 mode "resize" {
