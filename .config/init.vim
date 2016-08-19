@@ -25,7 +25,7 @@ let python_highlight_all=1
 filetype plugin indent on
 let g:onedark_termcolors=16
 syntax on
-colorscheme gruvbox
+colorscheme onedark
 
 
 " Set relative numbers to the side
@@ -81,8 +81,8 @@ set expandtab
 set softtabstop=4
 set shiftwidth=4
 set shiftround
-set textwidth=79
 
+au FileType python setl sw=4 sts=4 ts=8 tw=79
 " Indent settings
 set autoindent
 set smartindent

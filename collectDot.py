@@ -5,7 +5,8 @@ import shutil
 # Too cool for variables ;)
 items = {'~/.config': ['i3', 'scripts', 'nvim/init.vim', 'termite'],
          '': ['.bashrc', '.Xresources', '.mpd/mpd.conf', 'Code/Web/homepage',
-              '.vimperator/colors/gruvbox.vimp'],
+              '.vimperator/colors/gruvbox.vimp',
+              '.vimperator/colors/onedark.vimp'],
          '~/.ncmpcpp': ['config']}
 dotfileDir = os.path.expanduser('~/Documents/Git/dotfiles')
 
@@ -13,7 +14,6 @@ dotfileDir = os.path.expanduser('~/Documents/Git/dotfiles')
 def itemScrapper():
     for item in items:
         os.chdir(dotfileDir)
-        print(item)
         if item != '':
             os.makedirs(os.path.basename(item), exist_ok=True)
             os.chdir(os.path.basename(item))
@@ -39,6 +39,8 @@ def wallReader():
     mo = fehEx.search(i3Config.read())
     wallPath = os.path.expanduser(mo.group().split()[2])
     shutil.copy(wallPath, dotfileDir)
+    os.rename(os.path.join(dotfileDir, os.path.basename(wallPath)),
+              'wallpaper.jpg')
 
 itemScrapper()
 wallReader()

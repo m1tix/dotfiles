@@ -1,7 +1,7 @@
 :root {
-    --dark-color: #1e222a;
-    --light-color: #282c34;
-    --text: #ABB2BF;
+    --dark-color: #222222;
+    --light-color: #282828;
+    --text: #A89984;
     --shadow: #100908;
 }
 
@@ -21,6 +21,7 @@ a {
 #Container {
     width: 750px;
     height: 700px;
+    //background: var(--light-color);
     position: absolute;
     margin: auto;
     left: 0; right: 0; top: 0;

@@ -21,21 +21,24 @@ wWidth = 5          # gaps between workspaces
 gapWidthRight = 5   # gaps between sound and date
 secondSleep = 1     # Seconds till next refresh (frequency)
 
-colorHighlight = '#cc241d'
-colorForeground = '#ebdbb2'
-colorText = '#d3c2a0'
-colorBackground = '#222222'
-colorBlock = '#a89984'
-colorTextInactive = '#918273'
+colorHighlight = '#61AFEF'
+colorForeground = '#abb2bf'
+colorText = '#abb2bf'
+colorBackground = '#282c34'
+colorBlock = colorHighlight
+colorTextlight = '#5c6370'
 colorIcon = colorText
 colorVolumeMuted = colorHighlight
 colorSongText = colorText
+colorSongTime = colorHighlight
 colorSongBackground = colorBackground
 
 useVolume = False       # Volume Icon present or not
 useSongIcon = False     # Song prev and next icon present or not
 useDesktopIcon = False  # Desktop icon present or not
 
+iconCircleO = '\uf10c'
+iconCircle = '\uf111'
 iconDesktop = '\uf108'
 iconWorkspace = '\uf24d'
 iconPlay = '\uf04b'
@@ -97,7 +100,7 @@ def get_Workspaces():
     for workspaceName in (natural_sort(workspaceNames)):
         if workspaceName == focusedWorkspace:
             string += "%{{B{}}}%{{O{}}}%{{F{}}}%{{O{}}}".format(
-                colorBackground, wWidth, colorText, wWidth) +\
+                colorHighlight, wWidth, colorBackground, wWidth) +\
                     workspaceName + "%{{O{}}}%{{F-}}%{{O{}}}%{{B-}}".format(
                         wWidth,
                         wWidth,
@@ -105,10 +108,10 @@ def get_Workspaces():
         else:
             string += "%{{B{}}}%{{O{}}}%{{A:i3-msg workspace {}:}}%{{F{}}}"\
                       "%{{O{}}}".format(
-                            colorBlock,
+                            colorBackground,
                             wWidth,
                             workspaceName,
-                            colorBackground,
+                            colorText,
                             wWidth
                         ) + workspaceName +\
                     "%{{O{}}}%{{F-}}%{{A}}%{{O{}}}%{{B-}}".format(
@@ -132,6 +135,14 @@ def is_song_stopped():
     return True if shell_result('mpc current') == '' else False
 
 
+def get_song_time():
+    if not is_song_stopped():
+        return shell_result("mpc status | head -n 2 | tail -n 1 |"
+                            " awk '{{print $3;}}'")
+    else:
+        return False
+
+
 def get_song():
     if not is_song_stopped():
         if useSongIcon:
@@ -149,11 +160,15 @@ def get_song():
             )
         else:
             return (
-                "%{{F{}}}%{{B{}}}%{{A:{}:}}{}%{{A}}%{{B-}}%{{F-}}".format(
+                "%{{A:{}:}}%{{F{}}}%{{B{}}}{}%{{B-}}%{{F-}}%{{B{}}}"
+                " [%{{F{}}}{}%{{F-}}] %{{B-}}%{{A}}".format(
+                    'mpc pause' if is_song_playing() else 'mpc play',
                     colorSongText,
                     colorSongBackground,
-                    'mpc pause' if is_song_playing() else 'mpc play',
-                    shell_result("mpc current")
+                    shell_result("mpc current"),
+                    colorSongBackground,
+                    colorSongTime,
+                    get_song_time()
                 )
             )
     else:

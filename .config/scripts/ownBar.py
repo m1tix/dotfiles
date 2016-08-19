@@ -5,14 +5,14 @@ import subprocess
 
 monitor = 'DVI-0'   # change this to your monitor
 barWidth = 1920
-barHeight = 25
+barHeight = 30
 barName = 'bigPapa'
 
-colorBackground = '#222222'
-colorForeground = '#ebdbb2'
+colorBackground = '#282c34'
+colorForeground = '#abb2bf'
 # font1 = "DejaVu Sans Mono-10:Bold"
-font1 = "Source Sans Pro-10"
-font2 = 'FontAwesome-12'
+font1 = "Source Sans Pro Semibold-10"
+font2 = 'FontAwesome-10'
 actions = 20
 
 
@@ -39,7 +39,8 @@ def main():
     monitorWidth = monitorWidthCalc()
     geometry = '{}x{}x{}'.format(barWidth, barHeight, monitorWidth)
     cmd = "python -u ~/.config/scripts/ownBarStatus.py | lemonbar -p -n \"{}\"\
-    -g \"{}\" -B \"{}\" -F \"{}\" -a {} -f \"{}\" -f \"{}\" -u 2 | sh".format(
+    -g \"{}\" -B \"{}\" -F \"{}\" -a {} -o 0 -f \"{}\" -o 2 -f \"{}\" -u 2\
+    | sh".format(
         barName,
         geometry,
         colorBackground,

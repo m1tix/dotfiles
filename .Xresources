@@ -21,9 +21,9 @@ URxvt*font: xft:Source\ Code\ Pro:size=12:antialias=true:hinting=true
 ! ------------------------------------------------------------------------------
 ! ROFI settings
 ! ------------------------------------------------------------------------------
-#define ROFI_BG     #282828
-#define ROFI_FG     #ebdbb2
-#define ROFI_hi_fg  #A89984
+#define ROFI_BG     #282c34
+#define ROFI_FG     #abb2bf
+#define ROFI_hi_fg  #61AFEF
 #define ROFI_sep    ROFI_BG
 #define ROFI_border ROFI_hi_fg
 

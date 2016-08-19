@@ -1,9 +1,9 @@
 # Variables
 set $FONT pango: Fira Mono 9
-set $BORDER_SIZE            0
-set $COLOR_ACCENT           #458588
+set $BORDER_SIZE            4
+set $COLOR_ACCENT           #61AFEF
 set $COLOR_HIGHLIGHT        #F0554C
-set $COLOR_NORMAL           #222222
+set $COLOR_NORMAL           #5c6370
 set $COLOR_INDICATOR        #458588
 set $TEXT_COLOR             #FFD7AF
 set $I_TEXT_COLOR           #676E7D
@@ -16,8 +16,8 @@ floating_modifier $mod
 
 # Bindings
 
-bindsym $mod+Return exec termite
-bindsym $mod+Shift+q kill
+bindsym $mod+Return exec --no-startup-id termite
+bindsym $mod+w kill
 
 bindsym $mod+h focus left
 bindsym $mod+j focus down
@@ -34,7 +34,6 @@ bindsym $mod+v split v
 
 bindsym $mod+f fullscreen toggle
 bindsym $mod+s layout stacking
-bindsym $mod+w layout tabbed
 bindsym $mod+e layout toggle split
 
 bindsym $mod+Shift+space floating toggle
@@ -49,8 +48,7 @@ bindsym $mod+Ctrl+l resize grow width 1 px or 1 ppt
 
 bindsym $mod+Shift+c reload
 bindsym $mod+Shift+r restart
-# bindsym $mod+Shift+e exec --no-startup-id "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
-bindsym $mod+Shift+e exec oblogout
+ bindsym $mod+Shift+e exec --no-startup-id "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
 
 bindsym $mod+y gaps inner current minus 6
 bindsym $mod+u gaps inner current plus 6
@@ -62,11 +60,14 @@ bindsym XF86AudioRaiseVolume exec pactl set-sink-volume 1 +5% #increase sound vo
 bindsym XF86AudioLowerVolume exec pactl set-sink-volume 1 -5% #decrease sound volume
 bindsym XF86AudioMute exec pactl set-sink-mute 1 toggle # mute sound
 
+bindsym XF86AudioPlay exec mpc toggle
+bindsym XF86AudioNext exec mpc next
+bindsym XF86AudioPrev exec mpc prev
+
 bindsym $mod+shift+x exec ~/.config/scripts/lock.sh
 bindsym $mod+d exec --no-startup-id rofi -show run
 bindsym $mod+shift+s exec firefox
 bindsym $mod+shift+w exec Thunar
-#bindsym Print exec scrot -e 'mv $f ~/Pictures/'
 bindsym Print exec --no-startup-id imgur-screenshot
 
 ### Workspace Configuration ###
@@ -122,8 +123,7 @@ for_window [class="Thunar"] floating enable
 
 for_window [instance="Places" class="Firefox"] floating enable
 for_window [instance="Toplevel" class="Firefox"] floating enable
-for_window [class='Oblogout'] floating enable
-for_window [instance="oblogout" class='Oblogout'] fullscreen enable
+for_window [title="Openbox Logout"] floating enable
 ###  Modes ###
 
 mode "resize" {
@@ -150,33 +150,15 @@ client.urgent           $COLOR_NORMAL   $COLOR_NORMAL   $TEXT_COLOR    $COLOR_IN
 hide_edge_borders both
 
 
-### Bar configuration ###
-#
-#bar {
-#    status_command i3blocks -c ~/.config/i3/i3blocks.conf
-#	tray_output none
-#	font pango:Source Sans Pro-10 9
-#    height 17
-#	colors {
-#        background $COLOR_NORMAL
-#        separator  $SEPERATOR_COLOR
-#        #                  border             background         text
-#        focused_workspace  $COLOR_NORMAL     $COLOR_NORMAL       $TEXT_COLOR
-#        active_workspace   $COLOR_NORMAL     $COLOR_NORMAL       $TEXT_COLOR
-#        inactive_workspace $COLOR_NORMAL     $COLOR_NORMAL       $I_TEXT_COLOR
-#        urgent_workspace   $COLOR_HIGHLIGHT  $COLOR_HIGHLIGHT    $TEXT_COLOR
-#    }
-#}
-
-
 ### Random things at last ###
 for_window [class="^.*"] border pixel $BORDER_SIZE
 gaps inner 12
 smart_borders on
 smart_gaps on
+focus_follows_mouse no
 
 exec_always --no-startup-id compton -f
-exec_always --no-startup-id feh --bg-scale ~/Pictures/wallpaper-japan.jpg
+exec_always --no-startup-id feh --bg-scale ~/Pictures/random_papes/Dark-sky.jpg
 exec --no-startup-id steam
 exec --no-startup-id mpd
 exec xrandr --output DVI-0 --primary --mode 1920x1080 --refresh 144 --output DVI-1 --mode 1920x1080 --left-of DVI-0

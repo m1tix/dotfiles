@@ -20,26 +20,29 @@
        To change url-bar, comment out linenumber 77 and 210.
        also change url font size back to 13pt and tab font size to 9pt
        change tab-height back to 25px aswell :)
+
+    TODO
+        font change, better tab colors    
 */
 
 :root {
-    --tab-accent: #458588; --tab-private-accent: #bb4444;
+    --tab-accent: #61AFEF; --tab-private-accent: #E06c75;
 
     /* TAB VARIABLES */
-    --bg-light: #282828; --bg-dark: #282828;
-    --fg-light: #ebdbb2; --fg-dark: #a89984; /* cccccc */
-    --activeTabFgColor: #a89984;
+    --bg-light: #282c34; --bg-dark: #282c34;
+    --fg-light: #ABB2BF; --fg-dark: #abb2bf; /* 5c6370 */
 
     --tab-triangle-correction: -1px;
-    --tab-height: 25px; --tab-icon-size: 16px; --tab-strip-margin: -12px; --tab-overlap: -5px;
-    --tab-fonts: "DejaVu Sans Mono"; --tab-font-size: 9pt;
+    --tab-height: 30px; --tab-icon-size: 16px; --tab-strip-margin: -12px; --tab-overlap: -5px;
+    --tab-fonts: "Source Sans Pro"; --tab-font-size: 9pt;
     --tab-text-align: center; /* left | center | right */
     --tab-triangle: none;  /* block | none */
+    --tab-max-width: 100%;
 
     /* URL VARIABLES */
     --url-background: var(--bg-light); --url-color: var(--fg-light);
     --url-height: 25px; --url-right-margin: 6px;
-    --url-fonts: "DejaVu Sans Mono "; --url-font-size: 11pt;
+    --url-fonts: "Source Sans Pro"; --url-font-size: 11pt;
     --url-text-align: center; /* left | center | right */
     --url-position: absolute; /* absolute == top (under tabs) || fixed == bottom of browser */
 }
@@ -58,10 +61,9 @@
 
     /* --- Comment out the section below to remove the newtab button --- */
 
-    .tabs-newtab-button { display: block !important; background: transparent !important; color: var(--fg-dark) !important; margin: 0 10px 0 0 !important; width: 40px !important; }
+    .tabs-newtab-button { display: block !important; background: transparent !important; color: var(--fg-light) !important; margin: 0 10px 0 0 !important; width: 40px !important; }
     .tabs-newtab-button::before { content: "\f067" !important; font-family: "FontAwesome"; }
-    /**/
-
+    
     .tab-drop-indicator { margin-bottom: 0 !important; }
 
 
@@ -128,7 +130,7 @@
     
 
     /* TABS */
-    .tabbrowser-tab[fadein]:not([pinned]) { min-width: 100px !important; max-width: /*180px*/ 100% !important; }
+    .tabbrowser-tab[fadein]:not([pinned]) { min-width: 100px !important; max-width: /*180px*/ var(--tab-max-width) !important; }
     tab {
         font-family: var(--tab-fonts) !important;
         height: var(--tab-height) !important; min-height: var(--tab-height) !important;
@@ -167,10 +169,10 @@
 
     .tabbrowser-tab[selected="true"] .tab-stack {
         /* EDITED: from --bg-light to --bg-dark to enable border selection to show */
-        background: var(--activeTabFgColor) !important; color: var(--bg-dark) !important;
+        background: var(--bg-light) !important; color: var(--fg-light) !important;
         border-radius: 0px !important; position: relative !important;
-        /* UNEDITED: uncommented 
-        border-bottom: 3px solid var(--tab-accent) !important;*/
+        /* UNEDITED: uncommented */
+        border-bottom: 3px solid var(--tab-accent) !important;
     }
     .tabbrowser-tab[selected="true"]:before { /* Left Triangle (of selected tab) */
         content: '' !important; display: var(--tab-triangle);
@@ -350,10 +352,10 @@
 
 /* about:stylish-edit toolbar style */
 @-moz-document regexp("about:stylish-edit.*") {
-    #main-area, textbox { background: var(--bg-dark) !important; }
-    textbox, grid, columns, rows, separator { border: 0 !important; }
+    #main-area, textbox { background: var(--bg-dark) !important; color: var(--fg-light) !important;}
+    textbox, grid, columns, rows, separator { border: 0 !important; color: var(--fg-light) !important;}
 
-    .devtools-toolbarbutton { background: var(--bg-dark) !important; color: var(--fg-light) !important; }
+    .devtools-toolbarbutton { background: var(--bg-light) !important; color: var(--fg-light) !important; }
 }
 
 /*----- Fix for white flash on new tab -----*/
