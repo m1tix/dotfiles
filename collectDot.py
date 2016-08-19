@@ -5,8 +5,8 @@ import shutil
 # Too cool for variables ;)
 items = {'~/.config': ['i3', 'scripts', 'nvim/init.vim', 'termite'],
          '': ['.bashrc', '.Xresources', '.mpd/mpd.conf', 'Code/Web/homepage'],
-         'vimperator': ['.vimperator/colors/gruvbox.vimp',
-                        '.vimperator/colors/onedark.vimp'],
+         '~/.vimperator': ['colors/gruvbox.vimp',
+                        'colors/onedark.vimp'],
          '~/.ncmpcpp': ['config']}
 dotfileDir = os.path.expanduser('~/Documents/Git/dotfiles')
 
