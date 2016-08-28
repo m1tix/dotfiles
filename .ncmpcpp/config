@@ -1,16 +1,7 @@
-
-#ncmpcpp_directory = ~/.ncmpcpp
-
-#lyrics_directory = ~/.lyrics
-#
+lyrics_directory = ~/.mpd/lyrics
 ##### connection settings #####
-#
 mpd_host = localhost
-#
 mpd_port = 6600
-#
-#mpd_connection_timeout = 5
-
 mpd_music_dir = ~/Music
 mpd_crossfade_time = 2
                 
@@ -22,28 +13,17 @@ audio_output {
         path            "/tmp/mpd.fifo"
        format          "44100:16:2"
 }
-
 visualizer_fifo_path = "/tmp/mpd.fifo"
 visualizer_output_name = "FIFO"
 visualizer_sync_interval = "30"
 ##spectrum/wave/wave_filled/ellipse
 visualizer_type = "spectrum"
-#visualizer_color = "red"
-#visualizer_look ='◆█'
+visualizer_color = "blue"
+# visualizer_look ='◆█'
 #visualizer_in_stereo = yes
 #visualizer_sample_multiplier = 1
 
-
-#system_encoding = ""
-
-##### delays #####
-
-#playlist_disable_highlight_delay = 5
-
-#message_delay_time = 5
-
 ##### song format #####
-##
 ## For a song format you can use:
 ##
 ## %l - length
@@ -80,159 +60,65 @@ visualizer_type = "spectrum"
 
 # Song Format
 song_status_format = "{%a - }{%t}|{%f}{  [%b]}"
-now_playing_prefix = "$5>$9$3>$9$4>"
+now_playing_prefix = "$8> "
+now_playing_suffix = "$9"
 song_window_title_format = "{%a - }{%t}|{%f}"
 song_library_format = {%n - }{%t}|{%f}
-song_columns_list_format = "(25)[red]{aE} (50)[blue]{t|f:Title} (5f)[green]{l}"
-song_list_format = {$2%a$9 $3-$9 }{$5%t$9}|{$8%f$9}$R{$3(%l)$9}
+song_columns_list_format = "(35)[blue]{a} (60)[white]{t|f:Title}(5f)[blue]{lr}"
+song_list_format = {$5%a$9 $8-$9 }{$8%t$9}|{$8%f$9}$R{$5(%l)$9}
 
 alternative_header_second_line_format = ""
-alternative_header_first_line_format = "{{$2%a$9}{ - $5%t$9}|{$5%f$9}}"
-
-#now_playing_suffix = $/b
-
-#browser_playlist_prefix = "$2playlist$9 "
-
-#selected_item_prefix = $b
-#selected_item_suffix = $b
-#modified_item_prefix = $3> $9
+alternative_header_first_line_format = "{{$5%a$9}{ - $8%t$9}|{$8%f$9}}"
+browser_playlist_prefix = "$5playlist$9 "
+selected_item_prefix = '$5'
+selected_item_suffix = '$9'
+modified_item_prefix = $5> $9
 
 ##name/mtime/format/noop
 browser_sort_mode = format 
-browser_sort_format = {%a - }{%t}|{%f} {(%l)}
+browser_sort_format = {%n }|{%a - }{%t}|{%f} {(%l)}
 
+playlist_display_mode = columns
+browser_display_mode = columns
+search_engine_display_mode = classic
+playlist_editor_display_mode = classic
 
-
-##### various settings #####
-#
-##
-## Note: Custom command that will be executed each
-## time song changes. Useful for notifications etc.
-##
-#execute_on_song_change = ""
-#
-#playlist_show_mpd_host = no
-#playlist_show_remaining_time = no
-#playlist_shorten_total_times = no
-#playlist_separate_albums = no
-
-##columns/classic
-#playlist_display_mode = columns 
-#browser_display_mode = classic 
-#search_engine_display_mode = classic
-#playlist_editor_display_mode = classic
-
-#discard_colors_if_item_is_selected = yes
-
-#incremental_seeking = yes
-
-#seek_time = 1
-
-volume_change_step = 2
-
+volume_change_step = 5
 autocenter_mode = yes
+# progressbar_look = "─╼"
+progressbar_look = "━━━"
+progressbar_boldness = no
+user_interface = classic
 
-#centered_cursor = no
-
-
-#progressbar_look = =>
-#progressbar_boldness = yes
-##database/playlist
-#default_place_to_search_in = database 
-#classic/alternative
-user_interface = alternative 
-
-#data_fetching_delay = yes
-
-##artist/album_artist/date/genre/composer/performer
-#media_library_primary_tag = artist 
-
-##wrapped/normal
-#default_find_mode = wrapped 
-#default_tag_editor_pattern = %n - %t
-
-#header_visibility = yes
-#statusbar_visibility = yes
-#titles_visibility = yes
-
-#header_text_scrolling = yes
-#cyclic_scrolling = no
-#lines_scrolled = 2
-
-#follow_now_playing_lyrics = no
-#fetch_lyrics_for_current_song_in_background = no
-#store_lyrics_in_song_dir = no
-
-#generate_win32_compatible_filenames = yes
+header_visibility = no
+statusbar_visibility = no
+titles_visibility = no
 
 allow_for_physical_item_deletion = yes
 
-#lastfm_preferred_language = en
-
-#show_hidden_files_in_local_browser = no
-
-
-## Screens available for use: help, playlist, browser, search_engine,
-## media_library, playlist_editor, tag_editor, outputs, visualizer, clock.
-#screen_switcher_mode = playlist, browser 
-#startup_screen = playlist
-startup_slave_screen = "browser"
-startup_slave_screen_focus = yes
+startup_screen = playlist
+# startup_slave_screen = "browser"
+# startup_slave_screen_focus = no
 
 locked_screen_width_part = 50
 ask_for_locked_screen_width_part = no
-#jump_to_now_playing_song_at_start = yes
-#ask_before_clearing_playlists = yes
-
-
-#clock_display_seconds = no
-#display_volume_level = yes
-#display_bitrate = no
-#display_remaining_time = no
-
-##none/basic/extended/perl
-#regular_expressions = basic 
-
-#ignore_leading_the = no
-
-#block_search_constraints_change_if_items_found = yes
-
 mouse_support = no
-
 #mouse_list_scroll_whole_page = yes
-
 empty_tag_marker = "<empty>"
 
-#tags_separator = " | "
-
-#tag_editor_extended_numeration = no
-
-#media_library_sort_by_mtime = no
-
-#enable_window_title = yes
-
-
-
-#search_engine_default_search_mode = 1
-#
-#external_editor = nano
-#use_console_editor = yes
 
 ##### colors definitions #####
-#colors_enabled = yes
-#empty_tag_color = cyan
-#header_window_color = default
-#volume_color = default
-#state_line_color = default
-#state_flags_color = default
-main_window_color = yellow
+empty_tag_color = blue
+header_window_color = default
+volume_color = default
+state_line_color = blue
+state_flags_color = blue
+main_window_color = white
 color1 = white
-color2 = green
-#main_window_highlight_color = blue
-progressbar_color = yellow
-progressbar_elapsed_color = yellow
-#statusbar_color = default
-#alternative_ui_separator_color = black
-#active_column_color = white
-#window_border_color = green
-#active_window_border = red
+color2 = blue
+main_window_highlight_color = blue
+# progressbar_color = white
+progressbar_elapsed_color = blue
+statusbar_color = default
+alternative_ui_separator_color = black
+window_border_color = blue

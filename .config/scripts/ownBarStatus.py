@@ -17,7 +17,8 @@ alsaChannel = 'Master'
 volumeChange = 4
 
 gapWidthLeft = 15   # gaps between left icon and workspaces
-wWidth = 5          # gaps between workspaces
+paddingWP = "    "  # gaps between workspaces
+padding = "  "      # gap between block and text
 gapWidthRight = 5   # gaps between sound and date
 secondSleep = 1     # Seconds till next refresh (frequency)
 
@@ -99,24 +100,21 @@ def get_Workspaces():
 
     for workspaceName in (natural_sort(workspaceNames)):
         if workspaceName == focusedWorkspace:
-            string += "%{{B{}}}%{{O{}}}%{{F{}}}%{{O{}}}".format(
-                colorHighlight, wWidth, colorBackground, wWidth) +\
-                    workspaceName + "%{{O{}}}%{{F-}}%{{O{}}}%{{B-}}".format(
-                        wWidth,
-                        wWidth,
+            string += "%{{B{}}}{}%{{F{}}}".format(
+                colorHighlight, paddingWP, colorBackground) +\
+                    workspaceName + "%{{F-}}{}%{{B-}}".format(
+                        paddingWP
                     )
         else:
-            string += "%{{B{}}}%{{O{}}}%{{A:i3-msg workspace {}:}}%{{F{}}}"\
-                      "%{{O{}}}".format(
+            string += "%{{B{}}}{}%{{A:i3-msg workspace {}:}}%{{F{}}}"\
+                      .format(
                             colorBackground,
-                            wWidth,
+                            paddingWP,
                             workspaceName,
                             colorText,
-                            wWidth
                         ) + workspaceName +\
-                    "%{{O{}}}%{{F-}}%{{A}}%{{O{}}}%{{B-}}".format(
-                        wWidth,
-                        wWidth
+                    "%{{F-}}{}%{{A}}%{{B-}}".format(
+                        paddingWP
                         )
 
     string += "%{A}%{A}"
@@ -212,10 +210,12 @@ def get_time_and_date():
     timeAndDate = time.strftime('%a, %b %d %H:%M')
 
     return (
-        "%{{B{}}}%{{F{}}}  {} %{{F-}}%{{B-}}".format(
+        "%{{B{}}}%{{F{}}}{}{}{}%{{F-}}%{{B-}}".format(
             colorBlock,
             colorBackground,
-            timeAndDate
+            padding,
+            timeAndDate,
+            padding
         )
     )
 
@@ -228,7 +228,6 @@ def get_status():
             get_volume() if useVolume else "",
             gapWidthRight,
             get_time_and_date()
-
         )
     )
 

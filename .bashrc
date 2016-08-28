@@ -12,6 +12,7 @@ export EDITOR=nvim
 # Aliases
 alias swingin='mpc clear & mpc load soundcloud://url/soundcloud.com/mitix-106877130/likes'
 alias dot='cd ~/Documents/Git/dotfiles/'
+alias neofetch="neofetch --gtk2 'off' --gtk3 'off' --block_range '0' '15'"
 alias ls='ls -l --color'
 alias dirs='dirs -v'
 alias l='ls -al'

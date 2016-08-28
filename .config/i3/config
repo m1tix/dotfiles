@@ -1,10 +1,12 @@
 # Variables
 set $FONT pango: Fira Mono 9
+hide_edge_borders           both
 set $BORDER_SIZE            4
 set $COLOR_ACCENT           #61AFEF
 set $COLOR_HIGHLIGHT        #F0554C
 set $COLOR_NORMAL           #5c6370
-set $COLOR_INDICATOR        #458588
+set $COLOR_INDICATOR        #5c6370
+set $COLOR_INDICATOR_ACTIVE #61AFEF
 set $TEXT_COLOR             #FFD7AF
 set $I_TEXT_COLOR           #676E7D
 set $SEPERATOR_COLOR        #83a598
@@ -56,18 +58,18 @@ bindsym $mod+Shift+y gaps outer current minus 6
 bindsym $mod+Shift+u gaps outer current plus 6
 
 
-bindsym XF86AudioRaiseVolume exec pactl set-sink-volume 1 +5% #increase sound volume
-bindsym XF86AudioLowerVolume exec pactl set-sink-volume 1 -5% #decrease sound volume
-bindsym XF86AudioMute exec pactl set-sink-mute 1 toggle # mute sound
+bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume 1 +5% #increase sound volume
+bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume 1 -5% #decrease sound volume
+bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute 1 toggle # mute sound
 
-bindsym XF86AudioPlay exec mpc toggle
-bindsym XF86AudioNext exec mpc next
-bindsym XF86AudioPrev exec mpc prev
+bindsym XF86AudioPlay exec --no-startup-id mpc toggle
+bindsym XF86AudioNext exec --no-startup-id mpc next
+bindsym XF86AudioPrev exec --no-startup-id mpc prev
 
-bindsym $mod+shift+x exec ~/.config/scripts/lock.sh
+bindsym $mod+shift+x exec --no-startup-id ~/.config/scripts/lock.sh
 bindsym $mod+d exec --no-startup-id rofi -show run
-bindsym $mod+shift+s exec firefox
-bindsym $mod+shift+w exec Thunar
+bindsym $mod+shift+s exec --no-startup-id firefox
+bindsym $mod+shift+w exec --no-startup-id Thunar
 bindsym Print exec --no-startup-id imgur-screenshot
 
 ### Workspace Configuration ###
@@ -143,11 +145,10 @@ mode "resize" {
 
 # Window Colors
 #                       border          background      text           indicator
-client.focused          $COLOR_ACCENT   $COLOR_ACCENT   $TEXT_COLOR    $COLOR_INDICATOR
+client.focused          $COLOR_ACCENT   $COLOR_ACCENT   $TEXT_COLOR    $COLOR_INDICATOR_ACTIVE
 client.focused_inactive $COLOR_NORMAL   $COLOR_NORMAL   $TEXT_COLOR    $COLOR_INDICATOR
 client.unfocused        $COLOR_NORMAL   $COLOR_NORMAL   $TEXT_COLOR    $COLOR_INDICATOR
 client.urgent           $COLOR_NORMAL   $COLOR_NORMAL   $TEXT_COLOR    $COLOR_INDICATOR
-hide_edge_borders both
 
 
 ### Random things at last ###
