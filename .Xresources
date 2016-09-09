@@ -47,9 +47,9 @@ URxvt*font: xft:Fira Mono:size=11,\
 ! ------------------------------------------------------------------------------
 ! ROFI settings
 ! ------------------------------------------------------------------------------
-#define ROFI_BG     #282c34
-#define ROFI_FG     #abb2bf
-#define ROFI_hi_fg  #61AFEF
+#define ROFI_BG     #2b303b
+#define ROFI_FG     #c0c5ce
+#define ROFI_hi_fg  #bf616a
 #define ROFI_sep    ROFI_BG
 #define ROFI_border ROFI_hi_fg
 

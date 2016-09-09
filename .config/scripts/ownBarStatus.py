@@ -22,12 +22,12 @@ padding = "  "      # gap between block and text
 gapWidthRight = 5   # gaps between sound and date
 secondSleep = 1     # Seconds till next refresh (frequency)
 
-colorHighlight = '#61AFEF'
-colorForeground = '#abb2bf'
-colorText = '#abb2bf'
-colorBackground = '#282c34'
+colorHighlight = '#bf616a'
+colorForeground = '#c0c5ce'
+colorText = '#c0c5ce'
+colorBackground = '#2b303b'
 colorBlock = colorHighlight
-colorTextlight = '#5c6370'
+colorTextlight = '#65737e'
 colorIcon = colorText
 colorVolumeMuted = colorHighlight
 colorSongText = colorText

@@ -1,7 +1,7 @@
 :root {
     --dark-color: #1e222a;
-    --light-color: #282c34;
-    --text: #ABB2BF;
+    --light-color: #2b303b;
+    --text: #c0c5ce;
     --shadow: #100908;
 }
 
@@ -55,7 +55,7 @@ a {
     background: var(--light-color);
     line-height: 140px;
     text-align: center;
-    transition: background 0.5s; 
+    transition: background 0.5s;
     box-shadow: 3px 3px 3px var(--shadow)
 }
 

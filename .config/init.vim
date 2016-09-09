@@ -4,34 +4,41 @@ filetype off
 set rtp+=~/.config/nvim/bundle/Vundle.vim
 call vundle#begin('~/.config/nvim/bundle')
 
+" General Plugins
 Plugin 'gmarik/Vundle.vim'
-Plugin 'morhetz/gruvbox'
-Plugin 'joshdick/onedark.vim'
-Plugin 'joshdick/airline-onedark.vim'
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
 Plugin 'vim-scripts/indentpython.vim'
 Plugin 'scrooloose/syntastic'
 Plugin 'nvie/vim-flake8'
 Plugin 'scrooloose/nerdtree'
-" Plugin 'sheerun/vim-polyglot'
+Plugin 'junegunn/goyo.vim'
+Plugin 'sheerun/vim-polyglot'
+Plugin 'Shougo/deoplete.nvim'
+Plugin 'zchee/deoplete-jedi'
+Plugin 'Shougo/neco-vim'
+
+" Colorschemes
+Plugin 'morhetz/gruvbox'
+Plugin 'joshdick/onedark.vim'
+Plugin 'rakr/vim-two-firewatch'
+Plugin 'alessandroyorba/sierra'
+Plugin 'jacoborus/tender'
+Plugin 'chriskempson/base16-vim'
+Plugin 'baskerville/bubblegum'
+
 call vundle#end()
 
 filetype plugin indent on
 " Colors
-if (empty($TMUX))
-  if (has("nvim"))
-    let $NVIM_TUI_ENABLE_TRUE_COLOR=1
-  endif
-  if (has("termguicolors"))
-    set termguicolors
-  endif
-endif
+" let $NVIM_TUI_ENABLE_TRUE_COLOR=1
+set termguicolors
 set background=dark
 let python_highlight_all=1
+let base16colorspace=256
 syntax on
-colorscheme onedark
-
+colorscheme base16-ocean
+" colorscheme onedark
 
 " Set relative numbers to the side
 set relativenumber
@@ -43,10 +50,21 @@ set mouse=c
 set hlsearch
 set ic
 
+" Bar shit
+set nosmd
+set noru
+
+" Deoplete
+let g:deoplete#enable_at_startup=1
+
 " Powerline
 set laststatus=2
 set encoding=utf-8
 let g:airline_powerline_fonts = 1
+" let g:airline_left_sep=''
+" let g:airline_right_sep=''
+let g:airline_section_y=''
+
 " Code Folding (install SimpyIFold if folds aint good)
 set foldmethod=indent
 set foldlevel=99
@@ -68,6 +86,7 @@ set clipboard=unnamedplus
 
 " Autoshit
 au BufNewFile,Bufread config set filetype=conf
+" autocmd VimEnter * Goyo
 
 " Disable automatic comment insertion
 autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
@@ -89,4 +108,33 @@ noremap <Down> <NOP>
 noremap <Left> <NOP>
 noremap <Right> <NOP>
 
+" Python test shit
 map <F5> :w<CR>:!python %<CR>
+
+" remap split keybindings
+nnoremap <C-J> <C-W><C-J>
+nnoremap <C-K> <C-W><C-K>
+nnoremap <C-L> <C-W><C-L>
+nnoremap <C-H> <C-W><C-H>
+
+" Quits nvim even if Goyo is active
+function! s:goyo_enter()
+  let b:quitting = 0
+  let b:quitting_bang = 0
+  autocmd QuitPre <buffer> let b:quitting = 1
+  cabbrev <buffer> q! let b:quitting_bang = 1 <bar> q!
+endfunction
+
+function! s:goyo_leave()
+  " Quit Vim if this is the only remaining buffer
+  if b:quitting && len(filter(range(1, bufnr('$')), 'buflisted(v:val)')) == 1
+    if b:quitting_bang
+      qa!
+    else
+      qa
+    endif
+  endif
+endfunction
+
+autocmd! User GoyoEnter call <SID>goyo_enter()
+autocmd! User GoyoLeave call <SID>goyo_leave()

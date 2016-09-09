@@ -8,8 +8,8 @@ barWidth = 1920
 barHeight = 30
 barName = 'bigPapa'
 
-colorBackground = '#282c34'
-colorForeground = '#abb2bf'
+colorBackground = '#2b303b'
+colorForeground = '#c0c5ce'
 # font1 = "DejaVu Sans Mono-10:Bold"
 font1 = "Source Sans Pro Semibold-10"
 font2 = 'FontAwesome-10'

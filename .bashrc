@@ -5,8 +5,11 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
+BASE16_SHELL=$HOME/.config/base16-shell/
+[ -n "$PS1" ] && [ -s $BASE16_SHELL/profile_helper.sh ] && eval "$($BASE16_SHELL/profile_helper.sh)"
+
 # Export
-export PYTHONPATH=/usr/lib64/python3.5/site-packages
+#" export PYTHONPATH=/usr/lib64/python3.5/site-packages
 export EDITOR=nvim
 
 # Aliases
