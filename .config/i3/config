@@ -159,10 +159,11 @@ smart_borders on
 smart_gaps on
 focus_follows_mouse no
 
+exec xrandr --output DVI-0 --primary --mode 1920x1080 --refresh 144 --output DVI-1 --mode 1920x1080 --left-of DVI-0
+exec_always --nos-startup-id killall lemonbar
 exec_always --no-startup-id compton -f
 exec_always --no-startup-id feh --bg-scale ~/Pictures/random_papes/Dark-sky.jpg
+exec_always --no-startup-id ~/.config/scripts/ownBar.py
 exec --no-startup-id steam
 exec --no-startup-id mpd
-exec xrandr --output DVI-0 --primary --mode 1920x1080 --refresh 144 --output DVI-1 --mode 1920x1080 --left-of DVI-0
 exec --no-startup-id redshift
-exec --no-startup-id ~/.config/scripts/ownBar.py

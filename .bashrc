@@ -9,7 +9,7 @@ BASE16_SHELL=$HOME/.config/base16-shell/
 [ -n "$PS1" ] && [ -s $BASE16_SHELL/profile_helper.sh ] && eval "$($BASE16_SHELL/profile_helper.sh)"
 
 # Export
-#" export PYTHONPATH=/usr/lib64/python3.5/site-packages
+export PYTHONPATH=/usr/lib64/python3.5/site-packages
 export EDITOR=nvim
 
 # Aliases
@@ -20,7 +20,6 @@ alias ls='ls -l --color'
 alias dirs='dirs -v'
 alias l='ls -al'
 alias t='tmux'
-alias tutorial='cd ~/Code/Python/tutorial'
 alias x='xrdb ~/.Xresources'
 
 # Extract program
@@ -48,5 +47,3 @@ function extract()
 
 
 PS1="\[\033[38;5;3m\]λ\[$(tput sgr0)\]\[\033[38;5;15m\] \[$(tput sgr0)\]\[\033[38;5;2m\]\W\[$(tput sgr0)\]\[\033[38;5;15m\] \[$(tput sgr0)\]"
-# PS1="\[\033[38;5;3m\]\w\[$(tput sgr0)\]\[\033[38;5;15m\] \[$(tput sgr0)\]\[\033[38;5;2m\]]\[$(tput sgr0)\]\[\033[38;5;15m\] \[$(tput sgr0)\]"
-

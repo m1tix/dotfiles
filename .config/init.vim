@@ -6,17 +6,16 @@ call vundle#begin('~/.config/nvim/bundle')
 
 " General Plugins
 Plugin 'gmarik/Vundle.vim'
-Plugin 'vim-airline/vim-airline'
-Plugin 'vim-airline/vim-airline-themes'
 Plugin 'vim-scripts/indentpython.vim'
 Plugin 'scrooloose/syntastic'
 Plugin 'nvie/vim-flake8'
-Plugin 'scrooloose/nerdtree'
+" Plugin 'scrooloose/nerdtree'
 Plugin 'junegunn/goyo.vim'
 Plugin 'sheerun/vim-polyglot'
 Plugin 'Shougo/deoplete.nvim'
 Plugin 'zchee/deoplete-jedi'
 Plugin 'Shougo/neco-vim'
+Plugin 'itchyny/lightline.vim'
 
 " Colorschemes
 Plugin 'morhetz/gruvbox'
@@ -31,14 +30,13 @@ call vundle#end()
 
 filetype plugin indent on
 " Colors
-" let $NVIM_TUI_ENABLE_TRUE_COLOR=1
 set termguicolors
 set background=dark
 let python_highlight_all=1
 let base16colorspace=256
 syntax on
 colorscheme base16-ocean
-" colorscheme onedark
+hi Nontext guifg=#2b303b
 
 " Set relative numbers to the side
 set relativenumber
@@ -54,16 +52,44 @@ set ic
 set nosmd
 set noru
 
-" Deoplete
-let g:deoplete#enable_at_startup=1
-
 " Powerline
 set laststatus=2
 set encoding=utf-8
-let g:airline_powerline_fonts = 1
-" let g:airline_left_sep=''
-" let g:airline_right_sep=''
-let g:airline_section_y=''
+
+" Lightline
+let g:lightline = {
+    \ 'colorscheme': 'ocean',
+    \ 'active': {
+    \   'left': [ [ 'mode' ],
+    \             [ 'filetype' ] ],
+    \   'right': [ [ 'lineinfo' ],
+    \              [ 'filename' ] ],
+    \ },
+    \ 'separator': { 'left': '⮀', 'right': '⮂' },
+    \ 'subseparator': { 'left': '⮁', 'right': '⮃' },
+    \ }
+
+" Deoplete
+let g:deoplete#enable_at_startup=1
+
+" Terminal Emulator ColorScheme
+let g:terminal_color_0 = "#2b303b"
+let g:terminal_color_8 = "#65737e"
+let g:terminal_color_1 = "#bf616a"
+let g:terminal_color_9 = "#bf616a"
+let g:terminal_color_2 = "#a3be8c"
+let g:terminal_color_10 = "#a3be8c"
+let g:terminal_color_3 = "#ebcb8b"
+let g:terminal_color_11 = "#ebcb8b"
+let g:terminal_color_4 = "#8fa1b3"
+let g:terminal_color_12 = "#8fa1b3"
+let g:terminal_color_5 = "#b48ead"
+let g:terminal_color_13 = "#b48ead"
+let g:terminal_color_6 = "#96b5b4"
+let g:terminal_color_14 = "#96b5b4"
+let g:terminal_color_7 = "#c0c5ce"
+let g:terminal_color_15 = "#eff1f5"
+
 
 " Code Folding (install SimpyIFold if folds aint good)
 set foldmethod=indent
@@ -77,6 +103,7 @@ set shiftwidth=4
 set shiftround
 
 au FileType python setl sw=4 sts=4 ts=8 tw=79
+
 " Indent settings
 set autoindent
 set smartindent
@@ -91,8 +118,6 @@ au BufNewFile,Bufread config set filetype=conf
 " Disable automatic comment insertion
 autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
 
-" Bindings
-map <C-n> : NERDTreeToggle<CR>
 
 " Creates new line without entering insert mode
 nmap <S-Enter> O<ESC>
@@ -112,15 +137,24 @@ noremap <Right> <NOP>
 map <F5> :w<CR>:!python %<CR>
 
 " remap split keybindings
-nnoremap <C-J> <C-W><C-J>
-nnoremap <C-K> <C-W><C-K>
-nnoremap <C-L> <C-W><C-L>
-nnoremap <C-H> <C-W><C-H>
+tnoremap <Esc> <C-\><C-n>
+tnoremap <A-h> <C-\><C-n><C-w>h
+tnoremap <A-j> <C-\><C-n><C-w>j
+tnoremap <A-k> <C-\><C-n><C-w>k
+tnoremap <A-l> <C-\><C-n><C-w>l
+nnoremap <A-h> <C-w>h
+nnoremap <A-j> <C-w>j
+nnoremap <A-k> <C-w>k
+nnoremap <A-l> <C-w>l
 
 " Quits nvim even if Goyo is active
+let g:goyo_width='80%'
+let g:goyo_height='90%'
+
 function! s:goyo_enter()
   let b:quitting = 0
   let b:quitting_bang = 0
+  set relativenumber
   autocmd QuitPre <buffer> let b:quitting = 1
   cabbrev <buffer> q! let b:quitting_bang = 1 <bar> q!
 endfunction

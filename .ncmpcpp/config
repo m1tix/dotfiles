@@ -65,7 +65,7 @@ now_playing_suffix = "$9"
 song_window_title_format = "{%a - }{%t}|{%f}"
 song_library_format = {%n - }{%t}|{%f}
 song_columns_list_format = "(35)[red]{a} (60)[white]{t|f:Title}(5f)[red]{lr}"
-song_list_format = {$2%a$9 $8-$9 }{$8%t$9}|{$8%f$9}$R{$2(%l)$9}
+song_list_format = {$2%a$9 $8-$9 }{$8%t$9}|{$8%f$9}
 
 alternative_header_second_line_format = ""
 alternative_header_first_line_format = "{{$2%a$9}{ - $8%t$9}|{$8%f$9}}"
@@ -85,9 +85,13 @@ playlist_editor_display_mode = classic
 
 volume_change_step = 5
 autocenter_mode = yes
+
 # progressbar_look = "─╼"
-progressbar_look = "━━━"
+# progressbar_look = "━━━"
+progressbar_look = "---"
 progressbar_boldness = no
+progressbar_color = black
+progressbar_elapsed_color = red
 user_interface = classic
 
 header_visibility = no
@@ -117,8 +121,6 @@ main_window_color = white
 color1 = white
 color2 = red
 main_window_highlight_color = red
-# progressbar_color = white
-progressbar_elapsed_color = red
 statusbar_color = default
 alternative_ui_separator_color = black
 window_border_color = red
