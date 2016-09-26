@@ -18,9 +18,22 @@ alias dot='cd ~/Documents/Git/dotfiles/'
 alias neofetch="neofetch --gtk2 'off' --gtk3 'off' --block_range '0' '15'"
 alias ls='ls -l --color'
 alias dirs='dirs -v'
+alias gl="git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
 alias l='ls -al'
 alias t='tmux'
 alias x='xrdb ~/.Xresources'
+function twitch()
+{
+    if [ $# -eq 0 ]
+    then 
+        echo "Not enough arguments passed"
+    else
+
+        livestreamer -p mpv twitch.tv/$1 best --http-header Client-id=ewvlchtxgqq88ru9gmfp1gmyt6h2b93
+    fi
+}
+
+alias twitch=twitch
 
 # Extract program
 function extract()

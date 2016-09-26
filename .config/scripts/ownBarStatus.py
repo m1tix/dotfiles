@@ -26,8 +26,8 @@ colorHighlight = '#bf616a'
 colorForeground = '#c0c5ce'
 colorText = '#c0c5ce'
 colorBackground = '#2b303b'
-colorBlock = colorHighlight
 colorTextlight = '#65737e'
+colorBlock = colorHighlight
 colorIcon = colorText
 colorVolumeMuted = colorHighlight
 colorSongText = colorText
@@ -50,7 +50,7 @@ iconVolumeMute = '\uf026'
 iconVolumeLow = '\uf027'
 iconVolumeHigh = '\uf028'
 
-# ----------------------------------------------------------------------------#
+# --------------------------------------------------------------------------- #
 
 
 def natural_sort(l):
@@ -235,6 +235,6 @@ def get_status():
 def main():
     while True:
         print(get_status())
-        time.sleep(secondSleep)   # test purpose, set to secondSleep
+        time.sleep(secondSleep)
 
 main()

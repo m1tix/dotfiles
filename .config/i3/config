@@ -1,4 +1,6 @@
+# vim:filetype=i3
 # Variables
+
 set $FONT pango: Fira Mono 9
 hide_edge_borders           both
 set $BORDER_SIZE            4
@@ -58,9 +60,13 @@ bindsym $mod+Shift+y gaps outer current minus 6
 bindsym $mod+Shift+u gaps outer current plus 6
 
 
-bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume 1 +5% #increase sound volume
-bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume 1 -5% #decrease sound volume
-bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute 1 toggle # mute sound
+# bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume 1 +5% #increase sound volume
+# bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume 1 -5% #decrease sound volume
+# bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute 1 toggle # mute sound
+
+bindsym XF86AudioRaiseVolume exec --no-startup-id "amixer -q sset Master,0 5%+ unmute"
+bindsym XF86AudioLowerVolume exec --no-startup-id "amixer -q sset Master,0 5%- unmute"
+bindsym XF86AudioMute exec --no-startup-id"amixer -q sset Master,0 toggle"
 
 bindsym XF86AudioPlay exec --no-startup-id mpc toggle
 bindsym XF86AudioNext exec --no-startup-id mpc next
@@ -69,11 +75,10 @@ bindsym XF86AudioPrev exec --no-startup-id mpc prev
 bindsym $mod+shift+x exec --no-startup-id ~/.config/scripts/lock.sh
 bindsym $mod+d exec --no-startup-id rofi -show run
 bindsym $mod+shift+s exec --no-startup-id firefox
-bindsym $mod+shift+w exec --no-startup-id Thunar
+bindsym $mod+shift+w exec --no-startup-id nemo --no-desktop 
 bindsym Print exec --no-startup-id imgur-screenshot
 
 ### Workspace Configuration ###
-
 
 set $workspace1 "I"
 set $workspace2 "II"
@@ -121,12 +126,13 @@ for_window [class="Steam"] floating enable
 for_window [class="^Steam$" title=".* - Chat"] floating disable, move container to workspace $workspace2
 for_window [class="^Steam$" title="^Friends$"] floating disable, move container to workspace $workspace2
 for_window [class="Binding of Isaac: Afterbirth"] floating enable
-for_window [class="Thunar"] floating enable
+for_window [class="Nemo"] floating enable
 for_window [class="Deluge"] floating enable
+for_window [class="factorio"] floating enable, move container to workspace $workspace5
 
 for_window [instance="Places" class="Firefox"] floating enable
 for_window [instance="Toplevel" class="Firefox"] floating enable
-for_window [title="Openbox Logout"] floating enable
+
 ###  Modes ###
 
 mode "resize" {
@@ -153,17 +159,18 @@ client.urgent           $COLOR_NORMAL   $COLOR_NORMAL   $TEXT_COLOR    $COLOR_IN
 
 
 ### Random things at last ###
+
 for_window [class="^.*"] border pixel $BORDER_SIZE
 gaps inner 12
 smart_borders on
 smart_gaps on
 focus_follows_mouse no
 
-exec xrandr --output DVI-0 --primary --mode 1920x1080 --refresh 144 --output DVI-1 --mode 1920x1080 --left-of DVI-0
-exec_always --nos-startup-id killall lemonbar
+exec --no-startup-id xrandr --output DVI-0 --primary --mode 1920x1080 --refresh 144 --output DVI-1 --mode 1920x1080 --left-of DVI-0
+exec_always --no-startup-id killall lemonbar
 exec_always --no-startup-id compton -f
 exec_always --no-startup-id feh --bg-scale ~/Pictures/random_papes/Dark-sky.jpg
 exec_always --no-startup-id ~/.config/scripts/ownBar.py
-exec --no-startup-id steam
+exec --no-startup-id STEAM_RUNTIME=0 steam
 exec --no-startup-id mpd
 exec --no-startup-id redshift

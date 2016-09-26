@@ -3,10 +3,11 @@ import os
 import re
 import shutil
 # Too cool for variables ;)
-items = {'~/.config': ['i3', 'scripts', 'nvim/init.vim', 'termite'],
+items = {'~/.config': ['i3', 'scripts', 'nvim/init.vim', 'termite',
+                       'zathura/zathurarc'],
          '': ['.bashrc', '.Xresources', '.mpd/mpd.conf', 'Code/Web/homepage'],
          '~/.vimperator': ['colors/gruvbox.vimp',
-                        'colors/onedark.vimp'],
+                           'colors/onedark.vimp'],
          '~/.ncmpcpp': ['config']}
 dotfileDir = os.path.expanduser('~/Documents/Git/dotfiles')
 

@@ -1,0 +1,38 @@
+set adjust-open             "width"
+set pages-per-row           "1"
+set page-padding            "0"
+
+set font "Meslo LG M for Powerline 8"
+
+set selection-clipboard "clipboard"
+
+map <C-n> toggle_statusbar
+
+
+set statusbar-bg            "#2b303b"
+set statusbar-fg            "#c0c5ce"
+set highlight-color         "#ebcb8b"
+set highlight-active-color  "#8fa1b3"
+set notification-error-bg   "#bf616a"
+set notification-error-fg   "#151515"
+set notification-warning-bg "#bf616a"
+set notification-warning-fg "#151515"
+set completion-highlight-bg "#bf616a"
+set completion-highlight-fg "#2b303b"
+set completion-bg           "#2b303b"
+set completion-fg           "#c0c5ce"
+set notification-bg         "#bf616a"
+set notification-fg         "#151515"
+set inputbar-bg             "#2b303b"
+set inputbar-fg             "#c0c5ce"
+set render-loading-bg       "#2b303b"
+set render-loading-fg       "#c0c5ce"
+
+set tabbar-fg               "#c0c5ce"
+set tabbar-bg               "#2b303b"
+set tabbar-focus-fg         "#2b303b"
+set tabbar-focus-bg         "#bf616a"
+
+set recolor-keephue         "true"
+
+

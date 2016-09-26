@@ -11,11 +11,13 @@ Plugin 'scrooloose/syntastic'
 Plugin 'nvie/vim-flake8'
 " Plugin 'scrooloose/nerdtree'
 Plugin 'junegunn/goyo.vim'
+Plugin 'tpope/vim-surround'
 Plugin 'sheerun/vim-polyglot'
 Plugin 'Shougo/deoplete.nvim'
 Plugin 'zchee/deoplete-jedi'
 Plugin 'Shougo/neco-vim'
 Plugin 'itchyny/lightline.vim'
+Plugin 'PotatoesMaster/i3-vim-syntax'
 
 " Colorschemes
 Plugin 'morhetz/gruvbox'
@@ -40,6 +42,7 @@ hi Nontext guifg=#2b303b
 
 " Set relative numbers to the side
 set relativenumber
+set number
 
 " Mouse support
 set mouse=c
@@ -63,11 +66,26 @@ let g:lightline = {
     \   'left': [ [ 'mode' ],
     \             [ 'filetype' ] ],
     \   'right': [ [ 'lineinfo' ],
-    \              [ 'filename' ] ],
+    \              [ 'filename', 'syntastic' ] ],
+    \ },
+    \ 'component_expand': {
+    \       'syntastic': 'SyntasticStatuslineFlag',
+    \ },
+    \ 'component_type': {
+    \       'syntastic': 'middle',
     \ },
     \ 'separator': { 'left': '⮀', 'right': '⮂' },
     \ 'subseparator': { 'left': '⮁', 'right': '⮃' },
     \ }
+
+function! s:syntastic()
+    SyntasticCheck
+    call lightline#update()
+endfunction
+augroup AutoSyntastic
+    autocmd!
+    autocmd BufWritePost * call s:syntastic()
+augroup END
 
 " Deoplete
 let g:deoplete#enable_at_startup=1
@@ -155,6 +173,7 @@ function! s:goyo_enter()
   let b:quitting = 0
   let b:quitting_bang = 0
   set relativenumber
+  set number
   autocmd QuitPre <buffer> let b:quitting = 1
   cabbrev <buffer> q! let b:quitting_bang = 1 <bar> q!
 endfunction
