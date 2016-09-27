@@ -1,0 +1,76 @@
+#! /bin/sh
+#
+# Example panel for lemonbar
+
+. panel_colors
+. panel_config
+PADDING="  "
+num_mon=$(bspc query -M | wc -l)
+
+while read -r line ; do
+	case $line in
+                MUSIC*)
+                        # music output
+                        music="${line#?????}"
+                        ;;
+		TIME*)
+			# clock output
+			clock="%{F$COLOR_DATE_FG}%{B$COLOR_DATE_BG}${line#????}$PADDING%{B-}%{F-}"
+			;;
+                DATE*)
+                        # date output
+                        date="%{F$COLOR_DATE_FG}%{B$COLOR_DATE_BG}$PADDING${line#????}%{B-}%{F-}"
+                        ;;
+		W*)
+			# bspwm's state
+			wm=""
+			IFS=':'
+			set -- ${line#?}
+			while [ $# -gt 0 ] ; do
+				item=$1
+				name=${item#?}
+				case $item in
+					#M*)
+                                        #        #active monitor
+                                        #        if [ $num_mon -gt 1 ] ; then
+                                        #            wm="${wm} %{F$COLOR_FOCUSED_MONITOR_FG}%{B$COLOR_FOCUSED_MONITOR_BG}$PADDING${name}$PADDING%{B-}%{F-}"
+                                        #        fi
+                                        #        ;;
+                                        #m*)
+                                        #        if [ $num_mon -gt 1 ] ; then
+                                        #            wm="${wm} %{F$COLOR_MONITOR_FG}%{B$COLOR_MONITOR_BG}$PADDING${name}$PADDING%{B-}%{F-}"
+                                        #        fi
+                                        #        ;;
+                                        f*)
+                                                # free desktop
+                                                wm="${wm}%{F$COLOR_FREE_FG}%{B$COLOR_FREE_BG}%{A:bspc desktop -f ${name}:}$PADDING$ICON_CIRCLE_O$PADDING%{A}%{B-}%{F-}"
+                                                ;;
+                                        F*)
+                                                # focused free desktop
+                                                wm="${wm}%{F$COLOR_FOCUSED_FREE_FG}%{B$COLOR_FOCUSED_FREE_BG}%{A:bspc desktop -f ${name}:}$PADDING$ICON_CIRCLE_O$PADDING%{A}%{B-}%{F-}"
+                                                ;;
+                                        o*)
+                                                # occupied desktop
+                                                FG=$COLOR_OCCUPIED_FG
+                                                BG=$COLOR_OCCUPIED_BG
+                                                wm="${wm}%{F$COLOR_OCCUPIED_FG}%{B$COLOR_OCCUPIED_BG}%{A:bspc desktop -f ${name}:}$PADDING$ICON_CIRCLE$PADDING%{A}%{B-}%{F-}"
+                                                ;;
+                                        O*)
+                                                # focused occupied desktop
+                                                wm="${wm}%{F$COLOR_FOCUSED_OCCUPIED_FG}%{B$COLOR_FOCUSED_OCCUPIED_BG}%{A:bspc desktop -f ${name}:}$PADDING$ICON_CIRCLE$PADDING%{A}%{B-}%{F-}"
+                                                ;;
+                                        u*)
+                                                # urgent desktop
+                                                wm="${wm}%{F$COLOR_URGENT_FG}%{B$COLOR_URGENT_BG}%{A:bspc desktop -f ${name}:}$PADDING$ICON_CIRCLE$PADDING%{A}%{B-}%{F-}"
+                                                ;;
+                                        U*)
+                                                # focused urgent desktop
+                                                wm="${wm}%{F$COLOR_FOCUSED_URGENT_FG}%{B$COLOR_FOCUSED_URGENT_BG}%{A:bspc desktop -f ${name}:}$PADDING$ICON_CIRCLE_O$PADDING%{A}%{B-}%{F-}"
+                                                ;;
+                                esac
+				shift
+			done
+			;;
+	esac
+	printf "%s\n" "%{l}%{O7}${wm}%{c}${music}%{r}${date}${clock}"
+done
