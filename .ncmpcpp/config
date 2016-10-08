@@ -87,8 +87,8 @@ volume_change_step = 5
 autocenter_mode = yes
 
 # progressbar_look = "─╼"
-# progressbar_look = "━━━"
-progressbar_look = "---"
+progressbar_look = "━━━"
+# progressbar_look = "---"
 progressbar_boldness = no
 progressbar_color = black
 progressbar_elapsed_color = red

@@ -1,6 +1,6 @@
 [options]
 font = Meslo LG M for Powerline 12
-# font = Monaco for Powerline 12
+# font = Iosevka 12
 cursor_blink = off
 cursor_shape = block
 [colors]

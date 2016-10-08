@@ -29,7 +29,7 @@ function twitch()
         echo "Not enough arguments passed"
     else
 
-        livestreamer -p mpv twitch.tv/$1 best --http-header Client-id=ewvlchtxgqq88ru9gmfp1gmyt6h2b93
+        livestreamer -p mpv twitch.tv/$1 $2 --http-header Client-id=ewvlchtxgqq88ru9gmfp1gmyt6h2b93
     fi
 }
 
