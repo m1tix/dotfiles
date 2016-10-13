@@ -1,4 +1,4 @@
-@namespace html url(http://www.w3.org/1999/xhtml);
+mespace html url(http://www.w3.org/1999/xhtml);
 @namespace xul url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);
 
 /*
@@ -26,15 +26,15 @@
 */
 
 :root {
-    --tab-accent: #61AFEF; --tab-private-accent: #E06c75;
+    --tab-accent: #bf616a; --tab-private-accent: #E06c75;
 
     /* TAB VARIABLES */
-    --bg-light: #282c34; --bg-dark: #282c34;
-    --fg-light: #ABB2BF; --fg-dark: #abb2bf; /* 5c6370 */
+    --bg-light: #2b303b; --bg-dark: #2b303b;
+    --fg-light: #c0c5ce; --fg-dark: #c0c5ce; /* 5c6370 */
 
     --tab-triangle-correction: -1px;
     --tab-height: 30px; --tab-icon-size: 16px; --tab-strip-margin: -12px; --tab-overlap: -5px;
-    --tab-fonts: "Source Sans Pro"; --tab-font-size: 9pt;
+    --tab-fonts: "Source Sans Pro"; --tab-font-size: 10pt;
     --tab-text-align: center; /* left | center | right */
     --tab-triangle: none;  /* block | none */
     --tab-max-width: 100%;
@@ -395,3 +395,4 @@ tabbrowser tabpanels, #appcontent > #content { background: var(--bg-light) !impo
     color: var(--fg-dark) !important;
 }
 #PopupAutoCompleteRichResult .autocomplete-richlistbox > scrollbox { overflow: visible !important; }
+

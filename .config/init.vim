@@ -89,6 +89,7 @@ augroup AutoSyntastic
 augroup END
 
 " Deoplete
+set completeopt-=preview
 let g:deoplete#enable_at_startup=1
 let g:clang_library_path='/usr/lib/libclang.so'
 inoremap <expr><tab> pumvisible() ? "\<c-n>" : "\<tab>"
