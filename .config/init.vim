@@ -15,6 +15,7 @@ Plugin 'tpope/vim-surround'
 Plugin 'sheerun/vim-polyglot'
 Plugin 'Shougo/deoplete.nvim'
 Plugin 'zchee/deoplete-jedi'
+Plugin 'Rip-Rip/clang_complete'
 Plugin 'Shougo/neco-vim'
 Plugin 'itchyny/lightline.vim'
 Plugin 'PotatoesMaster/i3-vim-syntax'
@@ -89,6 +90,9 @@ augroup END
 
 " Deoplete
 let g:deoplete#enable_at_startup=1
+let g:clang_library_path='/usr/lib/libclang.so'
+inoremap <expr><tab> pumvisible() ? "\<c-n>" : "\<tab>"
+autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
 
 " Terminal Emulator ColorScheme
 let g:terminal_color_0 = "#2b303b"
@@ -145,7 +149,7 @@ nmap <CR> o<Esc>
 nnoremap <esc> :noh<return><esc>
 nnoremap <esc>^[ <esc>^[
 
-" disable arrow keys to brake the bad habit!
+" disable arrow keys to break the bad habit!
 noremap <Up> <NOP>
 noremap <Down> <NOP>
 noremap <Left> <NOP>

@@ -2,7 +2,7 @@ set adjust-open             "width"
 set pages-per-row           "1"
 set page-padding            "0"
 
-set font "Meslo LG M for Powerline 8"
+set font "Meslo LG M for Powerline 10"
 
 set selection-clipboard "clipboard"
 

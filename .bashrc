@@ -22,17 +22,16 @@ alias gl="git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %
 alias l='ls -al'
 alias t='tmux'
 alias x='xrdb ~/.Xresources'
+
 function twitch()
 {
     if [ $# -eq 0 ]
     then 
         echo "Not enough arguments passed"
     else
-
         livestreamer -p mpv twitch.tv/$1 $2 --http-header Client-id=ewvlchtxgqq88ru9gmfp1gmyt6h2b93
     fi
 }
-
 alias twitch=twitch
 
 # Extract program

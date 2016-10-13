@@ -1,3 +1,4 @@
+// Credits: Twily
 var $=function(id) { return document.getElementById(id); };
 var search=[ // Search engines
     ["",    "https://www.google.com/#q="],                               // Google (Default)

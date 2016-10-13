@@ -7,7 +7,6 @@ import i3ipc
 import re
 import subprocess
 import time
-from mpd import MPDClient
 
 disk = '/dev/sda6'
 networkAdapter = 'enp5s0'
@@ -63,10 +62,6 @@ def natural_sort(l):
 
 global i3
 i3 = i3ipc.Connection()
-
-global client
-client = MPDClient()
-client.connect(mpdServer, mpdServerPort)
 
 
 def shell_result(cmd):

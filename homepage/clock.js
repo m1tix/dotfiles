@@ -1,3 +1,4 @@
+// Credits: guy from 4chan
 function startTime() {
     var today=new Date();
     var h=today.getHours();
