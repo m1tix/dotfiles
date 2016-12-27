@@ -9,16 +9,16 @@ Plugin 'gmarik/Vundle.vim'
 Plugin 'vim-scripts/indentpython.vim'
 Plugin 'scrooloose/syntastic'
 Plugin 'nvie/vim-flake8'
-" Plugin 'scrooloose/nerdtree'
 Plugin 'junegunn/goyo.vim'
 Plugin 'tpope/vim-surround'
 Plugin 'sheerun/vim-polyglot'
 Plugin 'Shougo/deoplete.nvim'
 Plugin 'zchee/deoplete-jedi'
-Plugin 'Rip-Rip/clang_complete'
+" Plugin 'Rip-Rip/clang_complete'
 Plugin 'Shougo/neco-vim'
 Plugin 'itchyny/lightline.vim'
 Plugin 'PotatoesMaster/i3-vim-syntax'
+Plugin 'lervag/vimtex'
 
 " Colorschemes
 Plugin 'morhetz/gruvbox'
@@ -28,6 +28,7 @@ Plugin 'alessandroyorba/sierra'
 Plugin 'jacoborus/tender'
 Plugin 'chriskempson/base16-vim'
 Plugin 'baskerville/bubblegum'
+Plugin 'cocopon/iceberg.vim'
 
 call vundle#end()
 
@@ -38,8 +39,9 @@ set background=dark
 let python_highlight_all=1
 let base16colorspace=256
 syntax on
-colorscheme base16-ocean
+colorscheme ocean
 hi Nontext guifg=#2b303b
+hi SignColumn guibg=guibg
 
 " Set relative numbers to the side
 set relativenumber
@@ -55,6 +57,25 @@ set ic
 " Bar shit
 set nosmd
 set noru
+
+" localleader for latex
+let maplocalleader = "\\"
+
+" no no no no no no no no no
+set noswapfile
+
+" Polyglot
+let g:polyglot_disabled = ['latex']
+
+" Syntastic
+" let g:syntastic_error_symbol = "✗"
+" let g:syntastic_warning_symbol = "△"
+hi SyntasticErrorSign guifg=#bf616a
+hi SyntasticWarningSign guifg=#ebcb8b
+hi link SyntasticErrorSign SignColumn
+hi link SyntasticWarningSign SignColumn
+hi link SyntasticStyleErrorSign SignColumn
+hi link SyntasticStyleWarningSign SignColumn
 
 " Powerline
 set laststatus=2
@@ -74,10 +95,7 @@ let g:lightline = {
     \ },
     \ 'component_type': {
     \       'syntastic': 'middle',
-    \ },
-    \ 'separator': { 'left': '⮀', 'right': '⮂' },
-    \ 'subseparator': { 'left': '⮁', 'right': '⮃' },
-    \ }
+    \ }}
 
 function! s:syntastic()
     SyntasticCheck
@@ -91,28 +109,11 @@ augroup END
 " Deoplete
 set completeopt-=preview
 let g:deoplete#enable_at_startup=1
-let g:clang_library_path='/usr/lib/libclang.so'
+" let g:clang_library_path='/usr/lib/libclang.so'
 inoremap <expr><tab> pumvisible() ? "\<c-n>" : "\<tab>"
 autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
 
 " Terminal Emulator ColorScheme
-let g:terminal_color_0 = "#2b303b"
-let g:terminal_color_8 = "#65737e"
-let g:terminal_color_1 = "#bf616a"
-let g:terminal_color_9 = "#bf616a"
-let g:terminal_color_2 = "#a3be8c"
-let g:terminal_color_10 = "#a3be8c"
-let g:terminal_color_3 = "#ebcb8b"
-let g:terminal_color_11 = "#ebcb8b"
-let g:terminal_color_4 = "#8fa1b3"
-let g:terminal_color_12 = "#8fa1b3"
-let g:terminal_color_5 = "#b48ead"
-let g:terminal_color_13 = "#b48ead"
-let g:terminal_color_6 = "#96b5b4"
-let g:terminal_color_14 = "#96b5b4"
-let g:terminal_color_7 = "#c0c5ce"
-let g:terminal_color_15 = "#eff1f5"
-
 
 " Code Folding (install SimpyIFold if folds aint good)
 set foldmethod=indent

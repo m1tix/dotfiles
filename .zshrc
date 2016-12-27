@@ -1,21 +1,19 @@
-#
-# ~/.bashrc
-#
+# Created by newuser for 5.2
 
-# If not running interactively, don't do anything
-[[ $- != *i* ]] && return
+autoload -Uz compinit
+compinit
 
 BASE16_SHELL=$HOME/.config/base16-shell/
 [ -n "$PS1" ] && [ -s $BASE16_SHELL/profile_helper.sh ] && eval "$($BASE16_SHELL/profile_helper.sh)"
 
 # Export
-export PYTHONPATH=/usr/lib64/python3.5/site-packages
+# export PYTHONPATH=/usr/lib64/python3.5/site-packages
 export EDITOR=nvim
 
 # Aliases
 alias swingin='mpc clear & mpc load soundcloud://url/soundcloud.com/mitix-106877130/likes'
 alias dot='cd ~/Documents/Git/dotfiles/'
-alias neofetch="neofetch --gtk2 'off' --gtk3 'off' --block_range '0' '15'"
+# alias neofetch="neofetch --gtk2 'off' --gtk3 'off' --block_range '0' '15'"
 alias ls='ls -l --color'
 alias dirs='dirs -v'
 alias gl="git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
@@ -56,6 +54,5 @@ function extract()
     fi
 }
 
-
-
-PS1="\[\033[38;5;3m\]λ\[$(tput sgr0)\]\[\033[38;5;15m\] \[$(tput sgr0)\]\[\033[38;5;2m\]\W\[$(tput sgr0)\]\[\033[38;5;15m\] \[$(tput sgr0)\]"
+PROMPT='%F{yellow}λ%f %F{green}%~%f '
+#PS1="\[\033[38;5;3m\]λ\[$(tput sgr0)\]\[\033[38;5;15m\] \[$(tput sgr0)\]\[\033[38;5;2m\]\W\[$(tput sgr0)\]\[\033[38;5;15m\] \[$(tput sgr0)\]"

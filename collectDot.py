@@ -4,10 +4,12 @@ import re
 import shutil
 
 items = {'~/.config': ['i3', 'scripts', 'nvim/init.vim', 'termite',
-                       'zathura/zathurarc', 'bspwm', 'sxhkd', 'lemonbar'],
-         '': ['.bashrc', '.Xresources', '.mpd/mpd.conf', 'Code/Web/homepage'],
+                       'zathura/zathurarc', 'bspwm', 'sxhkd', 'lemonbar',
+                       'nvim/bundle/lightline.vim/autoload/lightline/colorscheme/ocean.vim'],
+         '': ['.zshrc', '.Xresources', '.mpd/mpd.conf', 'Code/Web/homepage',
+              '.vimperatorrc'],
          '~/.vimperator': ['colors/gruvbox.vimp',
-                           'colors/onedark.vimp'
+                           'colors/onedark.vimp',
                            'colors/oceandark.vimp'],
          '~/.ncmpcpp': ['config']}
 dotfileDir = os.path.expanduser('~/Documents/Git/dotfiles')

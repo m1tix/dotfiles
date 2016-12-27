@@ -19,7 +19,7 @@ visualizer_sync_interval = "30"
 ##spectrum/wave/wave_filled/ellipse
 visualizer_type = "spectrum"
 visualizer_color = "red"
-# visualizer_look ="◾◾"
+#visualizer_look ="◾◾"
 #visualizer_in_stereo = yes
 #visualizer_sample_multiplier = 1
 
@@ -108,7 +108,7 @@ locked_screen_width_part = 50
 ask_for_locked_screen_width_part = no
 mouse_support = no
 #mouse_list_scroll_whole_page = yes
-empty_tag_marker = "<empty>"
+empty_tag_marker = " "
 
 
 ##### colors definitions #####
