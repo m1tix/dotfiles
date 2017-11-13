@@ -26,11 +26,11 @@ mespace html url(http://www.w3.org/1999/xhtml);
 */
 
 :root {
-    --tab-accent: #bf616a; --tab-private-accent: #E06c75;
+    --tab-accent: #5e81ac; --tab-private-accent: #E06c75;
 
     /* TAB VARIABLES */
-    --bg-light: #2b303b; --bg-dark: #2b303b;
-    --fg-light: #c0c5ce; --fg-dark: #c0c5ce; /* 5c6370 */
+    --bg-light: #252a33; --bg-dark: #252a33;
+    --fg-light: #d7dbe2; --fg-dark: #d7dbe2; /* 5c6370 */
 
     --tab-triangle-correction: -1px;
     --tab-height: 30px; --tab-icon-size: 16px; --tab-strip-margin: -12px; --tab-overlap: -5px;
