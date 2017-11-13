@@ -1,4 +1,4 @@
-mespace html url(http://www.w3.org/1999/xhtml);
+@namespace html url(http://www.w3.org/1999/xhtml);
 @namespace xul url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);
 
 /*
@@ -139,6 +139,7 @@ mespace html url(http://www.w3.org/1999/xhtml);
     }
 
     .tabbrowser-tab label { padding: 0 22px 0 22px !important; }
+    .tab-label {-moz-box-flex: 1 !important; text-align: center !important;}
 
     #tabbrowser-tabs .tabbrowser-tab[pinned] {
         width: 50px !important;
