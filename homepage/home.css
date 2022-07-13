@@ -1,7 +1,7 @@
 :root {
-    --dark-color: #1e222a;
-    --light-color: #2b303b;
-    --text: #c0c5ce;
+    --dark-color: #292D3E;
+    --light-color: #393D4C;
+    --text: #787c99;
     --shadow: #100908;
 }
 
@@ -136,3 +136,4 @@ a:hover {
     color:var(--light-color);
     background: var(--text);
 }
+

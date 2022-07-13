@@ -1,0 +1,22 @@
+import:
+  - ~/.config/alacritty/palenight.yml
+
+# [Font]
+font:
+  normal:
+    family: Fira Mono Nerd Font
+    style: regular
+  bold:
+    family: Fira Mono Nerd Font
+    style: bold
+  italic:
+    family: Fira Mono Nerd Font
+    style: italic
+
+  size: 10
+
+window:
+  padding:
+    x: 6
+    y: 6
+  dynamic_padding: true

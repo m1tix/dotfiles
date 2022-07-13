@@ -1,0 +1,42 @@
+:root {
+    --bg0: #292D3E;
+    --bg1: #34324A;
+    --bg2: #717CB470;
+    --fg0: #A6ACCD;
+    --fg2: #FFFFFF;
+    --border: #2b2a3e;
+    --white: #EEFFFF;
+    --red: #f07178;
+    --accent: #AB47BC;
+    --blue: #82AAFF;
+
+    --tridactyl-fg: var(--fg0) !important;
+    --tridactyl-bg: var(--bg0) !important;
+    --tridactyl-cmdl-fg: var(--white) !important;
+    --tridactyl-cmdl-bg: var(--bg1) !important;
+    --tridactyl-url-fg: var(--accent) !important;
+    --tridactyl-url-bg: transparent !important;
+    --tridactyl-header-font-weight: 500 !important;
+
+    --tridactyl-of-fg: var(--fg2) !important;
+    --tridactyl-of-bg: var(--bg2) !important;
+    --tridactyl-highlight-box-bg: var(--bg2) !important;
+    --tridactyl-highlight-box-fg: var(--fg2) !important;
+
+    --tridactyl-hint-bg: transparent !important;
+    --tridactyl-hint-fg: var(--fg0) !important;
+    --tridactyl-hint-outline: none !important;
+
+    --tridactyl-hint-active-bg: none !important;
+    --tridactyl-hint-active-fg: none !important;
+    --tridactyl-hint-active-outline: none !important;
+
+    --tridactyl-hintspan-fg: var(--white) !important;
+    --tridactyl-hintspan-bg: var(--bg1) !important;
+    --tridactyl-hintspan-border-color: var(--border) !important;
+    /* why are these not with bg/fg? */
+    --tridactyl-hintspan-js-background: var(--red) !important;
+    /* this doesnt even exist sadge */
+    /* --tridactyl-hintspan-js-foreground: var(--red) !important; */
+    --tridactyl-cmdl-fg: var(--white) !important;
+}

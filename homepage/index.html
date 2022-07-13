@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title> Homepage </title>
+        <link rel='stylesheet' href='home.css'>
+        <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
+        <!-- <script type="text/javascript" language="javascript" src="search.js"></script> -->
+        <script src="clock.js"></script>
+    </head>
+    <body onload="startTime();javascript:init();">
+        <div id='Container'>
+            <div id='Title'><span>Hi.</span></div>
+            <div id='Div-Container'>
+                <!--Reddit--!>
+                <a href='https://reddit.com'><div class='PerioDiv'>
+                    <span></span>
+                </div></a>
+                <!--Youtube--!>
+                <a href='https://Youtube.com'><div class='PerioDiv'>
+                    <span></span>
+                </div></a>
+                <!--Github--!>
+                <a href='https://twitter.com'><div class='PerioDiv'>
+                    <span></span>
+                </div></a>
+                <!--Gmail--!>
+                <a href='https://gmail.com'><div class='PerioDiv'>
+                    <span></span>
+                </div></a>
+                <!--Soundcloud--!>
+                <a href='https://soundcloud.com'><div class='PerioDiv'>
+                    <span></span>
+                </div></a>
+                <!--SearchBar and Clock--!>
+                <div id='Search-container'>
+                    <div id="Searchbar">
+                        <input type="text" id="q" value="" autocomplete='off' placeholder="Search" style='text-align:center' onkeypress="javascript:handleQuery(event,this.value);" onfocus="this.value=this.value" />
+                    </div>
+                    <div id='clock'>
+                        <span id='rclock'></span>
+                    </div>
+                </div>
+                <a href='https://elo.mastermath.nl'><div class='PerioDiv'>
+                    <span>拾</span>
+                </div></a>
+                <a href='https://github.com'><div class='PerioDiv'>
+                    <span></span>
+                </div></a>
+            </div>
+        </div>
+    </body>
+</html>
+
+
+

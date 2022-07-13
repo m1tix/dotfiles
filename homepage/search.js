@@ -1,7 +1,7 @@
 // Credits: Twily
 var $=function(id) { return document.getElementById(id); };
 var search=[ // Search engines
-    ["",    "https://www.google.com/#q="],                               // Google (Default)
+    ["",    "https://www.duckduckgo.com/&q="],                           // DDG
     ["!g",  "https://www.google.com/#q="],                               // Google
     ["!i",  "https://www.google.com/search?tbm=isch&q="],                // Google Images
     ["!y",  "https://www.youtube.com/results?search_query="],            // YouTube
@@ -9,7 +9,6 @@ var search=[ // Search engines
     ["!m",  "http://www.imdb.com/find?q="],                              // IMDb
     ["!u",  "http://www.urbandictionary.com/define.php?term="],          // Urban Dictionary
     ["!n",  "http://www.nyaa.se/?page=search&cats=0_0&filter=0&term="],  // Nyaa
-    ["!t",  "http://shop.tcgplayer.com/magic/product/show?ProductName="],// TCGplayer
     ["!a",  "https://aur.archlinux.org/packages/?O=0&K="],               // AUR
 ];
 var ss="";
@@ -38,3 +37,4 @@ function handleQuery(e,q) { // Handle search query
         }
     }
 }
+

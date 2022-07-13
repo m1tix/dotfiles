@@ -1,0 +1,17 @@
+#!/bin/bash
+
+lock="󰌾"
+logout="󰩈"
+shutdown="󰐥"
+reboot="󰜉"
+sleep="󰤄"
+
+options="$lock\n$logout\n$shutdown\n$reboot\n$sleep"
+ 
+selected=$(echo -e "$options" | rofi -dmenu -p "Power" -theme "~/.config/rofi/powermenu.rasi")
+
+if [ "$selected" == "$lock" ]; then
+    betterlockscreen --lock
+else
+    echo "hihih"
+fi

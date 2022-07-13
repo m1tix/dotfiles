@@ -1,0 +1,42 @@
+#!/bin/bash
+
+get_icon() {
+    volume_status=$(amixer get Master | awk '/Left:/ { print $6}' | tr -d '[]')
+    volume_level=$(awk -F"[][]" '/Left:/ { print $2 }' <(amixer sget Master) | tr -d "%")
+    if [ "$volume_status" == "off" ]; then
+        echo "volume-off"
+    else
+        if [ "$volume_level" -lt 33 ]; then
+            echo "volume-low"
+        elif [ "$volume_level" -lt 66 ]; then
+            echo "volume-medium"
+        else
+            echo "volume-high"
+        fi
+    fi
+}
+
+
+_notify() {
+    volume=$(awk -F"[][]" '/Left:/ { print $2 }' <(amixer sget Master) | tr -d "%")
+    dunstify -a "volume" -r 1414 -u low -h int:value:"$volume" -i "$(get_icon)" "Volume: ${volume}%" 
+}
+
+case $1 in
+    up)
+        amixer -q set Master 5%+
+        _notify
+        ;;
+    down)
+        amixer -q set Master 5%-
+        _notify 
+        ;;
+    mute)
+        amixer -q set Master toggle
+        if [[ $(amixer get Master | awk '/Left:/ { print $6}' | tr -d '[]') != 'on' ]]; then
+            dunstify -i volume-off -a "volume" -r 1414 -u low "Muted"
+        else
+            dunstify -i "$(get_icon)" -a "volume" -r 1414 -u low "Unmuted"
+        fi
+        ;;
+esac

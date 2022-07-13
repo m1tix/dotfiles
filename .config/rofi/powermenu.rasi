@@ -1,0 +1,50 @@
+configuration {
+    font: "Material Design Icons:style=regular 22";
+    disable-history: false;
+    sidebar-mode: false;
+}
+
+window {
+    background-color:               @bg0;
+    border-radius:                  15px; 
+    width:                          80px;
+    height:                         335px;
+    location:                       west;
+}
+ 
+listview {
+    background-color:               @bg0;
+    spacing:                        15px;
+    dynamic:                        true;
+    cyclic:                         true;
+    layout:                         vertical;
+}
+ 
+mainbox {
+    background-color:               @bg0;
+    children:                       [ listview ];
+    padding:                        25px 15px 25px 15px;
+}
+ 
+element {
+    background-color:               @bg0;
+    text-color:                     @fg1;
+    orientation:                    vertical;
+    border-radius:                  15px;
+}
+ 
+element-text {
+    background-color:               inherit;
+    text-color:                     inherit;
+    expand:                         true;
+    horizontal-align:               0.5;
+    padding: 2px;
+    vertical-align:                 0.5;
+}
+ 
+element selected {
+    background-color:               @hl-bg;
+    text-color:                     @hl-fg;
+}
+@import "~/.config/rofi/palenight.rasi"
+/* vim:ft=css

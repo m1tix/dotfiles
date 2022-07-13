@@ -1,0 +1,18 @@
+#!/bin/bash
+BRIGHTNESS_DEVICE="amdgpu_bl0"
+BRIGHTNESS_STEPS=5
+
+
+case ${1} in
+    up)      brightnessctl -d ${BRIGHTNESS_DEVICE} set "${BRIGHTNESS_STEPS:-5}%+" -q
+    ;;
+    down)    brightnessctl -d ${BRIGHTNESS_DEVICE} set "${BRIGHTNESS_STEPS:-5}%-" -q
+    ;;
+esac
+
+BRIGHTNESS="$(brightnessctl -d ${BRIGHTNESS_DEVICE} g)"
+BRIGHTNESS_MAX="$(brightnessctl -d ${BRIGHTNESS_DEVICE} m)"
+BRIGHT=$(awk "BEGIN {print ${BRIGHTNESS}/${BRIGHTNESS_MAX}*100}"| cut -d '.' -f1)
+dunstify -a "brightness" -r 1515 -u low -h int:value:"$BRIGHT" -i brightness "Brightness: ${BRIGHT}%"
+
+exit ${?}

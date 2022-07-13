@@ -1,0 +1,15 @@
+* {
+    bg0: #292D3E;
+    bg1: #34324A;
+    fg0: #A6ACCD;
+    fg1: #676E95;
+    fg2: #FFFFFF;
+    accent: #AB47BC;
+    hl-fg: @fg2;
+    hl-bg: #717CB470;
+
+    foreground: @fg0;
+    background-color: transparent;
+    transparent: rgba(41, 45, 62, 1);
+}
+/* vim:ft=css

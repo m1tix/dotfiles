@@ -1,0 +1,20 @@
+#!/bin/bash
+# joinked from janleigh
+
+_notify() {
+    local icon
+    if [ -z "$3" ]; then
+        icon="$HOME/.config/dunst/icons/screenshot.png"
+    else
+        icon="$3"
+    fi
+    notify-send -a 'screenshot' -i "$icon" "$1" "$2"
+}
+
+if [[ $(file --mime-type -b $1) != "image/png" ]]; then
+    rm $1
+    _notify "Screenshot aborted." && exit 1
+fi
+
+canberra-gtk-play -i "camera-shutter"
+_notify "Screenshot saved." "" $1
