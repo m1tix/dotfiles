@@ -1,0 +1,40 @@
+#!/bin/bash
+
+dunstify -i wifi-looking -r 1616 -t 0 "Searching for networks..."
+# ugliest oneliner on earth
+wifi_list=$(nmcli --fields "BARS,SSID,SECURITY" device wifi list | sed 1d | sed -e 's/  */ /g' -E -e "s/WPA*.?\S/ /g"  -e "s/^--/ /g" -e "s/  //g" -e "/--/d" | awk '{gsub(/▂___/, "󰤟", $1); gsub(/▂▄__/, "󰤢", $1); gsub(/▂▄▆_/, "󰤥", $1); gsub(/▂▄▆█/, "󰤨", $1); print}')
+
+# might use the wifi with the lock icon!
+connected=$(nmcli -fields WIFI g)
+if [[ "$connected" =~ "enabled" ]]; then
+	toggle="󰤭 Disable Wi-Fi"
+elif [[ "$connected" =~ "disabled" ]]; then
+	toggle="󰤨 Enable Wi-Fi"
+fi
+
+# kill dunstify notification
+dunstify -C 1616
+chosen_network=$(echo -e "$toggle\n$wifi_list" | uniq -u | rofi -dmenu -i -selected-row 1 -p "Wi-Fi SSID: " -theme $HOME/.config/rofi/wifimenu.rasi)
+chosen_id=$(echo "${chosen_network:2:-1}" | xargs)
+
+if [ -z "$chosen_network" ]; then
+    exit 1
+elif [ "$chosen_network" = "󰤭 Disable Wi-Fi" ]; then
+    nmcli radio wifi off
+elif [ "$chosen_network" = "󰤨 Enable Wi-Fi" ]; then
+    nmcli radio wifi on
+else
+    # Message to show when connection is activated successfully
+    success_message="Connected to: \"$chosen_id\"."
+    # Get known connections
+    # saved_connections=$(nmcli -g NAME connection)
+    # if [[ $(echo "$saved_connections" | grep -w "$chosen_id") = "$chosen_id" ]]; then
+    #         nmcli connection up id "$chosen_id" | grep "successfully" && notify-send "Connection Established" "$success_message"
+    # else
+    if [[ "$chosen_network" =~ "" ]]; then
+        wifi_password=$(rofi -dmenu -p "" -theme ~/.config/rofi/password-input.rasi)
+    fi
+    dunstify -i wifi-looking -r 1616 -t 0 "Connecting..."
+    nmcli device wifi connect "$chosen_id" password "$wifi_password" | grep "successfully" && dunstify -i wifi-looking -r 1616 "$success_message"
+    # fi
+fi

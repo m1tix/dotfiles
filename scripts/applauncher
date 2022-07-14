@@ -2,4 +2,4 @@
 
 rofi -modi "drun" -show drun \
     -theme $HOME/.config/rofi/applauncher.rasi \
-    -disable-history -no-lazy-grab
+    -no-disable-history -max-history-size 25 -no-lazy-grab

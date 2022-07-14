@@ -12,6 +12,15 @@ selected=$(echo -e "$options" | rofi -dmenu -p "Power" -theme "~/.config/rofi/po
 
 if [ "$selected" == "$lock" ]; then
     betterlockscreen --lock
+elif [ "$selected" == "$logout" ]; then
+    bspc quit
+elif [ "$selected" == "$shutdown" ]; then
+    systemctl poweroff
+elif [ "$selected" == "$reboot" ]; then
+    systemctl reboot
+elif [ "$selected" == "$sleep" ]; then
+    amixer set Master mute
+    systemctl suspend
 else
-    echo "hihih"
+    exit 0
 fi

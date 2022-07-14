@@ -2,6 +2,7 @@ configuration {
     font: "Material Design Icons:style=regular 22";
     disable-history: false;
     sidebar-mode: false;
+    hover-select: true;
 }
 
 window {
