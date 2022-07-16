@@ -31,6 +31,17 @@ require('packer').startup(function(use)
         'nvim-lualine/lualine.nvim',
         requires = { 'kyazdani42/nvim-web-devicons', opt = true }
     }
+    use { -- summary of errors
+        "folke/trouble.nvim",
+        requires = "kyazdani42/nvim-web-devicons",
+        config = function()
+            require("trouble").setup {
+            -- your configuration comes here
+            -- or leave it empty to use the default settings
+            -- refer to the configuration section below
+            }
+        end
+    }
     use 'neovim/nvim-lspconfig' -- autocompletetime!
     use 'hrsh7th/nvim-cmp'
     use 'hrsh7th/cmp-nvim-lsp'
@@ -84,7 +95,10 @@ vim.opt.shiftround = true
 --------------------------------------------------
 -- Colors                                       --
 --------------------------------------------------
--- vim.g.tokyonight_style = "storm"
+-- Cool other themes:
+---- Tokyo night
+---- rose-pine
+---- everforest
 vim.g.material_style = "palenight"
 vim.o.termguicolors = true
 vim.o.background = 'dark'
@@ -131,7 +145,7 @@ require('lualine').setup {
 require('nvim-treesitter.configs').setup {
   -- Add languages to be installed here that you want installed for treesitter
   ensure_installed = { 'lua', 'python' },
-
+  auto_install = true,
   highlight = { enable = true },
   indent = { enable = true },
   incremental_selection = {
@@ -322,3 +336,9 @@ local opt = {
 map('n', 'b]', ':BufferLineCycleNext<CR>', opt)
 map('n', 'b[', ':BufferLineCyclePrev<CR>', opt)
 map('n', '<leader>bd', ':Bdelete!<CR>', opt)
+
+
+--------------------------------------------------
+-- Trouble                                      --
+--------------------------------------------------
+map("n", "<leader>xx", "<cmd>Trouble<cr>", opt)

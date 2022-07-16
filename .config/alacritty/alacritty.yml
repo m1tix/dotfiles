@@ -17,6 +17,6 @@ font:
 
 window:
   padding:
-    x: 6
-    y: 6
+    x: 8
+    y: 8
   dynamic_padding: true

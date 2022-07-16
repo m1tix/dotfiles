@@ -10,6 +10,9 @@ super + Return
 super + @space
         $HOME/.local/bin/applauncher
 
+super + alt + @space
+        $HOME/.local/bin/powermenu
+
 # make sxhkd reload its configuration files:
 super + Escape
 	pkill -USR1 -x sxhkd

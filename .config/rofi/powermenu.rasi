@@ -47,5 +47,5 @@ element selected {
     background-color:               @hl-bg;
     text-color:                     @hl-fg;
 }
-@import "~/.config/rofi/palenight.rasi"
+@import "~/.config/rofi/colors.rasi"
 /* vim:ft=css

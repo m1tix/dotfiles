@@ -35,7 +35,7 @@ set recolor                     "false"
 set recolor-keephue             "false"
 
 set selection-clipboard "clipboard"
-set adjust-open         "bestfit"
+set adjust-open         "width" 
 set pages-per-row       "1"
 set page-padding        "0"
 

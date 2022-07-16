@@ -75,5 +75,5 @@ element-text selected.normal {
     text-color: @hl-fg;
     background-color: transparent;
 }
-@import "~/.config/rofi/palenight.rasi"
-/* vim:ft=css
+@import "~/.config/rofi/colors.rasi"
+/* vim:ft=rasi
