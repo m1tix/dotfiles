@@ -6,7 +6,7 @@ configuration {
 }
 
 window {
-    background-color:               @bg0;
+    background-color:               @primary-background;
     border-radius:                  15px; 
     width:                          80px;
     height:                         335px;
@@ -14,7 +14,7 @@ window {
 }
  
 listview {
-    background-color:               @bg0;
+    background-color:               @primary-background;
     spacing:                        15px;
     dynamic:                        true;
     cyclic:                         true;
@@ -22,14 +22,14 @@ listview {
 }
  
 mainbox {
-    background-color:               @bg0;
+    background-color:               @primary-background;
     children:                       [ listview ];
     padding:                        25px 15px 25px 15px;
 }
  
 element {
-    background-color:               @bg0;
-    text-color:                     @fg1;
+    background-color:               @primary-background;
+    text-color:                     @list-inactive-foreground;
     orientation:                    vertical;
     border-radius:                  15px;
 }
@@ -44,8 +44,8 @@ element-text {
 }
  
 element selected {
-    background-color:               @hl-bg;
-    text-color:                     @hl-fg;
+    background-color:               @selected-background;
+    text-color:                     @selected-foreground;
 }
 @import "~/.config/rofi/colors.rasi"
 /* vim:ft=css

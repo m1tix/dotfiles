@@ -1,19 +1,19 @@
 import:
-  - ~/.config/alacritty/palenight.yml
+  - ~/.config/alacritty/colors.yml
 
 # [Font]
 font:
   normal:
-    family: Fira Mono Nerd Font
-    style: regular
+    family: FuraCode Nerd Font Mono
+    style: Regular
   bold:
-    family: Fira Mono Nerd Font
-    style: bold
+    family: FuraCode Nerd Font Mono
+    style: Bold
   italic:
-    family: Fira Mono Nerd Font
-    style: italic
+    family: FuraCode Nerd Font Mono
+    style: Italic
 
-  size: 10
+  size: 10 
 
 window:
   padding:
