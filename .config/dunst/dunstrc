@@ -1,8 +1,8 @@
 [global]
     ### Colors ###
-    frame_color = "#2B2A3E"
-    separator_color = "#292D3E"
-    highlight="#AB47BC"
+    frame_color = "#2a273f"
+    separator_color = "#2a273f"
+    highlight="#EA9A97"
     ### End Colors ###
 
     ### General ###
@@ -24,7 +24,7 @@
     origin = top-right
     offset = 5x100
 
-    frame_width = 3
+    frame_width = 0
     transparency = 0
 
     # Don't remove messages, if the user is idle (no mouse or keyboard input)
@@ -99,20 +99,20 @@
     # IMPORTANT: colors have to be defined in quotation marks.
     # Otherwise the "#" and following would be interpreted as a comment.
     timeout = 3
-    background = "#292D3E"
-    foreground = "#959DCB"
+    background = "#2a273f"
+    foreground = "#e0def4"
     # Icon for notifications with low urgency, uncomment to enable
     #default_icon = /path/to/icon
 
 [urgency_normal]
     timeout = 3
-    background = "#292D3E"
-    foreground = "#959DCB"
+    background = "#2a273f"
+    foreground = "#e0def4"
     # Icon for notifications with normal urgency, uncomment to enable
     #default_icon = /path/to/icon
 
 [urgency_critical]
     timeout = 5
-    background = "#292D3E"
-    foreground = "#959DCB"
+    background = "#2a273f"
+    foreground = "#e0def4"
 # vim: ft=cfg

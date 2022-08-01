@@ -1,35 +1,32 @@
-# Base16 Material Palenight
-# Author: Nate Peterson
+set default-bg                  "#232136"
+set default-fg                  "#e0def4"
 
-set default-bg                  "#292D3E"
-set default-fg                  "#444267"
+set statusbar-fg                "#e0def4"
+set statusbar-bg                "#59546d"
 
-set statusbar-fg                "#8796B0"
-set statusbar-bg                "#32374D"
+set inputbar-bg                 "#817c9c"
+set inputbar-fg                 "#232136"
 
-set inputbar-bg                 "#292D3E"
-set inputbar-fg                 "#FFFFFF"
+set notification-bg             "#817c9c"
+set notification-fg             "#232136"
 
-set notification-bg             "#292D3E"
-set notification-fg             "#FFFFFF"
+set notification-error-bg       "#817c9c"
+set notification-error-fg       "#ea9a97"
 
-set notification-error-bg       "#292D3E"
-set notification-error-fg       "#F07178"
+set notification-warning-bg     "#817c9c"
+set notification-warning-fg     "#f6c177"
 
-set notification-warning-bg     "#292D3E"
-set notification-warning-fg     "#F07178"
+set highlight-color             "#3e8fb0"
+set highlight-active-color      "#9ccfd8"
 
-set highlight-color             "#FFCB6B"
-set highlight-active-color      "#82AAFF"
+set completion-bg               "#817c9c"
+set completion-fg               "#9ccfd8"
 
-set completion-bg               "#34324A"
-set completion-fg               "#AB47BC"
+set completion-highlight-fg     "#232136"
+set completion-highlight-bg     "#9ccfd8"
 
-set completion-highlight-fg     "#EEFFFF"
-set completion-highlight-bg     "#717CB470"
-
-set recolor-lightcolor          "#292D3E"
-set recolor-darkcolor           "#959DCB"
+set recolor-lightcolor          "#232136"
+set recolor-darkcolor           "#e0def4"
 
 set recolor                     "false"
 set recolor-keephue             "false"
@@ -38,6 +35,7 @@ set selection-clipboard "clipboard"
 set adjust-open         "width" 
 set pages-per-row       "1"
 set page-padding        "0"
+set show-recent         "1"
 
 set font                "Fira Code 10"
 map <C-n> toggle_statusbar

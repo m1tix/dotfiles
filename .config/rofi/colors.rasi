@@ -1,20 +1,20 @@
 * {
-    primary-background: #292D3E;
-    secondary-background: #34324A;
-    foreground: #A6ACCD;
-    muted-foreground: #676e95;
-    list-inactive-foreground: @muted-foreground;
+    /* edit here */ 
+    primary-background:         #232136;
+    secondary-background:       #2a273f;
+    foreground:                 #e0def4;
+    muted-foreground:           #908caa;
+    list-inactive-foreground:   #6e6a86;
+    selected-foreground:        @foreground;
+    selected-background:        #44415a;
+    accent:                     #ea9a97;
 
-    selected-foreground: #EEFFFF;
-    selected-background: #717CB470;
-    accent: #AB47BC;
+    button-background:          #393552;
+    button-foreground:          @foreground;
+    button-selected-background: @foreground;
+    button-selected-foreground: @primary-background;
 
-    button-background:          @foreground;
-    button-foreground:          @background;
-    button-selected-background: @selected-background;
-    button-selected-foreground: @selected-foreground;
-
-    background-color: transparent;
-    transparent: rgba(41, 45, 62, 1);
+    background-color:           transparent;
+    transparent:                rgba(35, 33, 54, 1);
 }
 /* vim:ft=rasi
