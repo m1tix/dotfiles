@@ -132,7 +132,6 @@ XF86MonBrightness{Down,Up}
 XF86Audio{Mute,RaiseVolume,LowerVolume}
         sh $HOME/.scripts/change-volume {mute,up,down}
 ##Screenshots
-
 Print
         DATE=$(date '+%b%d-%H-%M.png'); \
         maim -us "${HOME}/Images/Screenshots/$DATE"; \

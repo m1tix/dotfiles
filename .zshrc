@@ -43,6 +43,16 @@ function extract()
     fi
 }
 
+function twitch()
+{
+    if [ $# -eq 0]
+    then
+        echo "Not enough arguments"
+    else
+        streamlink -p mpv twitch.tv/$1 best
+    fi
+}
+
 PROMPT='%F{red}λ%f %F{yellow}%~%f '
 # PS1="\[\033[38;5;3m\]λ\[$(tput sgr0)\]\[\033[38;5;15m\] \[$(tput sgr0)\]\[\033[38;5;2m\]\W\[$(tput sgr0)\]\[\033[38;5;15m\] \[$(tput sgr0)\]"
 

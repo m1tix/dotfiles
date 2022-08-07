@@ -1,10 +1,4 @@
 [global]
-    ### Colors ###
-    frame_color = "#2a273f"
-    separator_color = "#2a273f"
-    highlight="#EA9A97"
-    ### End Colors ###
-
     ### General ###
     font = JetBrains Mono Regular Nerd Font 11
     allow_markup = yes
@@ -95,24 +89,24 @@
     # notification height to avoid clipping text and/or icons.
     corner_radius = 15
 
+# Start autocolor
+[global]
+    frame_color = "#181825"
+    separator_color = "#181825"
+    highlight="#CBA6F7"
 [urgency_low]
-    # IMPORTANT: colors have to be defined in quotation marks.
-    # Otherwise the "#" and following would be interpreted as a comment.
     timeout = 3
-    background = "#2a273f"
-    foreground = "#e0def4"
+    background = "#181825"
+    foreground = "#CDD6F4"
     # Icon for notifications with low urgency, uncomment to enable
     #default_icon = /path/to/icon
-
 [urgency_normal]
     timeout = 3
-    background = "#2a273f"
-    foreground = "#e0def4"
-    # Icon for notifications with normal urgency, uncomment to enable
-    #default_icon = /path/to/icon
-
+    background = "#181825"
+    foreground = "#CDD6F4"
 [urgency_critical]
     timeout = 5
-    background = "#2a273f"
-    foreground = "#e0def4"
+    background = "#181825"
+    foreground = "#CDD6F4"
+# End autocolor
 # vim: ft=cfg

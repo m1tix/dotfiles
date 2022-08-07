@@ -6,6 +6,7 @@ pgrep -x sxhkd > /dev/null || sxhkd &
 feh --bg-scale $HOME/Images/Wallpapers/spirited-away1.jpg &
 dunst --config $HOME/.config/dunst/dunstrc &
 picom &
+xsettingsd &
 $HOME/.config/polybar/launch.sh &
 
 rule() { bspc rule -a "$@" & }
@@ -17,6 +18,7 @@ rule feh                    state=floating
 rule Gpick                  state=floating
 rule firefox:Places         state=floating
 rule Zathura                state=tiled
+rule mpv                    state=floating
 
 config border_width          0
 config border_radius         15

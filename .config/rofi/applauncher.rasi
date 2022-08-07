@@ -1,6 +1,6 @@
 /* basically adi but different. */
 configuration {
-    font: "JetBrains Mono Nerd Font 11";
+    font: "JetBrains Mono Nerd Font Bold 11";
     width: 30;
     line-margin: 10;
     display-drun:"";
@@ -68,11 +68,16 @@ element {
     spacing:        8px;
     border-radius:  15px;
     background-color: @primary-background;
+    text-color: @list-inactive-foreground;
 }
 
-element selected.normal {
-    background-color:   @selected-background;
-    text-color: @selected-foreground;
+element selected {
+    text-color: @red;
+}
+
+element-text, element-icon {
+    background-color: inherit;
+    text-color:       inherit;
 }
 
 element-icon {
@@ -81,19 +86,7 @@ element-icon {
     background-color: inherit;
 }
 
-element-icon selected.normal {
-    background-color: transparent;
 
-}
-
-element-text {
-    text-color: @list-inactive-foreground;
-    background-color: inherit;
-}
-element-text selected.normal {
-    text-color: @selected-foreground;
-    background-color: transparent;
-}
 
 mode-switcher {
     spacing: 0;

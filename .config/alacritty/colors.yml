@@ -1,41 +1,42 @@
+# Base16  256 - alacritty color config
+# 
 colors:
+  # Default colors
   primary:
-    background: "0x232136"
-    foreground: "0xe0def4"
+    background: '0x1E1E2E'
+    foreground: '0xCDD6F4'
+
+  # Colors the cursor will use if `custom_cursor_colors` is true
   cursor:
-    text: "0xe0def4"
-    cursor: "0x56526e"
-  vi_mode_cursor:
-    text: "0xe0def4"
-    cursor: "0x56526e"
-  line_indicator:
-    foreground: None
-    background: None
-  selection:
-    text: "0xe0def4"
-    background: "0x44415a"
+    text: '0x1E1E2E'
+    cursor: '0xCDD6F4'
+
+  # Normal colors
   normal:
-    black: "0x393552"
-    red: "0xeb6f92"
-    green: "0x3e8fb0"
-    yellow: "0xf6c177"
-    blue: "0x9ccfd8"
-    magenta: "0xc4a7e7"
-    cyan: "0xea9a97"
-    white: "0xe0def4"
+    black:   '0x1E1E2E'
+    red:     '0xF38BA8'
+    green:   '0xA6E3A1'
+    yellow:  '0xF9E2AF'
+    blue:    '0x89B4FA'
+    magenta: '0xF5C2E7'
+    cyan:    '0x94E2D5'
+    white:   '0xCDD6F4'
+
+  # Bright colors
   bright:
-    black: "0x6e6a86"
-    red: "0xeb6f92"
-    green: "0x3e8fb0"
-    yellow: "0xf6c177"
-    blue: "0x9ccfd8"
-    magenta: "0xc4a7e7"
-    cyan: "0xea9a97"
-    white: "0xe0def4"
-  hints:
-    start:
-      foreground: "#908caa"
-      background: "#2a273f"
-    end:
-      foreground: "#6e6a86"
-      background: "#2a273f"
+    black:   '0x7F849C'
+    red:     '0xF38BA8'
+    green:   '0xA6E3A1'
+    yellow:  '0xF9E2AF'
+    blue:    '0x89B4FA'
+    magenta: '0xF5C2E7'
+    cyan:    '0x94E2D5'
+    white:   '0xA6ADC8'
+
+  indexed_colors:
+    - { index: 16, color: '0xFAB387' }
+    - { index: 17, color: '0xF5E0DC' }
+    - { index: 18, color: '0x181825' }
+    - { index: 19, color: '0x2f2f3e' }
+    - { index: 20, color: '0x7F849C' }
+    - { index: 21, color: '0xC9CBFF' }

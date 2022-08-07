@@ -1,19 +1,23 @@
 import:
   - ~/.config/alacritty/colors.yml
 
+# abcdefghikjlmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
 # [Font]
 font:
   normal:
-    family: FuraCode Nerd Font Mono
+    family: Iosevka Mayukai Monolite
     style: Regular
   bold:
-    family: FuraCode Nerd Font Mono
+    family: Iosevka Mayukai Monolite
     style: Bold
   italic:
-    family: FuraCode Nerd Font Mono
+    family: Iosevka Mayukai Monolite
     style: Italic
+  bold_italic:
+    family: Iosevka Mayukai Monolite
+    style: Bold Italic
 
-  size: 10 
+  size: 11
 
 window:
   padding:
