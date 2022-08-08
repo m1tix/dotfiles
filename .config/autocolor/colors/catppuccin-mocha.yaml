@@ -1,0 +1,39 @@
+info:
+  scheme: "Catppuccin Mocha"
+  author: "M1tix"
+  type: dark
+colors:
+  base00: "1E1E2E" # Base
+  base01: "181825" # Mantle
+  base02: "2f2f3e" # Surface2
+  base03: "7F849C" # Overlay1
+  base04: "7F849C" # Overlay1
+  base05: "CDD6F4" # Text
+  base06: "C9CBFF" # idk lmao
+  base07: "A6ADC8" # Subtext0
+  base08: "F38BA8" # Red
+  base09: "FAB387" # Peach
+  base0A: "F9E2AF" # Yellow
+  base0B: "A6E3A1" # Green
+  base0C: "94E2D5" # Teal
+  base0D: "89B4FA" # Blue
+  base0E: "F5C2E7" # Pink
+  base0F: "F5E0DC" # Rosewater
+  accent: "CBA6F7"
+nvim:
+  name: catppuccin
+  extra: |-
+    vim.g.catppuccin_flavour = "mocha"
+    require("catppuccin").setup({
+        highlight_overrides = {
+            mocha = {
+                NvimTreeNormal = { bg = "#1e1e2e" },
+                NormalFloat = { bg = "#1e1e2e" },
+                VertSplit = { fg = "#313244" },
+                NvimTreeVertSplit = { fg = "#313244" },
+            },
+        },
+    })
+gtk:
+  theme: Catppuccin-Mocha-Mauve
+  icon: default

@@ -1,5 +1,5 @@
 #!/bin/bash
 
-rofi -modi "drun" -show drun \
+rofi -modi drun,window -show drun \
     -theme $HOME/.config/rofi/applauncher.rasi \
     -no-disable-history -max-history-size 25 -no-lazy-grab

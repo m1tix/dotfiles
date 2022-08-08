@@ -1,42 +1,34 @@
+@import "colors.css";
+@namespace url("http://www.w3.org/1999/xhtml");
 :root {
-    --bg0: #292D3E;
-    --bg1: #34324A;
-    --bg2: #717CB470;
-    --fg0: #A6ACCD;
-    --fg2: #FFFFFF;
-    --border: #2b2a3e;
-    --white: #EEFFFF;
-    --red: #f07178;
-    --accent: #AB47BC;
-    --blue: #82AAFF;
-
-    --tridactyl-fg: var(--fg0) !important;
-    --tridactyl-bg: var(--bg0) !important;
-    --tridactyl-cmdl-fg: var(--white) !important;
-    --tridactyl-cmdl-bg: var(--bg1) !important;
-    --tridactyl-url-fg: var(--accent) !important;
-    --tridactyl-url-bg: transparent !important;
-    --tridactyl-header-font-weight: 500 !important;
-
-    --tridactyl-of-fg: var(--fg2) !important;
-    --tridactyl-of-bg: var(--bg2) !important;
-    --tridactyl-highlight-box-bg: var(--bg2) !important;
-    --tridactyl-highlight-box-fg: var(--fg2) !important;
-
-    --tridactyl-hint-bg: transparent !important;
-    --tridactyl-hint-fg: var(--fg0) !important;
-    --tridactyl-hint-outline: none !important;
-
-    --tridactyl-hint-active-bg: none !important;
-    --tridactyl-hint-active-fg: none !important;
-    --tridactyl-hint-active-outline: none !important;
-
-    --tridactyl-hintspan-fg: var(--white) !important;
-    --tridactyl-hintspan-bg: var(--bg1) !important;
-    --tridactyl-hintspan-border-color: var(--border) !important;
-    /* why are these not with bg/fg? */
-    --tridactyl-hintspan-js-background: var(--red) !important;
-    /* this doesnt even exist sadge */
-    /* --tridactyl-hintspan-js-foreground: var(--red) !important; */
-    --tridactyl-cmdl-fg: var(--white) !important;
+    --vim-primary-background:  var(--window-colour);/* main background */
+    --vim-foreground:          var(--inverted-colour);/* text color */
+    --vim-url-color:           var(--uc-identity-colour-purple);/* url color in bar */
+    --vim-source-color:        var(--uc-identity-colour-green);/* source color in bar */
+    --vim-inactive-foreground: var(--inactive-inverted-colour);/* non-selected entries in bar */
+    --vim-selected-background: var(--secondary-colour); /* obvious ;) */
+    /* scrollbar-color: var(--inverted-colour) var(--window-colour); */
 }
+
+@-moz-document url-prefix(about:blank) {
+    html > body:empty {
+        background-color: var(--vim-primary-background) !important;
+    }
+}
+@-moz-document url(about:blank) {
+    html > body:empty {
+        background-color: var(--vim-primary-background) !important;
+    }
+}
+
+@-moz-document domain(m1tix.github.io) {
+    :root {
+        --color-bg: var(--window-colour) !important;
+        --color-fg: var(--inverted-colour) !important;
+        --color-link: var(--inactive-inverted-colour) !important;
+        --color-link-visited: var(--color-link) !important;
+        --color-link-hover: #CBA6F7 !important;
+    }
+}
+
+

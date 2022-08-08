@@ -1,0 +1,210 @@
+#!/bin/python3
+import argparse
+import os
+import re
+import subprocess
+import sys
+
+import chevron
+import yaml
+from neovim import attach
+
+CONFIG_FILE = os.path.expanduser("~/.config/autocolor/config.yaml")
+COLORS_LOC = os.path.expanduser("~/.config/autocolor/colors/")
+TEMPLATE_LOC = os.path.expanduser("~/Programming/Python/autocolor/templates/")
+
+# TODO
+# bspwm
+# make light scheme work
+# spotify with spicetify!
+
+
+def change_colorscheme_gtk(scheme):
+    """
+    Change the colorscheme of gtk with xsettingsd
+    credits to phisch for the reload ;)
+    """
+    try:
+        template_gtk = f"Net/ThemeName \"{scheme['gtk']['theme']}\""
+        write_colorscheme_application(
+            template_gtk, "~/.config/xsettingsd/xsettingsd.conf", reload="xsettingsd"
+        )
+    except KeyError:
+        print(
+            "Scheme does not have a valid gtk theme, please specify in config file or"
+            " use -nogtk"
+        )
+        sys.exit(1)
+
+
+def reload_nvim():
+    """
+    reload all instances of neovim. Credits due to dj95@github.com
+    """
+    instances = []
+    directory_content = os.listdir("/tmp")
+    for d in directory_content:
+        if d.startswith("nvim"):
+            if "0" in os.listdir("/tmp/" + d):
+                instances.append("/tmp/" + d + "/0")
+    for instance in instances:
+        nvim = attach("socket", path=instance)
+        nvim.command("source ~/.config/nvim/init.lua")
+
+
+def change_colorscheme_nvim(scheme):
+    """
+    Special function to change the colorscheme of nvim as
+    i dont like the base16 themes for nvim
+    """
+    try:
+        options_nvim = scheme["nvim"]
+    except KeyError:
+        print(
+            "Scheme does not have a valid neovim theme, please specify in config file"
+            " or use -novim"
+        )
+        sys.exit(1)
+    nvim_cfg = os.path.expanduser("~/.config/nvim/init.lua")
+    scheme_type = scheme["info"]["type"]
+    bg = scheme["colors"]["base00"]
+    start = "-- Start autocolor"
+    end = "-- End autocolor"
+    insertion = (
+        f"{start}\n"
+        f'vim.o.background = "{scheme_type}"\n'
+        f"{options_nvim['extra']}\n"
+        f"vim.cmd(\"colorscheme {options_nvim['name']}\")\n"
+        f'vim.cmd("hi EndOfBuffer guifg=#{bg}")\n'
+        f"{end}\n"
+    )
+    with open(nvim_cfg, "r") as f:
+        old_content = f.read()
+    pattern = rf"{start}(.*?){end}\n"
+    new_content = re.sub(pattern, insertion, old_content, 1, re.DOTALL | re.MULTILINE)
+    with open(nvim_cfg, "w") as f:
+        f.write(new_content)
+    reload_nvim()
+
+
+def write_colorscheme_application(
+    template,
+    file,
+    mode="replace",
+    start="# Start autocolor",
+    end="# End autocolor",
+    reload=None,
+):
+    """
+    Changes the colorscheme of given application to the given scheme. Input:
+        scheme (string): yaml file
+        appl (string): name of application
+        file (string): location of config file of application
+        mode (string): replace/copy
+        start/end (strings): specify start/end of substition if mode is copy
+        reload (string): command to run after changing scheme
+    """
+    cfg_file = os.path.expanduser(file)
+    if mode == "replace":
+        with open(cfg_file, "w") as f:
+            f.write(template)
+    elif mode == "copy":
+        pattern = rf"{start}\n(.*?){end}\n"
+        with open(cfg_file, "r") as f:
+            old_content = f.read()
+        new_content = re.sub(
+            pattern, template, old_content, 1, re.DOTALL | re.MULTILINE
+        )
+        with open(cfg_file, "w") as f:
+            f.write(new_content)
+    if reload:
+        # this might be unsafe to use?
+        subprocess.Popen(
+            reload,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            shell=True,
+        )
+
+
+def change_colorscheme(scheme):
+    """
+    Change colorscheme to given scheme, where scheme is the content of any .yaml file
+    """
+    with open(CONFIG_FILE, "r") as f:
+        cfg_file = yaml.safe_load(f)
+    applications = cfg_file["applications"]
+    for appl in applications.keys():
+        appl_template = TEMPLATE_LOC + appl + ".mustache"
+        if not os.path.exists(appl_template):
+            print("Template file does not exists, exitting...")
+            sys.exit(1)
+        with open(appl_template, "r") as f:
+            appl_scheme = chevron.render(f, scheme["colors"])
+        write_colorscheme_application(appl_scheme, **applications[appl])
+
+
+def get_available_schemes():
+    content_color_dir = os.listdir(COLORS_LOC)
+    return [
+        x[0]
+        for x in map(os.path.splitext, content_color_dir)
+        if x[1] == ".yaml" or ".yml"
+    ]
+
+
+def get_args():
+    """Get arguments"""
+    description = (
+        "Simple python script to change colorscheme of all programs specified in the"
+        " config file"
+    )
+    arg = argparse.ArgumentParser(description=description)
+    arg.add_argument(
+        "--list", action="store_true", help="print available themes and exits"
+    )
+    arg.add_argument("--theme", metavar="theme_name", help="which colorscheme to use")
+    arg.add_argument(
+        "-novim", action="store_true", help="Do not change colorscheme of nvim"
+    )
+    arg.add_argument(
+        "-nogtk", action="store_true", help="Do not change colorscheme of gtk2/3"
+    )
+    return arg
+
+
+def parse_args(parser):
+    args = parser.parse_args()
+    if len(sys.argv) <= 1:
+        parser.print_help()
+        sys.exit(1)
+
+    colors = get_available_schemes()
+    if args.list:
+        print("\n".join(colors))
+        sys.exit(0)
+    scheme = args.theme
+    if scheme not in colors:
+        print(
+            f"{scheme} is not in colors. Use --list to list all available colorschemes"
+        )
+        sys.exit(1)
+    scheme_type = ".yaml"
+    if not os.path.exists(f"{COLORS_LOC}{scheme}{scheme_type}"):
+        scheme_type = ".yml"
+    scheme_file = f"{COLORS_LOC}{scheme}{scheme_type}"
+
+    with open(scheme_file, "r") as f:
+        scheme = yaml.safe_load(f)
+    change_colorscheme(scheme)
+
+    if not args.novim:
+        change_colorscheme_nvim(scheme)
+
+    if not args.nogtk:
+        change_colorscheme_gtk(scheme)
+
+
+if __name__ == "__main__":
+    parser = get_args()
+    parse_args(parser)

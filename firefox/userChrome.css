@@ -30,9 +30,6 @@
 *==============================================================================================*/
 
 
-
-
-
 /*---+---+---+---+---+---+
  | C | O | N | F | I | G |
  +---+---+---+---+---+---*/
@@ -40,78 +37,15 @@
 /* Feel free to tweak the following
  * config settings to your own liking. */
 
-
-    /*---+---+---+---+---+---+---+
-     | C | O | L | O | U | R | S |
-     +---+---+---+---+---+---+---*/
-
-    /* Comment this block out if you want to keep the default theme colour. */
-    /* This will also work with custom colours from color.firefox.com. */
-
-
-    @media (prefers-color-scheme: dark) { :root {
-
-        --window-colour:                     #292D3E;
-        --secondary-colour:                  #717CB470;
-        --inverted-colour:                   #A6ACCD;
-
-        /* Containter Tab Colours */
-        --uc-identity-colour-blue:            #82AAFF;
-        --uc-identity-colour-turquoise:       #80CBC4;
-        --uc-identity-colour-green:           #C3E88D;
-        --uc-identity-colour-yellow:          #FFCB6B;
-        --uc-identity-colour-orange:          #F78C6C;
-        --uc-identity-colour-red:             #F07178;
-        --uc-identity-colour-pink:            #89DDFF;
-        --uc-identity-colour-purple:          #C792EA;
-        --uc-identity-colour-white:           #EEFFFF;
-
-        --uc-identity-colour-blue-muted:      #82AAFF99;
-        --uc-identity-colour-turquoise-muted: #80CBC499;
-        --uc-identity-colour-green-muted:     #C3E88D99;
-        --uc-identity-colour-yellow-muted:    #FFCB6BCC;
-        --uc-identity-colour-orange-muted:    #F78C6CFF;
-        --uc-identity-colour-red-muted:       #F07178FF;
-        --uc-identity-colour-pink-muted:      #89DDFF99;
-        --uc-identity-colour-purple-muted:    #C792EAFF;
-
-    }}
-
-
-
-    @media (prefers-color-scheme: light) { :root {
-
-        --window-colour:                     #FAFAFC;
-        --secondary-colour:                  #EAEAEC;
-        --inverted-colour:                   #1E2021;
-
-        /* Containter Tab Colours */
-        --uc-identity-colour-blue:            #1D65F5;
-        --uc-identity-colour-turquoise:       #209FB5;
-        --uc-identity-colour-green:           #40A02B;
-        --uc-identity-colour-yellow:          #E49320;
-        --uc-identity-colour-orange:          #FE640B;
-        --uc-identity-colour-red:             #FC5C65;
-        --uc-identity-colour-pink:            #EC83D0;
-        --uc-identity-colour-purple:          #822FEE;
-
-        --uc-identity-colour-blue-muted:      #1D65F5FF;
-        --uc-identity-colour-turquoise-muted: #209FB5FF;
-        --uc-identity-colour-green-muted:     #40A02BFF;
-        --uc-identity-colour-yellow-muted:    #E49320FF;
-        --uc-identity-colour-orange-muted:    #FE640BFF;
-        --uc-identity-colour-red-muted:       #FC5C65FF;
-        --uc-identity-colour-pink-muted:      #EC83D0FF;
-        --uc-identity-colour-purple-muted:    #822FEEFF;
-
-    }}
-
-
+@import "colors.css";
 
 :root {
+    /* Need this, somehow changed automatically? */
+    --autocomplete-popup-highlight-color: #FFFFFF !important;
 
     /* URL colour in URL bar suggestions */
     --urlbar-popup-url-color: var(--uc-identity-colour-purple) !important;
+    --toolbar-field-color: var(--inverted-colour) !important;
 
 
     /*---+---+---+---+---+---+---+
@@ -119,7 +53,7 @@
      +---+---+---+---+---+---+---*/
 
     /* global border radius */
-    --uc-border-radius: 15px;
+    --uc-border-radius: 0px;
 
     /* dynamic url bar width settings */
     --uc-urlbar-width: clamp(200px, 40vw, 500px);
@@ -303,13 +237,14 @@ window,
     > .tab-background
     > .tab-context-line {
 
-        margin: -1px var(--container-tabs-indicator-margin) 0 var(--container-tabs-indicator-margin) !important;
+        margin: 1px var(--container-tabs-indicator-margin) 0 var(--container-tabs-indicator-margin) !important;
         height: 1px !important;
 
         border-radius: var(--tab-border-radius) !important;
         box-shadow: 0 1px 10px 1px var(--uc-identity-gradient-colour) !important;
 
 }
+
 
 .tabbrowser-tab:not([visuallyselected="true"]):not([multiselected]):not(:hover) {
   color: var(--uc-inverted-colour) !important;
@@ -416,13 +351,10 @@ window,
 
 
 #nav-bar {
-
     border:     none !important;
     box-shadow: none !important;
     background: transparent !important;
-
 }
-
 
 /* remove border below whole nav */
 #navigator-toolbox { border-bottom: none !important; }
@@ -469,7 +401,7 @@ window,
     border: none !important;
     border-radius: var(--uc-border-radius) !important;
     background: var(--uc-theme-colour) !important;
-    color: #EEFFFF !important;
+    color: var(--uc-inverted-colour) !important;
 }
 
 
@@ -489,8 +421,15 @@ window,
 } /* end media query */
 
 
+/* Text color of tabs */
+.tabbrowser-tab .tab-label { color: var(--inactive-inverted-colour) !important; }
+.tabbrowser-tab[selected] .tab-label{ color: var(--inverted-colour) !important; } 
 
-
+/* full width of tabs */
+.tabbrowser-tab[selected] > .tab-stack > .tab-background {
+    margin-bottom: 0px !important;
+    margin-top: 0px !important;
+}
 
 /* Container Tabs */
 .identity-color-blue      { --identity-tab-color: var(--uc-identity-colour-blue)      !important; --identity-icon-color: var(--uc-identity-colour-blue)      !important; --uc-identity-gradient-colour: var(--uc-identity-colour-blue-muted) !important; }

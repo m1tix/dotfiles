@@ -14,7 +14,7 @@ fi
 
 # kill dunstify notification
 dunstify -C 1616
-chosen_network=$(echo -e "$toggle\n$wifi_list" | uniq -u | rofi -dmenu -i -selected-row 1 -p "Wi-Fi SSID: " -theme $HOME/.config/rofi/wifimenu.rasi)
+chosen_network=$(echo -e "$toggle\n$wifi_list" | uniq -u | rofi -dmenu -i -selected-row 1 -p "爵" -theme $HOME/.config/rofi/wifimenu.rasi)
 chosen_id=$(echo "${chosen_network:2:-1}" | xargs)
 
 if [ -z "$chosen_network" ]; then

@@ -1,0 +1,34 @@
+# Every program is a tab. In each tab one have to specify:
+# file: the file specifying the colors.
+# mode: replace/copy. Default is replace. This option specifies whether the file above is replaced or copied.
+#
+# if mode is copy then one has to specify the following commands:
+# start: the start of the block to copy. Default: # Start autocolor
+# end: the end of the block to copy. Default: # End autocolor
+applications:
+  polybar:
+    file: ~/.config/polybar/colors.ini
+    reload: pkill -USR1 polybar
+
+  rofi:
+    file: ~/.config/rofi/colors.rasi
+
+  firefox:
+    file: ~/.mozilla/firefox/b2j4ykcd.default-release/chrome/colors.css
+
+  alacritty:
+    file: ~/.config/alacritty/colors.yml
+
+  dunst:
+    file: ~/.config/dunst/dunstrc
+    mode: copy 
+    reload: killall dunst
+  zathura:
+    file: ~/.config/zathura/zathurarc
+    mode: copy
+
+# bspwm:
+#   file: ~/.config/bspwm/bspwmrc
+#   mode: copy
+#   # this reloads pretty much everything
+#   reload: bspc wm -r
