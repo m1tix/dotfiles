@@ -9,27 +9,26 @@ if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
     vim.cmd([[packadd packer.nvim]])
 end
 
-
 require("packer").startup(function(use)
     use("wbthomason/packer.nvim") -- Package manager
 
     -------------------
     -- Colorschemes  --
     -------------------
-    use("folke/tokyonight.nvim")        -- Tokyo night
-    use("marko-cerovac/material.nvim")  -- material
-    use({                               -- rose-pine
+    use("folke/tokyonight.nvim") -- Tokyo night
+    use("marko-cerovac/material.nvim") -- material
+    use({ -- rose-pine
         "rose-pine/neovim",
         as = "rose-pine",
         tag = "v1.*",
     })
-    use("shaunsingh/nord.nvim")         -- nord ported to nvim
-    use("rebelot/kanagawa.nvim")        -- kanagawa
-    use("sainnhe/everforest")           -- everforest
-    use("Shatur/neovim-ayu")            -- ayu
-    use({                               -- CATPPUCCIN!
+    use("shaunsingh/nord.nvim") -- nord ported to nvim
+    use("rebelot/kanagawa.nvim") -- kanagawa
+    use("sainnhe/everforest") -- everforest
+    use("Shatur/neovim-ayu") -- ayu
+    use({ -- CATPPUCCIN!
         "catppuccin/nvim",
-        as = "catppuccin"
+        as = "catppuccin",
     })
     -------------------
     -- Other plugins --
@@ -49,7 +48,6 @@ require("packer").startup(function(use)
         "nvim-treesitter/nvim-treesitter",
         run = ":TSUpdate",
     })
-    use("williamboman/nvim-lsp-installer") -- lazy lsp installer
     use({ -- lua statusbar
         "nvim-lualine/lualine.nvim",
         requires = { "kyazdani42/nvim-web-devicons", opt = true },
@@ -58,8 +56,7 @@ require("packer").startup(function(use)
         "folke/trouble.nvim",
         requires = "kyazdani42/nvim-web-devicons",
         config = function()
-            require("trouble").setup({
-            })
+            require("trouble").setup({})
         end,
     })
     use("lewis6991/impatient.nvim") --increase startuptime
@@ -69,12 +66,16 @@ require("packer").startup(function(use)
     })
     use("lukas-reineke/indent-blankline.nvim") -- nice indentline
     use("Pocco81/true-zen.nvim") -- focus mode
+    use("folke/twilight.nvim") -- better focus mode
     use("folke/which-key.nvim") -- which key
-    use({"akinsho/toggleterm.nvim", tag = 'v2.*'})
+    use({ "akinsho/toggleterm.nvim", tag = "v2.*" }) -- nice terminal
+    use("gbprod/cutlass.nvim")
     -------------------
     -- Lsp           --
     -------------------
     use("neovim/nvim-lspconfig") -- autocomplete time!
+    use("williamboman/mason.nvim")
+    use("williamboman/mason-lspconfig.nvim")
     use("jose-elias-alvarez/null-ls.nvim") -- linting/formatting
     use("hrsh7th/nvim-cmp")
     use("hrsh7th/cmp-nvim-lsp")
@@ -82,6 +83,7 @@ require("packer").startup(function(use)
     use("hrsh7th/cmp-path")
     use("saadparwaiz1/cmp_luasnip")
     use("L3MON4D3/LuaSnip")
+    use("j-hui/fidget.nvim")
     use({
         "nvim-telescope/telescope.nvim",
         requires = { "nvim-lua/plenary.nvim" },
@@ -143,10 +145,10 @@ vim.g.catppuccin_flavour = "mocha"
 require("catppuccin").setup({
     highlight_overrides = {
         mocha = {
-            NvimTreeNormal = {bg = "#1e1e2e"},
-            NormalFloat = {bg = "#1e1e2e"},
-            VertSplit = {fg = "#313244"},
-            NvimTreeVertSplit = {fg = "#313244"},
+            NvimTreeNormal = { bg = "#1e1e2e" },
+            NormalFloat = { bg = "#1e1e2e" },
+            VertSplit = { fg = "#313244" },
+            NvimTreeVertSplit = { fg = "#313244" },
         },
     },
 })
@@ -205,7 +207,11 @@ require("nvim-treesitter.configs").setup({
 -- lspconfig                                    --
 --------------------------------------------------
 
-local on_attach = function(_, bufnr)
+local on_attach = function(client, bufnr)
+    -- Eyo this works, but think will be temporary
+    if client.name == "sumneko_lua" then
+        client.resolved_capabilities.document_formatting = false
+    end
     local nmap = function(keys, func, desc)
         if desc then
             desc = "LSP: " .. desc
@@ -233,7 +239,8 @@ local on_attach = function(_, bufnr)
     vim.api.nvim_buf_create_user_command(
         bufnr,
         "Format",
-        vim.lsp.buf.format or vim.lsp.buf.formatting_seq_sync,
+        -- Might need to change this to formatting-seq-sync or whatever
+        vim.lsp.buf.format or vim.lsp.buf.formatting,
         { desc = "Format current buffer" }
     )
 end
@@ -242,7 +249,7 @@ local capabilities = require("cmp_nvim_lsp").update_capabilities(vim.lsp.protoco
 
 local servers = { "sumneko_lua", "pyright", "bashls" }
 
-require("nvim-lsp-installer").setup({
+require("mason-lspconfig").setup({
     ensure_installed = servers,
 })
 
@@ -253,7 +260,17 @@ for _, lsp in ipairs(servers) do
     })
 end
 
--- some lua settings
+require("mason").setup({
+    ui = {
+        icons = {
+            package_installed = "✓",
+            package_pending = "➜",
+            package_uninstalled = "✗",
+        },
+        border = "single",
+    },
+})
+-- some lsp settings
 local runtime_path = vim.split(package.path, ";")
 table.insert(runtime_path, "lua/?.lua")
 table.insert(runtime_path, "lua/?/init.lua")
@@ -307,9 +324,9 @@ null_ls.setup({
     debug = false,
     on_attach = on_attach,
     sources = {
-        formatting.stylua,
+        formatting.stylua.with({ extra_args = { "--indent-type", "Spaces" } }),
         formatting.isort,
-        formatting.black.with({ extra_args = { "--preview" } }),
+        formatting.black,
         diagnostics.flake8.with({
             extra_args = { "--max-line-length=88", "--select=C,E,F,W,B,B950", "--extend-ignore=E203" },
         }),
@@ -327,7 +344,6 @@ if not snip_status_ok then
     return
 end
 
-
 cmp.setup({
     snippet = {
         expand = function(args)
@@ -337,7 +353,7 @@ cmp.setup({
     mapping = cmp.mapping.preset.insert({
         ["<C-d>"] = cmp.mapping.scroll_docs(-4),
         ["<C-f>"] = cmp.mapping.scroll_docs(4),
-        ["<C-Space>"] = cmp.mapping.complete(),
+        ["<C-Space>"] = cmp.mapping.complete({}), -- might want to fix this soon? idk
         ["<CR>"] = cmp.mapping.confirm({
             behavior = cmp.ConfirmBehavior.Replace,
             select = false,
@@ -369,7 +385,6 @@ cmp.setup({
     },
 })
 
-
 --------------------------------------------------
 -- Key bindings                                 --
 --------------------------------------------------
@@ -381,7 +396,7 @@ vim.api.nvim_exec(
     autocmd!
     autocmd TextYankPost * silent! lua vim.highlight.on_yank()
   augroup end
-]]   ,
+]],
     false
 )
 
@@ -393,7 +408,7 @@ require("bufferline").setup({
         show_close_icon = false,
         show_buffer_close_icons = false,
         always_show_bufferline = false,
-        offsets = {{filetype = "NvimTree", text = "File Explorer", text_align = "center"}},
+        offsets = { { filetype = "NvimTree", text = "File Explorer", text_align = "center" } },
     },
     -- i might need this later, dont like the black bar
     -- highlights = {
@@ -426,18 +441,30 @@ require("indent_blankline").setup({
 })
 
 --------------------------------------------------
--- truezen mode                                 --
+-- truezen mode and twilight                    --
 --------------------------------------------------
 require("true-zen").setup({
     integrations = {
         lualine = true,
-    }
+        twilight = false,
+    },
 })
+
+require("twilight").setup()
+
+--------------------------------------------------
+-- fidget nvim                                  --
+--------------------------------------------------
+require("fidget").setup()
 
 --------------------------------------------------
 -- which-key                                    --
 --------------------------------------------------
-require("which-key").setup()
+require("which-key").setup({
+    window = {
+        border = "single",
+    },
+})
 
 --------------------------------------------------
 -- toggleterm                                   --
@@ -454,6 +481,9 @@ local opt = {
     noremap = true,
     silent = true,
 }
+
+-- Rebind all delete options to black hole register
+require("cutlass").setup()
 map("n", "b]", ":BufferLineCycleNext<CR>", opt)
 map("n", "b[", ":BufferLineCyclePrev<CR>", opt)
 map("n", "<leader>bd", ":bdelete<CR>", opt)

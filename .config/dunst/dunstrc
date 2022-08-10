@@ -109,4 +109,7 @@
     background = "#181825"
     foreground = "#CDD6F4"
 # End autocolor
+
+[Spotify]
+    appname = Spotify
 # vim: ft=cfg

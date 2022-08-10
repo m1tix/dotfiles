@@ -2,15 +2,6 @@
 type = custom/text
 content=%{T1} %{T-}
 
-; [module/rightsep]
-; type = custom/text
-; content=%{T4}%{T-}
-
-; [module/leftsep]
-; type = custom/text
-; content=%{T4}%{T-}
-; content-foreground = ${colors.cyan}
-
 [module/launcher]
 type = custom/text
 content = %{T2}󰣇%{T-}
