@@ -26,6 +26,7 @@ require("packer").startup(function(use)
     use("rebelot/kanagawa.nvim") -- kanagawa
     use("sainnhe/everforest") -- everforest
     use("Shatur/neovim-ayu") -- ayu
+    use("EdenEast/nightfox.nvim")
     use({ -- CATPPUCCIN!
         "catppuccin/nvim",
         as = "catppuccin",
@@ -34,9 +35,10 @@ require("packer").startup(function(use)
     -- Other plugins --
     -------------------
     use("elkowar/yuck.vim") -- .yuck highlighting
-    use("tpope/vim-surround") -- brackets
-    use("tpope/vim-fugitive") -- git
-    use("tpope/vim-commentary") -- nice commenting (gc)
+    -- Might need to add some neovim variants of these, but atm not missing them
+    -- use("tpope/vim-surround") -- brackets
+    -- use("tpope/vim-fugitive") -- git
+    use("numToStr/Comment.nvim") -- easy commenting with gc/gcc
     use("kyazdani42/nvim-tree.lua") -- tree explorer
     use({ -- Bufferline
         "akinsho/bufferline.nvim",
@@ -69,21 +71,25 @@ require("packer").startup(function(use)
     use("folke/twilight.nvim") -- better focus mode
     use("folke/which-key.nvim") -- which key
     use({ "akinsho/toggleterm.nvim", tag = "v2.*" }) -- nice terminal
-    use("gbprod/cutlass.nvim")
+    use("gbprod/cutlass.nvim") -- overwrite neovim copy yoinks etc
+    use("ellisonleao/glow.nvim") -- markdown render inside neovim
+    use("dstein64/vim-startuptime") -- timing
     -------------------
-    -- Lsp           --
+    -- Lsp/complete  --
     -------------------
-    use("neovim/nvim-lspconfig") -- autocomplete time!
-    use("williamboman/mason.nvim")
+    use("neovim/nvim-lspconfig") -- its lsp time
+    use("williamboman/mason.nvim") -- nvim-lsp-installer replacement
     use("williamboman/mason-lspconfig.nvim")
     use("jose-elias-alvarez/null-ls.nvim") -- linting/formatting
-    use("hrsh7th/nvim-cmp")
+    use("hrsh7th/nvim-cmp") -- some completion plugins
     use("hrsh7th/cmp-nvim-lsp")
     use("hrsh7th/cmp-buffer")
     use("hrsh7th/cmp-path")
     use("saadparwaiz1/cmp_luasnip")
-    use("L3MON4D3/LuaSnip")
-    use("j-hui/fidget.nvim")
+    use("onsails/lspkind.nvim") -- some icons
+    use("L3MON4D3/LuaSnip") -- snippets!
+    use("rafamadriz/friendly-snippets") -- all sorts of snippets
+    use("j-hui/fidget.nvim") -- status of lsp
     use({
         "nvim-telescope/telescope.nvim",
         requires = { "nvim-lua/plenary.nvim" },
@@ -109,14 +115,13 @@ require("impatient")
 --------------------------------------------------
 vim.cmd("set clipboard+=unnamedplus")
 vim.o.inccommand = "nosplit"
-vim.o.hlsearch = false
+vim.o.hlsearch = true
 vim.wo.number = true
 vim.wo.relativenumber = true
 vim.o.hidden = true
 vim.o.mouse = "a"
 vim.o.breakindent = true
 vim.opt.undofile = true
-vim.o.updatetime = 250
 vim.wo.signcolumn = "yes"
 vim.o.completeopt = "menuone,noselect"
 vim.opt.autoindent = true
@@ -128,6 +133,9 @@ vim.opt.shiftwidth = 4
 vim.opt.shiftround = true
 
 vim.opt.timeoutlen = 500
+
+-- Global options
+local borderstyle = "rounded" -- borderstyle of all windows
 
 --------------------------------------------------
 -- Colors                                       --
@@ -180,7 +188,7 @@ require("lualine").setup({
     },
     inactive_sections = {},
     tabline = {},
-    extensions = { "nvim-tree" },
+    extensions = { "nvim-tree", "toggleterm" },
 })
 vim.opt.laststatus = 3
 
@@ -227,6 +235,7 @@ local on_attach = function(client, bufnr)
     nmap("gr", require("telescope.builtin").lsp_references)
     nmap("<leader>ds", require("telescope.builtin").lsp_document_symbols, "[D]ocument [S]ymbols")
     nmap("<leader>ws", require("telescope.builtin").lsp_dynamic_workspace_symbols, "[W]orkspace [S]ymbols")
+    nmap("<leader>wl", "<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>", "[W]orkspace [L]ist")
     nmap("gl", "<cmd>lua vim.diagnostic.open_float()<cr>", "Float diagnostic")
     nmap("[d", "<cmd>lua vim.diagnostic.goto_prev()<cr>", "Prev error")
     nmap("]d", "<cmd>lua vim.diagnostic.goto_next()<cr>", "Next error")
@@ -247,7 +256,7 @@ end
 
 local capabilities = require("cmp_nvim_lsp").update_capabilities(vim.lsp.protocol.make_client_capabilities())
 
-local servers = { "sumneko_lua", "pyright", "bashls" }
+local servers = { "sumneko_lua", "pyright", "bashls", "gopls" }
 
 require("mason-lspconfig").setup({
     ensure_installed = servers,
@@ -267,7 +276,7 @@ require("mason").setup({
             package_pending = "➜",
             package_uninstalled = "✗",
         },
-        border = "single",
+        border = borderstyle,
     },
 })
 -- some lsp settings
@@ -300,15 +309,15 @@ vim.diagnostic.config({
     float = {
         focusable = false,
         style = "minimal",
-        border = "rounded",
+        border = borderstyle,
         source = "always",
         header = "",
         prefix = "",
     },
 })
-vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" })
+vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = borderstyle })
 
-vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, { border = "rounded" })
+vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, { border = borderstyle })
 
 --------------------------------------------------
 -- null-ls                                      --
@@ -319,17 +328,21 @@ if not null_ls_status_k then
 end
 local formatting = null_ls.builtins.formatting
 local diagnostics = null_ls.builtins.diagnostics
+-- local code_action = null_ls.builtins.code_actions
 
 null_ls.setup({
     debug = false,
     on_attach = on_attach,
     sources = {
+        -- Lua
         formatting.stylua.with({ extra_args = { "--indent-type", "Spaces" } }),
+        -- Python
         formatting.isort,
         formatting.black,
         diagnostics.flake8.with({
             extra_args = { "--max-line-length=88", "--select=C,E,F,W,B,B950", "--extend-ignore=E203" },
         }),
+        -- Markdown, tex etc
     },
 })
 --------------------------------------------------
@@ -343,6 +356,7 @@ local snip_status_ok, luasnip = pcall(require, "luasnip")
 if not snip_status_ok then
     return
 end
+local lspkind = require("lspkind")
 
 cmp.setup({
     snippet = {
@@ -383,23 +397,17 @@ cmp.setup({
         { name = "buffer", keyword_length = 3 },
         { name = "path" },
     },
+    formatting = {
+        format = lspkind.cmp_format({
+            mode = "symbol",
+        }),
+    },
 })
 
 --------------------------------------------------
--- Key bindings                                 --
+-- LuaSnip                                      --
 --------------------------------------------------
-
--- Highlight on yank (copy). It will do a nice highlight blink of the thing you just copied.
-vim.api.nvim_exec(
-    [[
-  augroup YankHighlight
-    autocmd!
-    autocmd TextYankPost * silent! lua vim.highlight.on_yank()
-  augroup end
-]],
-    false
-)
-
+require("luasnip.loaders.from_vscode").lazy_load()
 --------------------------------------------------
 -- Bufferline/barbar                            --
 --------------------------------------------------
@@ -422,9 +430,14 @@ require("bufferline").setup({
 -- code_runner                                  --
 --------------------------------------------------
 require("code_runner").setup({
+    mode = "float",
     -- put here the commands by filetype
     filetype = {
         python = "python3 -u",
+        go = "go run",
+    },
+    float = {
+        border = borderstyle,
     },
 })
 --------------------------------------------------
@@ -462,7 +475,7 @@ require("fidget").setup()
 --------------------------------------------------
 require("which-key").setup({
     window = {
-        border = "single",
+        border = borderstyle,
     },
 })
 
@@ -473,15 +486,37 @@ require("toggleterm").setup({
     shade_terminals = false,
 })
 --------------------------------------------------
+-- Glow (markdown inside neovim)                --
+--------------------------------------------------
+require("glow").setup({
+    border = borderstyle,
+})
+
+--------------------------------------------------
+-- Comments                                     --
+--------------------------------------------------
+require("Comment").setup()
+
+--------------------------------------------------
 -- Keybindings                                  --
 --------------------------------------------------
+
+-- Highlight on yank (copy). It will do a nice highlight blink of the thing you just copied.
+vim.api.nvim_exec(
+    [[
+  augroup YankHighlight
+    autocmd!
+    autocmd TextYankPost * silent! lua vim.highlight.on_yank()
+  augroup end
+]],
+    false
+)
 
 local map = vim.api.nvim_set_keymap
 local opt = {
     noremap = true,
     silent = true,
 }
-
 -- Rebind all delete options to black hole register
 require("cutlass").setup()
 map("n", "b]", ":BufferLineCycleNext<CR>", opt)
@@ -490,11 +525,14 @@ map("n", "<leader>bd", ":bdelete<CR>", opt)
 map("n", "<leader>xx", "<cmd>TroubleToggle<CR>", opt)
 map("n", "<leader>f", ":Format<CR>", opt)
 map("n", "<leader>rr", ":RunFile<CR>", { noremap = true, silent = false })
-map("n", "<leader>rc", ":RunClose<CR>", { noremap = true, silent = false })
 map("n", "<C-n>", ":NvimTreeToggle<CR>", opt)
 map("n", "<leader>zn", ":TZAtaraxis<CR>", opt)
 map("n", "<leader>w", ":WhichKey<CR>", opt)
 map("n", "<leader>t", ":ToggleTerm<CR>", opt)
 
+map("i", "<c-k>", "<cmd>lua require'luasnip'.jump(1)<CR>", opt)
+map("s", "<c-k>", "<cmd>lua require'luasnip'.jump(1)<CR>", opt)
+map("i", "<c-j>", "<cmd>lua require'luasnip'.jump(-1)<CR>", opt)
+map("s", "<c-j>", "<cmd>lua require'luasnip'.jump(-1)<CR>", opt)
 -- Terminal mode
 map("t", "<esc>", [[<C-\><C-n>]], opt)

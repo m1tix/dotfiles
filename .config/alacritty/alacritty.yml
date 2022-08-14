@@ -16,6 +16,9 @@ font:
   bold_italic:
     family: Iosevka Mayukai Monolite
     style: Bold Italic
+  offset:
+    x: 0
+    y: 0
 
   size: 11
 

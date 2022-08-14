@@ -1,6 +1,6 @@
 /* basically adi but different. */
 configuration {
-    font: "JetBrains Mono Nerd Font Bold 11";
+    font: "JetBrains Mono Nerd Font Bold 12";
     width: 30;
     line-margin: 10;
     display-drun:"";

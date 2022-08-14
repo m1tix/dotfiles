@@ -45,7 +45,7 @@ set selection-clipboard "clipboard"
 set adjust-open         "width" 
 set pages-per-row       "1"
 set page-padding        "0"
-set show-recent         "1"
+set show-recent         "5"
 
 set font                "Fira Code 10"
 map <C-n> toggle_statusbar

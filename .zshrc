@@ -43,6 +43,6 @@ function extract()
 }
 
 
-PROMPT='%F{red}λ%f %F{yellow}%~%f '
+PROMPT=$'%F{yellow}%~%f\n%F{red}%f '
 # PS1="\[\033[38;5;3m\]λ\[$(tput sgr0)\]\[\033[38;5;15m\] \[$(tput sgr0)\]\[\033[38;5;2m\]\W\[$(tput sgr0)\]\[\033[38;5;15m\] \[$(tput sgr0)\]"
 

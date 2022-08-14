@@ -3,11 +3,11 @@
 pgrep -x sxhkd > /dev/null || sxhkd &
 
 # some apps
-feh --bg-scale $HOME/Images/Wallpapers/spirited-away1.jpg &
-dunst --config $HOME/.config/dunst/dunstrc &
+feh --bg-scale "$HOME/Images/Wallpapers/spirited-away1.jpg" &
+dunst --config "$HOME/.config/dunst/dunstrc" &
 picom &
 xsettingsd &
-$HOME/.config/polybar/launch.sh &
+"$HOME/.config/polybar/launch.sh" &
 
 rule() { bspc rule -a "$@" & }
 config() { bspc config "$@" & }
