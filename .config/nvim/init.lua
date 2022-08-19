@@ -1,6 +1,10 @@
+-- SOME INFO:
+-- DO NOT update neovim automatically before PR #17446,
+-- instead: edit src/nvim/screen.c around line 1931.
 --------------------------------------------------
 -- Packer (Stolen from nvim-lua/kickstart.nvim) --
 --------------------------------------------------
+
 local install_path = vim.fn.stdpath("data") .. "/site/pack/packer/start/packer.nvim"
 local is_bootstrap = false
 if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
@@ -9,7 +13,22 @@ if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
     vim.cmd([[packadd packer.nvim]])
 end
 
-require("packer").startup(function(use)
+local status_ok, packer = pcall(require, "packer")
+if not status_ok then
+    return
+end
+
+-- Let packer use a float for its information popups
+packer.init({
+    display = {
+        open_fn = function()
+            return require("packer.util").float({ border = "rounded" })
+        end,
+    },
+})
+
+-- Setup plugins
+packer.startup(function(use)
     use("wbthomason/packer.nvim") -- Package manager
 
     -------------------
@@ -45,8 +64,7 @@ require("packer").startup(function(use)
         tag = "v2.*",
         requires = "kyazdani42/nvim-web-devicons",
     })
-    -- use("famiu/bufdelete.nvim") -- delete buffers
-    use({ -- highlighting
+    use({ -- highlighting/indentation etc (GOAT plugin)
         "nvim-treesitter/nvim-treesitter",
         run = ":TSUpdate",
     })
@@ -68,27 +86,36 @@ require("packer").startup(function(use)
     })
     use("lukas-reineke/indent-blankline.nvim") -- nice indentline
     use("Pocco81/true-zen.nvim") -- focus mode
-    use("folke/twilight.nvim") -- better focus mode
     use("folke/which-key.nvim") -- which key
     use({ "akinsho/toggleterm.nvim", tag = "v2.*" }) -- nice terminal
     use("gbprod/cutlass.nvim") -- overwrite neovim copy yoinks etc
     use("ellisonleao/glow.nvim") -- markdown render inside neovim
     use("dstein64/vim-startuptime") -- timing
+    use({ -- improved folding (also edited screen.c in source code for better folds)
+        "kevinhwang91/nvim-ufo",
+        requires = "kevinhwang91/promise-async",
+    })
+    use("goolord/alpha-nvim") -- dashboard?
+    use("windwp/nvim-autopairs") -- trying out autopairs again...
     -------------------
     -- Lsp/complete  --
     -------------------
     use("neovim/nvim-lspconfig") -- its lsp time
     use("williamboman/mason.nvim") -- nvim-lsp-installer replacement
-    use("williamboman/mason-lspconfig.nvim")
+    use("williamboman/mason-lspconfig.nvim") -- better integration mason with lspconfig
     use("jose-elias-alvarez/null-ls.nvim") -- linting/formatting
-    use("hrsh7th/nvim-cmp") -- some completion plugins
+    use("hrsh7th/nvim-cmp") -- its completion time
+    -- Completion plugins
     use("hrsh7th/cmp-nvim-lsp")
     use("hrsh7th/cmp-buffer")
     use("hrsh7th/cmp-path")
     use("saadparwaiz1/cmp_luasnip")
+    use("hrsh7th/cmp-nvim-lua")
+    -- Snippets!
+    use("L3MON4D3/LuaSnip")
+    use("rafamadriz/friendly-snippets")
+    -- Other lsp things
     use("onsails/lspkind.nvim") -- some icons
-    use("L3MON4D3/LuaSnip") -- snippets!
-    use("rafamadriz/friendly-snippets") -- all sorts of snippets
     use("j-hui/fidget.nvim") -- status of lsp
     use({
         "nvim-telescope/telescope.nvim",
@@ -113,25 +140,31 @@ require("impatient")
 --------------------------------------------------
 -- Vim options                                  --
 --------------------------------------------------
+-- Testing whether packer_installed works now
+vim.cmd("source $HOME/.config/nvim/plugin/packer_compiled.lua")
 vim.cmd("set clipboard+=unnamedplus")
 vim.o.inccommand = "nosplit"
-vim.o.hlsearch = true
-vim.wo.number = true
-vim.wo.relativenumber = true
-vim.o.hidden = true
-vim.o.mouse = "a"
-vim.o.breakindent = true
-vim.opt.undofile = true
+vim.o.hlsearch = true -- highlight searched object
+vim.wo.number = true -- set numbers on the side
+vim.wo.relativenumber = true -- set them relative to cursor
+vim.o.hidden = true -- hidden buffers begone
+vim.o.mouse = "a" -- some mouse support (can delete tbh, never use it)
+vim.o.breakindent = true -- breakindent on line wrapping
+vim.opt.undofile = true -- undofile
 vim.wo.signcolumn = "yes"
 vim.o.completeopt = "menuone,noselect"
-vim.opt.autoindent = true
+vim.opt.autoindent = true -- autoindent
+vim.o.ignorecase = true
 
+-- General tab settings
+-- For specific filetypes, use ftplugin
 vim.opt.tabstop = 8
 vim.opt.expandtab = true
 vim.opt.softtabstop = 4
 vim.opt.shiftwidth = 4
 vim.opt.shiftround = true
 
+-- Which key setting
 vim.opt.timeoutlen = 500
 
 -- Global options
@@ -150,14 +183,22 @@ vim.o.termguicolors = true
 -- Start autocolor
 vim.o.background = "dark"
 vim.g.catppuccin_flavour = "mocha"
+local colors = require("catppuccin.palettes").get_palette()
 require("catppuccin").setup({
     highlight_overrides = {
         mocha = {
-            NvimTreeNormal = { bg = "#1e1e2e" },
-            NormalFloat = { bg = "#1e1e2e" },
-            VertSplit = { fg = "#313244" },
-            NvimTreeVertSplit = { fg = "#313244" },
+            NvimTreeNormal = { bg = colors.base },
+            NormalFloat = { bg = colors.base },
+            VertSplit = { fg = colors.surface0 },
+            NvimTreeVertSplit = { fg = colors.surface0 },
+            Folded = { bg = colors.base },
         },
+    },
+    custom_highlights = {
+        AlphaButtonText = { fg = colors.lavender, style = { "bold" } },
+        AlphaButtonShortcut = { fg = colors.rosewater, style = { "bold", "italic" } },
+        AlphaHeader = { fg = colors.lavender, style = { "bold" } },
+        AlphaFooter = { fg = colors.overlay1, style = { "italic" } },
     },
 })
 vim.cmd("colorscheme catppuccin")
@@ -165,22 +206,84 @@ vim.cmd("hi EndOfBuffer guifg=#1E1E2E")
 -- End autocolor
 
 --------------------------------------------------
+-- Dashboard                                    --
+--------------------------------------------------
+-- Yoinked from one of the config files listed in github discussion
+local alpha = require("alpha")
+local dashboard = require("alpha.themes.dashboard")
+-- Header
+-- shoutout to my dog toby <3
+dashboard.section.header.val = {
+    "⠀⠀⠀⠀⠀⠀⠀⢀⣠⣤⣠⣶⠚⠛⠿⠷⠶⣤⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
+    "⠀⠀⠀⠀⠀⢀⣴⠟⠉⠀⠀⢠⡄⠀⠀⠀⠀⠀⠉⠙⠳⣄⠀⠀⠀⠀⠀⠀⠀⠀",
+    "⠀⠀⠀⢀⡴⠛⠁⠀⠀⠀⠀⠘⣷⣴⠏⠀⠀⣠⡄⠀⠀⢨⡇⠀⠀⠀⠀⠀⠀⠀",
+    "⠀⠀⠀⠺⣇⠀⠀⠀⠀⠀⠀⠀⠘⣿⠀⠀⠘⣻⣻⡆⠀⠀⠙⠦⣄⣀⠀⠀⠀⠀",
+    "⠀⠀⠀⢰⡟⢷⡄⠀⠀⠀⠀⠀⠀⢸⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⢻⠶⢤⡀",
+    "⠀⠀⠀⣾⣇⠀⠻⣄⠀⠀⠀⠀⠀⢸⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠸⣀⣴⣿",
+    "⠀⠀⢸⡟⠻⣆⠀⠈⠳⢄⡀⠀⠀⡼⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠶⠶⢤⣬⡿⠁",
+    "⠀⢀⣿⠃⠀⠹⣆⠀⠀⠀⠙⠓⠿⢧⡀⠀⢠⡴⣶⣶⣒⣋⣀⣀⣤⣶⣶⠟⠁⠀",
+    "⠀⣼⡏⠀⠀⠀⠙⠀⠀⠀⠀⠀⠀⠀⠙⠳⠶⠤⠵⣶⠒⠚⠻⠿⠋⠁⠀⠀⠀⠀",
+    "⢰⣿⡇⠀⠀⠀⠀⠀⠀⠀⣆⠀⠀⠀⠀⠀⠀⠀⢠⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
+    "⢿⡿⠁⠀⠀⠀⠀⠀⠀⠀⠘⣦⡀⠀⠀⠀⠀⠀⢸⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
+    "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠻⣷⡄⠀⠀⠀⠀⣿⣧⠀⠀⠀⠀⠀⠀⠀⠀⠀",
+    "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢷⡀⠀⠀⠀⢸⣿⡄⠀⠀⠀⠀⠀⠀⠀⠀",
+    "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠸⣿⠇⠀⠀⠀⠀⠀⠀⠀⠀",
+}
+dashboard.section.header.opts.hl = "AlphaHeader"
+
+-- Buttons of dashboard
+local function button(sc, txt, keybind, keybind_opts)
+    local db = dashboard.button(sc, txt, keybind, keybind_opts)
+    db.opts.hl = "AlphaButtonText"
+    db.opts.hl_shortcut = "AlphaButtonShortcut"
+    db.opts.width = 33
+    db.opts.cursor = 5
+    return db
+end
+dashboard.section.buttons.val = {
+    button("e", "  > New file", ":ene <BAR> startinsert <CR>"),
+    button("f", "  > Find file", ":cd $HOME/Programming | Telescope find_files<CR>"),
+    button("r", "  > Recent", ":Telescope oldfiles<CR>"),
+    button("s", "  > Settings", ":e $MYVIMRC<CR>"),
+    button("u", "  > Update plugins", ":PackerSync<CR>"),
+    button("q", "ﰌ  > Quit", ":qa<CR>"),
+}
+local function footer()
+    local total_plugins = #vim.tbl_keys(packer_plugins)
+    local version = vim.version()
+    local nvim_version = "  Neovim v" .. version.major .. "." .. version.minor .. "." .. version.patch
+
+    return " " .. total_plugins .. " plugins" .. nvim_version
+end
+dashboard.section.footer.val = footer()
+dashboard.section.footer.opts.hl = "AlphaFooter"
+-- Spacing and layout of dashboard
+dashboard.section.buttons.opts.spacing = 0
+dashboard.config.layout = {
+    { type = "padding", val = 1 },
+    dashboard.section.header,
+    { type = "padding", val = 1 },
+    dashboard.section.buttons,
+    { type = "padding", val = 0 },
+    dashboard.section.footer,
+}
+alpha.setup(dashboard.opts)
+--------------------------------------------------
 -- Statusbar                                    --
 --------------------------------------------------
--- It's the default lualine setup since it seems neat ;)
 require("lualine").setup({
     options = {
         icons_enabled = true,
         theme = "auto",
         component_separators = { left = "", right = "" },
         section_separators = { left = "", right = "" },
-        disabled_filetypes = {},
+        disabled_filetypes = { "alpha" },
         always_divide_middle = true,
-        globalstatus = false,
+        globalstatus = true, -- single line for all windows
     },
     sections = {
         lualine_a = { "mode" },
-        lualine_b = { "diagnostics" },
+        lualine_b = { "branch", "diff", "diagnostics" },
         lualine_c = { "filename" },
         lualine_x = { "filetype" },
         lualine_y = {},
@@ -190,14 +293,14 @@ require("lualine").setup({
     tabline = {},
     extensions = { "nvim-tree", "toggleterm" },
 })
-vim.opt.laststatus = 3
+vim.opt.laststatus = 3 -- single line for all windows, dont think this is necessary since globalstatus is on
 
 --------------------------------------------------
 -- treesitter                                   --
 --------------------------------------------------
 require("nvim-treesitter.configs").setup({
     -- Add languages to be installed here that you want installed for treesitter
-    ensure_installed = { "lua", "python" },
+    ensure_installed = { "lua", "python", "go" },
     auto_install = true,
     highlight = { enable = true },
     incremental_selection = {
@@ -210,6 +313,10 @@ require("nvim-treesitter.configs").setup({
             node_decremental = "<c-backspace>",
         },
     },
+    indent = {
+        enable = true,
+        disable = { "python" }, -- python indent still seems to suck
+    },
 })
 --------------------------------------------------
 -- lspconfig                                    --
@@ -218,7 +325,7 @@ require("nvim-treesitter.configs").setup({
 local on_attach = function(client, bufnr)
     -- Eyo this works, but think will be temporary
     if client.name == "sumneko_lua" then
-        client.resolved_capabilities.document_formatting = false
+        client.server_capabilities.documentFormattingProvider = false
     end
     local nmap = function(keys, func, desc)
         if desc then
@@ -256,19 +363,13 @@ end
 
 local capabilities = require("cmp_nvim_lsp").update_capabilities(vim.lsp.protocol.make_client_capabilities())
 
+-- enabled servers
 local servers = { "sumneko_lua", "pyright", "bashls", "gopls" }
 
+-- Mason config
 require("mason-lspconfig").setup({
     ensure_installed = servers,
 })
-
-for _, lsp in ipairs(servers) do
-    require("lspconfig")[lsp].setup({
-        on_attach = on_attach,
-        capabilities = capabilities,
-    })
-end
-
 require("mason").setup({
     ui = {
         icons = {
@@ -279,7 +380,20 @@ require("mason").setup({
         border = borderstyle,
     },
 })
--- some lsp settings
+
+require("mason-lspconfig").setup({
+    ensure_installed = servers,
+})
+
+-- ensure servers are enabled on buffer start
+for _, lsp in ipairs(servers) do
+    require("lspconfig")[lsp].setup({
+        on_attach = on_attach,
+        capabilities = capabilities,
+    })
+end
+
+-- some specific lsp settings
 local runtime_path = vim.split(package.path, ";")
 table.insert(runtime_path, "lua/?.lua")
 table.insert(runtime_path, "lua/?/init.lua")
@@ -303,6 +417,18 @@ require("lspconfig").sumneko_lua.setup({
     },
 })
 
+require("lspconfig").gopls.setup({
+    on_attach = on_attach,
+    capabilities = capabilities,
+    settings = {
+        gopls = {
+            staticcheck = true,
+            gofumpt = true,
+        },
+    },
+})
+
+-- Floating window setting for lsp
 vim.diagnostic.config({
     virtual_text = false,
     severity_sort = true,
@@ -316,7 +442,6 @@ vim.diagnostic.config({
     },
 })
 vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = borderstyle })
-
 vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, { border = borderstyle })
 
 --------------------------------------------------
@@ -343,6 +468,11 @@ null_ls.setup({
             extra_args = { "--max-line-length=88", "--select=C,E,F,W,B,B950", "--extend-ignore=E203" },
         }),
         -- Markdown, tex etc
+        diagnostics.markdownlint,
+        formatting.prettier.with({
+            filetypes = { "markdown" },
+        }),
+        -- Go
     },
 })
 --------------------------------------------------
@@ -358,6 +488,11 @@ if not snip_status_ok then
 end
 local lspkind = require("lspkind")
 
+-- Autopairs
+require("nvim-autopairs").setup()
+local cmp_autopairs = require("nvim-autopairs.completion.cmp")
+cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
+
 cmp.setup({
     snippet = {
         expand = function(args)
@@ -365,14 +500,14 @@ cmp.setup({
         end,
     },
     mapping = cmp.mapping.preset.insert({
-        ["<C-d>"] = cmp.mapping.scroll_docs(-4),
-        ["<C-f>"] = cmp.mapping.scroll_docs(4),
-        ["<C-Space>"] = cmp.mapping.complete({}), -- might want to fix this soon? idk
-        ["<CR>"] = cmp.mapping.confirm({
+        ["<C-d>"] = cmp.mapping.scroll_docs(-4), -- scroll down completion window
+        ["<C-f>"] = cmp.mapping.scroll_docs(4), -- scroll up completion window
+        ["<C-Space>"] = cmp.mapping.complete({}), -- manually query completion
+        ["<CR>"] = cmp.mapping.confirm({ -- complete selected item
             behavior = cmp.ConfirmBehavior.Replace,
             select = false,
         }),
-        ["<Tab>"] = cmp.mapping(function(fallback)
+        ["<Tab>"] = cmp.mapping(function(fallback) -- tab settings for snippets and completion
             if cmp.visible() then
                 cmp.select_next_item()
             elseif luasnip.expand_or_jumpable() then
@@ -381,7 +516,7 @@ cmp.setup({
                 fallback()
             end
         end, { "i", "s" }),
-        ["<S-Tab>"] = cmp.mapping(function(fallback)
+        ["<S-Tab>"] = cmp.mapping(function(fallback) -- same as above but reversed
             if cmp.visible() then
                 cmp.select_prev_item()
             elseif luasnip.jumpable(-1) then
@@ -391,12 +526,15 @@ cmp.setup({
             end
         end, { "i", "s" }),
     }),
+    -- Sources
     sources = {
         { name = "nvim_lsp" },
         { name = "luasnip" },
         { name = "buffer", keyword_length = 3 },
         { name = "path" },
+        { name = "nvim_lua" },
     },
+    -- Use symbols as formatting in completion window
     formatting = {
         format = lspkind.cmp_format({
             mode = "symbol",
@@ -407,35 +545,35 @@ cmp.setup({
 --------------------------------------------------
 -- LuaSnip                                      --
 --------------------------------------------------
-require("luasnip.loaders.from_vscode").lazy_load()
+-- I dont like so many snippets tbh
+-- require("luasnip.loaders.from_vscode").lazy_load()
 --------------------------------------------------
 -- Bufferline/barbar                            --
 --------------------------------------------------
 require("bufferline").setup({
     options = {
+        -- disable all icons (I dont use mouse)
         show_close_icon = false,
         show_buffer_close_icons = false,
+        -- Only show bufferline for 2+ buffers
         always_show_bufferline = false,
+        -- If NvimTree is called, offset the bufferline
         offsets = { { filetype = "NvimTree", text = "File Explorer", text_align = "center" } },
     },
-    -- i might need this later, dont like the black bar
-    -- highlights = {
-    --     fill = {
-    --         guibg = '#232136',
-    --     }
-    -- },
 })
 
 --------------------------------------------------
 -- code_runner                                  --
 --------------------------------------------------
 require("code_runner").setup({
+    -- let code be ran in floating window
     mode = "float",
-    -- put here the commands by filetype
+    -- add "<filetype> = <command>" here for code_runner to be enabled in said filetype
     filetype = {
         python = "python3 -u",
         go = "go run",
     },
+    -- use global border for the floating window
     float = {
         border = borderstyle,
     },
@@ -443,18 +581,27 @@ require("code_runner").setup({
 --------------------------------------------------
 -- nvim tree lua                                --
 --------------------------------------------------
-require("nvim-tree").setup()
+require("nvim-tree").setup({
+    -- dont show git
+    renderer = {
+        icons = {
+            show = {
+                git = false,
+            },
+        },
+    },
+})
 
 --------------------------------------------------
 -- indent blankline                             --
 --------------------------------------------------
 require("indent_blankline").setup({
-    show_first_indent_level = false,
-    char_blankline = " ",
+    show_first_indent_level = false, -- dont show first indent
+    char_blankline = " ", -- remove blankline indent
 })
 
 --------------------------------------------------
--- truezen mode and twilight                    --
+-- truezen mode                                 --
 --------------------------------------------------
 require("true-zen").setup({
     integrations = {
@@ -462,8 +609,6 @@ require("true-zen").setup({
         twilight = false,
     },
 })
-
-require("twilight").setup()
 
 --------------------------------------------------
 -- fidget nvim                                  --
@@ -474,6 +619,7 @@ require("fidget").setup()
 -- which-key                                    --
 --------------------------------------------------
 require("which-key").setup({
+    -- use global borderstyle
     window = {
         border = borderstyle,
     },
@@ -483,12 +629,14 @@ require("which-key").setup({
 -- toggleterm                                   --
 --------------------------------------------------
 require("toggleterm").setup({
+    -- use regular background
     shade_terminals = false,
 })
 --------------------------------------------------
 -- Glow (markdown inside neovim)                --
 --------------------------------------------------
 require("glow").setup({
+    -- global border
     border = borderstyle,
 })
 
@@ -498,9 +646,35 @@ require("glow").setup({
 require("Comment").setup()
 
 --------------------------------------------------
+-- Folding with Ufo                             --
+--------------------------------------------------
+vim.o.fillchars = [[eob: ,fold: ,foldopen:,foldsep: ,foldclose:]] -- folding symbols
+vim.o.foldcolumn = "1" -- width of foldcolumn
+vim.o.foldlevel = 99 -- Using ufo provider need a large value, feel free to decrease the value
+vim.o.foldlevelstart = 99 -- see ^
+vim.o.foldenable = true -- enable fold of course
+vim.opt.viewoptions = { "folds", "cursor" } -- remember folds/cursor on leave with mkview
+
+require("ufo").setup({
+    provider_selector = function(_, filetype, _)
+        if filetype == "markdown" then
+            return ""
+        end
+        return { "treesitter", "indent" }
+    end,
+})
+
+--------------------------------------------------
 -- Keybindings                                  --
 --------------------------------------------------
-
+-- Create aliases for ease of access
+local create_autocmd = vim.api.nvim_create_autocmd
+local create_augroup = vim.api.nvim_create_augroup
+local map = vim.api.nvim_set_keymap
+local opt = {
+    noremap = true,
+    silent = true,
+}
 -- Highlight on yank (copy). It will do a nice highlight blink of the thing you just copied.
 vim.api.nvim_exec(
     [[
@@ -512,27 +686,42 @@ vim.api.nvim_exec(
     false
 )
 
-local map = vim.api.nvim_set_keymap
-local opt = {
-    noremap = true,
-    silent = true,
-}
+-- Overwrite default fold bindings
+vim.keymap.set("n", "zR", require("ufo").openAllFolds)
+vim.keymap.set("n", "zM", require("ufo").closeAllFolds)
+
+-- Save folds on leave and apply them upon enter
+-- Needs viewoptions set to at least folds
+local saveAndLoadViews = create_augroup("saveAndLoadViews", { clear = true })
+create_autocmd("BufWinLeave", {
+    pattern = "*.*",
+    command = "mkview",
+    group = saveAndLoadViews,
+    desc = "Save view on leaving buffer",
+})
+create_autocmd("BufWinEnter", {
+    pattern = "*.*",
+    command = "silent! loadview",
+    group = saveAndLoadViews,
+    desc = "Load view on entering buffer",
+})
+
 -- Rebind all delete options to black hole register
 require("cutlass").setup()
-map("n", "b]", ":BufferLineCycleNext<CR>", opt)
-map("n", "b[", ":BufferLineCyclePrev<CR>", opt)
-map("n", "<leader>bd", ":bdelete<CR>", opt)
-map("n", "<leader>xx", "<cmd>TroubleToggle<CR>", opt)
-map("n", "<leader>f", ":Format<CR>", opt)
-map("n", "<leader>rr", ":RunFile<CR>", { noremap = true, silent = false })
-map("n", "<C-n>", ":NvimTreeToggle<CR>", opt)
-map("n", "<leader>zn", ":TZAtaraxis<CR>", opt)
-map("n", "<leader>w", ":WhichKey<CR>", opt)
-map("n", "<leader>t", ":ToggleTerm<CR>", opt)
 
+map("n", "b]", ":BufferLineCycleNext<CR>", opt) -- next buffer
+map("n", "b[", ":BufferLineCyclePrev<CR>", opt) -- previous buffer
+map("n", "<leader>q", ":bdelete<CR>", opt) -- delete current buffer
+map("n", "<leader>xx", "<cmd>TroubleToggle<CR>", opt) -- toggle overview of lsp errors/warnings
+map("n", "<leader>ff", ":Format<CR>", opt) -- format current file with lsp/null-ls
+map("n", "<leader>rr", ":RunFile<CR>", { noremap = true, silent = false }) -- run file with code_runner
+map("n", "<C-n>", ":NvimTreeToggle<CR>", opt) -- toggle tree
+map("n", "<leader>zn", ":TZAtaraxis<CR>", opt) -- toggle zen mode
+map("n", "<leader>t", ":ToggleTerm<CR>", opt) -- toggle built-in terminal
+map("t", "<esc>", [[<C-\><C-n>]], opt) -- bind esc to normal mode in terminal mode
+
+-- Jump in-and-out of snippets
 map("i", "<c-k>", "<cmd>lua require'luasnip'.jump(1)<CR>", opt)
 map("s", "<c-k>", "<cmd>lua require'luasnip'.jump(1)<CR>", opt)
 map("i", "<c-j>", "<cmd>lua require'luasnip'.jump(-1)<CR>", opt)
 map("s", "<c-j>", "<cmd>lua require'luasnip'.jump(-1)<CR>", opt)
--- Terminal mode
-map("t", "<esc>", [[<C-\><C-n>]], opt)

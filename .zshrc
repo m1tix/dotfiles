@@ -14,12 +14,12 @@ compinit
 # Export
 # export PYTHONPATH=/usr/lib64/python3.5/site-packages
 export EDITOR=nvim
+export MYVIMRC="$HOME/.config/nvim/init.lua"
 
 # Aliases
-alias ls='ls -l --color'
+alias ls='ls -hl --color'
 alias dirs='dirs -v'
-alias l='ls -al'
-alias x='xrdb ~/.Xresources'
+alias tree='tree -C'
 # Extract program
 function extract()
 {
@@ -45,4 +45,6 @@ function extract()
 
 PROMPT=$'%F{yellow}%~%f\n%F{red}%f '
 # PS1="\[\033[38;5;3m\]λ\[$(tput sgr0)\]\[\033[38;5;15m\] \[$(tput sgr0)\]\[\033[38;5;2m\]\W\[$(tput sgr0)\]\[\033[38;5;15m\] \[$(tput sgr0)\]"
-
+#
+# source ~/.config/zsh/catppuccin-highlight.zsh
+# source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
