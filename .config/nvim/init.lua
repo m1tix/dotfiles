@@ -55,6 +55,7 @@ packer.startup(function(use)
     -------------------
     use("elkowar/yuck.vim") -- .yuck highlighting
     -- Might need to add some neovim variants of these, but atm not missing them
+    -- surround seems quite interesting tho
     -- use("tpope/vim-surround") -- brackets
     -- use("tpope/vim-fugitive") -- git
     use("numToStr/Comment.nvim") -- easy commenting with gc/gcc
@@ -97,6 +98,11 @@ packer.startup(function(use)
     })
     use("goolord/alpha-nvim") -- dashboard?
     use("windwp/nvim-autopairs") -- trying out autopairs again...
+    use({
+        "abecodes/tabout.nvim",
+        as = "tabout",
+        requires = "nvim-treesitter/nvim-treesitter",
+    })
     -------------------
     -- Lsp/complete  --
     -------------------
@@ -192,13 +198,15 @@ require("catppuccin").setup({
             VertSplit = { fg = colors.surface0 },
             NvimTreeVertSplit = { fg = colors.surface0 },
             Folded = { bg = colors.base },
+            BufferLineIndicatorSelected = { fg = colors.mauve },
+            BufferLineFill = { bg = colors.mantle },
         },
     },
     custom_highlights = {
         AlphaButtonText = { fg = colors.lavender, style = { "bold" } },
         AlphaButtonShortcut = { fg = colors.rosewater, style = { "bold", "italic" } },
         AlphaHeader = { fg = colors.lavender, style = { "bold" } },
-        AlphaFooter = { fg = colors.overlay1, style = { "italic" } },
+        AlphaFooter = { fg = colors.surface2, style = { "italic" } },
     },
 })
 vim.cmd("colorscheme catppuccin")
@@ -248,11 +256,12 @@ dashboard.section.buttons.val = {
     button("u", "  > Update plugins", ":PackerSync<CR>"),
     button("q", "ﰌ  > Quit", ":qa<CR>"),
 }
+-- Footer: display version and total packages
 local function footer()
     local total_plugins = #vim.tbl_keys(packer_plugins)
+    -- Kinda wanna use nvim --version | head -1, but cant figure it out
     local version = vim.version()
     local nvim_version = "  Neovim v" .. version.major .. "." .. version.minor .. "." .. version.patch
-
     return " " .. total_plugins .. " plugins" .. nvim_version
 end
 dashboard.section.footer.val = footer()
@@ -274,10 +283,10 @@ alpha.setup(dashboard.opts)
 require("lualine").setup({
     options = {
         icons_enabled = true,
-        theme = "auto",
+        theme = "catppuccin",
         component_separators = { left = "", right = "" },
         section_separators = { left = "", right = "" },
-        disabled_filetypes = { "alpha" },
+        disabled_filetypes = { "alpha", "packer" },
         always_divide_middle = true,
         globalstatus = true, -- single line for all windows
     },
@@ -316,6 +325,22 @@ require("nvim-treesitter.configs").setup({
     indent = {
         enable = true,
         disable = { "python" }, -- python indent still seems to suck
+    },
+})
+
+--------------------------------------------------
+-- Telescope                                    --
+--------------------------------------------------
+require("telescope").setup({
+    -- ignore packages from Go in workspace folders while searching
+    -- not sure if this breaks some lsp functionality, who knows?
+    defaults = {
+        file_ignore_patterns = { "Go/pkg/*" },
+    },
+    pickers = {
+        lsp_document_symbols = {
+            theme = "dropdown",
+        },
     },
 })
 --------------------------------------------------
@@ -488,8 +513,24 @@ if not snip_status_ok then
 end
 local lspkind = require("lspkind")
 
--- Autopairs
+-- Autopairs and tabout
 require("nvim-autopairs").setup()
+require("tabout").setup({
+    tabkey = "<C-k>",
+    backwards_tabkey = "<C-j>",
+    act_as_tab = false,
+    act_as_shift_tab = false,
+    completion = false,
+    enable_backwards = false,
+    tabouts = {
+        { open = "'", close = "'" },
+        { open = '"', close = '"' },
+        { open = "`", close = "`" },
+        { open = "(", close = ")" },
+        { open = "[", close = "]" },
+        { open = "{", close = "}" },
+    },
+})
 local cmp_autopairs = require("nvim-autopairs.completion.cmp")
 cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
 
@@ -557,7 +598,7 @@ require("bufferline").setup({
         show_buffer_close_icons = false,
         -- Only show bufferline for 2+ buffers
         always_show_bufferline = false,
-        -- If NvimTree is called, offset the bufferline
+        -- If NvimTree is called, offet the bufferline
         offsets = { { filetype = "NvimTree", text = "File Explorer", text_align = "center" } },
     },
 })
@@ -670,11 +711,15 @@ require("ufo").setup({
 -- Create aliases for ease of access
 local create_autocmd = vim.api.nvim_create_autocmd
 local create_augroup = vim.api.nvim_create_augroup
-local map = vim.api.nvim_set_keymap
-local opt = {
-    noremap = true,
-    silent = true,
-}
+-- General mapping variable, as these opts are ubiquitous
+local map = function(mode, keys, func, desc)
+    local opt = {
+        noremap = true,
+        silent = true,
+        desc = desc,
+    }
+    vim.api.nvim_set_keymap(mode, keys, func, opt)
+end
 -- Highlight on yank (copy). It will do a nice highlight blink of the thing you just copied.
 vim.api.nvim_exec(
     [[
@@ -709,19 +754,24 @@ create_autocmd("BufWinEnter", {
 -- Rebind all delete options to black hole register
 require("cutlass").setup()
 
-map("n", "b]", ":BufferLineCycleNext<CR>", opt) -- next buffer
-map("n", "b[", ":BufferLineCyclePrev<CR>", opt) -- previous buffer
-map("n", "<leader>q", ":bdelete<CR>", opt) -- delete current buffer
-map("n", "<leader>xx", "<cmd>TroubleToggle<CR>", opt) -- toggle overview of lsp errors/warnings
-map("n", "<leader>ff", ":Format<CR>", opt) -- format current file with lsp/null-ls
-map("n", "<leader>rr", ":RunFile<CR>", { noremap = true, silent = false }) -- run file with code_runner
-map("n", "<C-n>", ":NvimTreeToggle<CR>", opt) -- toggle tree
-map("n", "<leader>zn", ":TZAtaraxis<CR>", opt) -- toggle zen mode
-map("n", "<leader>t", ":ToggleTerm<CR>", opt) -- toggle built-in terminal
-map("t", "<esc>", [[<C-\><C-n>]], opt) -- bind esc to normal mode in terminal mode
+map("n", "b]", ":BufferLineCycleNext<CR>", "Next buffer") -- next buffer
+map("n", "b[", ":BufferLineCyclePrev<CR>", "Prev buffer") -- previous buffer
+map("n", "<leader>q", ":bdelete<CR>", "[Q]uit current buffer") -- delete current buffer
+map("n", "<leader>xx", "<cmd>TroubleToggle<CR>", "Toggle Trouble") -- toggle overview of lsp errors/warnings
+map("n", "<leader>fc", ":Format<CR>", "[F]ormat [C]urrent buffer") -- format current file with lsp/null-ls
+vim.api.nvim_set_keymap("n", "<leader>rr", ":RunFile<CR>", { noremap = true, silent = false, desc = "[R]un [R]egister" }) -- run file with code_runner
+map("n", "<C-p>", ":NvimTreeToggle<CR>", "Toggle NvimTree") -- toggle tree
+map("n", "<leader>zn", ":TZAtaraxis<CR>", "Toggle [Z]e[n]") -- toggle zen mode
+map("n", "<leader>t", ":ToggleTerm<CR>", "Toggle [T]erminal") -- toggle built-in terminal
+map("n", "<leader>wk", ":WhichKey<CR>", "[W]hich[K]ey") -- whichkey
+map("t", "<esc>", [[<C-\><C-n>]], "Switch to normal mode") -- bind esc to normal mode in terminal mode
+map("n", "<leader>ff", ":Telescope find_files<CR>", "[F]ind [F]iles") -- open fuzzy finding of files in current directory
 
+-- Some tabout keybinding
+map("i", "<A-k>", "<Plug>(TaboutMulti)", "Tabout next")
+map("i", "<A-j>", "<Plug>(TaboutBackMulti)", "Tabout prev")
 -- Jump in-and-out of snippets
-map("i", "<c-k>", "<cmd>lua require'luasnip'.jump(1)<CR>", opt)
-map("s", "<c-k>", "<cmd>lua require'luasnip'.jump(1)<CR>", opt)
-map("i", "<c-j>", "<cmd>lua require'luasnip'.jump(-1)<CR>", opt)
-map("s", "<c-j>", "<cmd>lua require'luasnip'.jump(-1)<CR>", opt)
+map("i", "<C-l>", "<cmd>lua require'luasnip'.jump(1)<CR>", "Jump forwards in snippet")
+map("s", "<C-l>", "<cmd>lua require'luasnip'.jump(1)<CR>", "Jump forwards in snippet")
+map("i", "<C-h>", "<cmd>lua require'luasnip'.jump(-1)<CR>", "Jump backwards in snippet")
+map("s", "<C-h>", "<cmd>lua require'luasnip'.jump(-1)<CR>", "Jump backwards in snippet")
