@@ -89,7 +89,8 @@ packer.startup(function(use)
     use("Pocco81/true-zen.nvim") -- focus mode
     use("folke/which-key.nvim") -- which key
     use({ "akinsho/toggleterm.nvim", tag = "v2.*" }) -- nice terminal
-    use("gbprod/cutlass.nvim") -- overwrite neovim copy yoinks etc
+    -- use("gbprod/cutlass.nvim") -- overwrite neovim copy yoinks etc
+    --
     use("ellisonleao/glow.nvim") -- markdown render inside neovim
     use("dstein64/vim-startuptime") -- timing
     use({ -- improved folding (also edited screen.c in source code for better folds)
@@ -127,6 +128,11 @@ packer.startup(function(use)
         "nvim-telescope/telescope.nvim",
         requires = { "nvim-lua/plenary.nvim" },
     })
+    use({ --clipboard testing instead of cutlass
+        "AckslD/nvim-neoclip.lua",
+        requires = { "nvim-telescope/telescope.nvim" },
+        as = "neoclip",
+    })
     if is_bootstrap then
         require("packer").sync()
     end
@@ -148,7 +154,7 @@ require("impatient")
 --------------------------------------------------
 -- Testing whether packer_installed works now
 vim.cmd("source $HOME/.config/nvim/plugin/packer_compiled.lua")
-vim.cmd("set clipboard+=unnamedplus")
+vim.cmd("set clipboard+=unnamedplus,unnamed")
 vim.o.inccommand = "nosplit"
 vim.o.hlsearch = true -- highlight searched object
 vim.wo.number = true -- set numbers on the side
@@ -331,11 +337,18 @@ require("nvim-treesitter.configs").setup({
 --------------------------------------------------
 -- Telescope                                    --
 --------------------------------------------------
+--
+
+require("neoclip").setup({
+    default_register = { '"', "+", "*" },
+})
+require("telescope").load_extension("neoclip")
 require("telescope").setup({
     -- ignore packages from Go in workspace folders while searching
     -- not sure if this breaks some lsp functionality, who knows?
     defaults = {
         file_ignore_patterns = { "Go/pkg/*" },
+        initial_mode = "normal",
     },
     pickers = {
         lsp_document_symbols = {
@@ -498,6 +511,7 @@ null_ls.setup({
             filetypes = { "markdown" },
         }),
         -- Go
+        formatting.goimports,
     },
 })
 --------------------------------------------------
@@ -511,7 +525,6 @@ local snip_status_ok, luasnip = pcall(require, "luasnip")
 if not snip_status_ok then
     return
 end
-local lspkind = require("lspkind")
 
 -- Autopairs and tabout
 require("nvim-autopairs").setup()
@@ -577,17 +590,24 @@ cmp.setup({
     },
     -- Use symbols as formatting in completion window
     formatting = {
-        format = lspkind.cmp_format({
-            mode = "symbol",
-        }),
+        fields = { "kind", "abbr" },
+        format = function(entry, vim_item)
+            local kind = require("lspkind").cmp_format({ mode = "symbol_text", maxwidth = 30 })(entry, vim_item)
+            local strings = vim.split(kind.kind, "%s", { trimempty = true })
+            kind.kind = "" .. strings[1] .. ""
+            return kind
+        end,
+        -- format = lspkind.cmp_format({
+        --     mode = "symbol",
+        -- }),
     },
 })
-
 --------------------------------------------------
 -- LuaSnip                                      --
 --------------------------------------------------
 -- I dont like so many snippets tbh
--- require("luasnip.loaders.from_vscode").lazy_load()
+require("luasnip.loaders.from_vscode").lazy_load()
+
 --------------------------------------------------
 -- Bufferline/barbar                            --
 --------------------------------------------------
@@ -661,6 +681,9 @@ require("fidget").setup()
 --------------------------------------------------
 require("which-key").setup({
     -- use global borderstyle
+    presets = {
+        operators = true,
+    },
     window = {
         border = borderstyle,
     },
@@ -752,15 +775,20 @@ create_autocmd("BufWinEnter", {
 })
 
 -- Rebind all delete options to black hole register
-require("cutlass").setup()
-
+-- require("cutlass").setup()
 map("n", "b]", ":BufferLineCycleNext<CR>", "Next buffer") -- next buffer
 map("n", "b[", ":BufferLineCyclePrev<CR>", "Prev buffer") -- previous buffer
 map("n", "<leader>q", ":bdelete<CR>", "[Q]uit current buffer") -- delete current buffer
 map("n", "<leader>xx", "<cmd>TroubleToggle<CR>", "Toggle Trouble") -- toggle overview of lsp errors/warnings
 map("n", "<leader>fc", ":Format<CR>", "[F]ormat [C]urrent buffer") -- format current file with lsp/null-ls
-vim.api.nvim_set_keymap("n", "<leader>rr", ":RunFile<CR>", { noremap = true, silent = false, desc = "[R]un [R]egister" }) -- run file with code_runner
-map("n", "<C-p>", ":NvimTreeToggle<CR>", "Toggle NvimTree") -- toggle tree
+map("n", "<leader>cb", ":Telescope neoclip<CR>", "[C]lip[B]oard manager")
+vim.api.nvim_set_keymap(
+    "n",
+    "<leader>rc",
+    ":RunFile<CR>",
+    { noremap = true, silent = false, desc = "[R]un [C]urrent file" }
+) -- run file with code_runner
+map("n", "<C-n>", ":NvimTreeToggle<CR>", "Toggle NvimTree") -- toggle tree
 map("n", "<leader>zn", ":TZAtaraxis<CR>", "Toggle [Z]e[n]") -- toggle zen mode
 map("n", "<leader>t", ":ToggleTerm<CR>", "Toggle [T]erminal") -- toggle built-in terminal
 map("n", "<leader>wk", ":WhichKey<CR>", "[W]hich[K]ey") -- whichkey
@@ -771,7 +799,7 @@ map("n", "<leader>ff", ":Telescope find_files<CR>", "[F]ind [F]iles") -- open fu
 map("i", "<A-k>", "<Plug>(TaboutMulti)", "Tabout next")
 map("i", "<A-j>", "<Plug>(TaboutBackMulti)", "Tabout prev")
 -- Jump in-and-out of snippets
-map("i", "<C-l>", "<cmd>lua require'luasnip'.jump(1)<CR>", "Jump forwards in snippet")
-map("s", "<C-l>", "<cmd>lua require'luasnip'.jump(1)<CR>", "Jump forwards in snippet")
-map("i", "<C-h>", "<cmd>lua require'luasnip'.jump(-1)<CR>", "Jump backwards in snippet")
-map("s", "<C-h>", "<cmd>lua require'luasnip'.jump(-1)<CR>", "Jump backwards in snippet")
+map("i", "<C-k>", "<cmd>lua require'luasnip'.jump(1)<CR>", "Jump forwards in snippet")
+map("s", "<C-k>", "<cmd>lua require'luasnip'.jump(1)<CR>", "Jump forwards in snippet")
+map("i", "<C-j>", "<cmd>lua require'luasnip'.jump(-1)<CR>", "Jump backwards in snippet")
+map("s", "<C-j>", "<cmd>lua require'luasnip'.jump(-1)<CR>", "Jump backwards in snippet")

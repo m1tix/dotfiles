@@ -4,4 +4,4 @@ local opt = {
     silent = true,
 }
 
-map(0, "n", "<leader>rr", ":Glow<CR>", opt)
+map(0, "n", "<leader>rc", ":Glow<CR>", opt)
