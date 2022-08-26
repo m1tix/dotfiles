@@ -5,16 +5,16 @@ import:
 # [Font]
 font:
   normal:
-    family: Iosevka Mayukai Monolite
+    family: Iosevka Mayukai Codepro
     style: Regular
   bold:
-    family: Iosevka Mayukai Monolite
+    family: Iosevka Mayukai Codepro
     style: Bold
   italic:
-    family: Iosevka Mayukai Monolite
+    family: Iosevka Mayukai Codepro
     style: Italic
   bold_italic:
-    family: Iosevka Mayukai Monolite
+    family: Iosevka Mayukai Codepro
     style: Bold Italic
   offset:
     x: 0

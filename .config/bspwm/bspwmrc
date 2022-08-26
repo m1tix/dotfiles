@@ -7,6 +7,7 @@ feh --bg-scale "$HOME/Images/Wallpapers/spirited-away1.jpg" &
 dunst --config "$HOME/.config/dunst/dunstrc" &
 picom &
 xsettingsd &
+redshift &
 "$HOME/.config/polybar/launch.sh" &
 
 rule() { bspc rule -a "$@" & }

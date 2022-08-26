@@ -73,13 +73,14 @@ packer.startup(function(use)
         "nvim-lualine/lualine.nvim",
         requires = { "kyazdani42/nvim-web-devicons", opt = true },
     })
-    use({ -- summary of errors
-        "folke/trouble.nvim",
-        requires = "kyazdani42/nvim-web-devicons",
-        config = function()
-            require("trouble").setup({})
-        end,
-    })
+    -- disabled this, empty files give error since cant jump to that, really annoying
+    -- use({ -- summary of errors
+    --     "folke/trouble.nvim",
+    --     requires = "kyazdani42/nvim-web-devicons",
+    --     config = function()
+    --         require("trouble").setup({})
+    --     end,
+    -- })
     use("lewis6991/impatient.nvim") --increase startuptime
     use({ -- Running code while in files
         "CRAG666/code_runner.nvim",
@@ -97,13 +98,14 @@ packer.startup(function(use)
         "kevinhwang91/nvim-ufo",
         requires = "kevinhwang91/promise-async",
     })
-    use("goolord/alpha-nvim") -- dashboard?
+    use("goolord/alpha-nvim") -- dashboard
     use("windwp/nvim-autopairs") -- trying out autopairs again...
-    use({
+    use({ -- tabout of a pairing (brackets, quotations etc).
         "abecodes/tabout.nvim",
         as = "tabout",
         requires = "nvim-treesitter/nvim-treesitter",
     })
+    use("stevearc/dressing.nvim")
     -------------------
     -- Lsp/complete  --
     -------------------
@@ -163,7 +165,7 @@ vim.o.hidden = true -- hidden buffers begone
 vim.o.mouse = "a" -- some mouse support (can delete tbh, never use it)
 vim.o.breakindent = true -- breakindent on line wrapping
 vim.opt.undofile = true -- undofile
-vim.wo.signcolumn = "yes"
+vim.wo.signcolumn = "yes:2"
 vim.o.completeopt = "menuone,noselect"
 vim.opt.autoindent = true -- autoindent
 vim.o.ignorecase = true
@@ -204,8 +206,13 @@ require("catppuccin").setup({
             VertSplit = { fg = colors.surface0 },
             NvimTreeVertSplit = { fg = colors.surface0 },
             Folded = { bg = colors.base },
+            -- recoloring of bufferline main frame color
             BufferLineIndicatorSelected = { fg = colors.mauve },
             BufferLineFill = { bg = colors.mantle },
+            -- nice current line highlight
+            LineNr = { fg = colors.mauve },
+            LineNrAbove = { fg = colors.surface1 },
+            LineNrBelow = { fg = colors.surface1 },
         },
     },
     custom_highlights = {
@@ -219,6 +226,14 @@ vim.cmd("colorscheme catppuccin")
 vim.cmd("hi EndOfBuffer guifg=#1E1E2E")
 -- End autocolor
 
+--------------------------------------------------
+-- Dressing (ui)                                --
+--------------------------------------------------
+require("dressing").setup({
+    input = {
+        winblend = 0,
+    },
+})
 --------------------------------------------------
 -- Dashboard                                    --
 --------------------------------------------------
@@ -289,7 +304,7 @@ alpha.setup(dashboard.opts)
 require("lualine").setup({
     options = {
         icons_enabled = true,
-        theme = "catppuccin",
+        theme = "auto",
         component_separators = { left = "", right = "" },
         section_separators = { left = "", right = "" },
         disabled_filetypes = { "alpha", "packer" },
@@ -466,9 +481,16 @@ require("lspconfig").gopls.setup({
     },
 })
 
+local signs = { Error = " ", Warn = " ", Hint = " ", Info = " " }
+for type, icon in pairs(signs) do
+    local hl = "DiagnosticSign" .. type
+    vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
+end
+
 -- Floating window setting for lsp
 vim.diagnostic.config({
     virtual_text = false,
+    signs = true,
     severity_sort = true,
     float = {
         focusable = false,
@@ -479,6 +501,7 @@ vim.diagnostic.config({
         prefix = "",
     },
 })
+
 vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = borderstyle })
 vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, { border = borderstyle })
 
@@ -506,12 +529,16 @@ null_ls.setup({
             extra_args = { "--max-line-length=88", "--select=C,E,F,W,B,B950", "--extend-ignore=E203" },
         }),
         -- Markdown, tex etc
-        diagnostics.markdownlint,
+        diagnostics.markdownlint.with({
+            -- disable line length in markdown; its bullshit imo
+            extra_args = { "--disable MD013" },
+        }),
         formatting.prettier.with({
             filetypes = { "markdown" },
         }),
         -- Go
         formatting.goimports,
+        formatting.golines,
     },
 })
 --------------------------------------------------
@@ -606,7 +633,7 @@ cmp.setup({
 -- LuaSnip                                      --
 --------------------------------------------------
 -- I dont like so many snippets tbh
-require("luasnip.loaders.from_vscode").lazy_load()
+-- require("luasnip.loaders.from_vscode").lazy_load()
 
 --------------------------------------------------
 -- Bufferline/barbar                            --
@@ -620,6 +647,9 @@ require("bufferline").setup({
         always_show_bufferline = false,
         -- If NvimTree is called, offet the bufferline
         offsets = { { filetype = "NvimTree", text = "File Explorer", text_align = "center" } },
+        indicator = {
+            style = "icon",
+        },
     },
 })
 
@@ -649,6 +679,11 @@ require("nvim-tree").setup({
             show = {
                 git = false,
             },
+        },
+    },
+    actions = {
+        open_file = {
+            quit_on_open = true,
         },
     },
 })
@@ -779,10 +814,10 @@ create_autocmd("BufWinEnter", {
 map("n", "b]", ":BufferLineCycleNext<CR>", "Next buffer") -- next buffer
 map("n", "b[", ":BufferLineCyclePrev<CR>", "Prev buffer") -- previous buffer
 map("n", "<leader>q", ":bdelete<CR>", "[Q]uit current buffer") -- delete current buffer
-map("n", "<leader>xx", "<cmd>TroubleToggle<CR>", "Toggle Trouble") -- toggle overview of lsp errors/warnings
+map("n", "<leader>wd", ":Telescope diagnostics<CR>", "[W]orkspace [D]iagnostics") -- no trouble.nvim, too buggy
 map("n", "<leader>fc", ":Format<CR>", "[F]ormat [C]urrent buffer") -- format current file with lsp/null-ls
 map("n", "<leader>cb", ":Telescope neoclip<CR>", "[C]lip[B]oard manager")
-vim.api.nvim_set_keymap(
+vim.api.nvim_set_keymap( -- run current file with code-runner
     "n",
     "<leader>rc",
     ":RunFile<CR>",
@@ -794,6 +829,7 @@ map("n", "<leader>t", ":ToggleTerm<CR>", "Toggle [T]erminal") -- toggle built-in
 map("n", "<leader>wk", ":WhichKey<CR>", "[W]hich[K]ey") -- whichkey
 map("t", "<esc>", [[<C-\><C-n>]], "Switch to normal mode") -- bind esc to normal mode in terminal mode
 map("n", "<leader>ff", ":Telescope find_files<CR>", "[F]ind [F]iles") -- open fuzzy finding of files in current directory
+map("n", "<leader>or", ":Telescope oldfiles<CR>", "[O]pen [R]ecent") -- fuzzy find in recent opened files
 
 -- Some tabout keybinding
 map("i", "<A-k>", "<Plug>(TaboutMulti)", "Tabout next")
