@@ -188,10 +188,7 @@ local borderstyle = "rounded" -- borderstyle of all windows
 -- Colors                                       --
 --------------------------------------------------
 -- Cool other themes:
----- Tokyo night
----- rose-pine
----- everforest
----- kanagawa
+-- aquarium-vim, rose-pine, catppuccin, everforest, iceberg
 vim.o.termguicolors = true
 
 -- Start autocolor

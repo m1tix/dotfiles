@@ -24,14 +24,29 @@ nvim:
   name: catppuccin
   extra: |-
     vim.g.catppuccin_flavour = "mocha"
+    local colors = require("catppuccin.palettes").get_palette()
     require("catppuccin").setup({
         highlight_overrides = {
             mocha = {
-                NvimTreeNormal = { bg = "#1e1e2e" },
-                NormalFloat = { bg = "#1e1e2e" },
-                VertSplit = { fg = "#313244" },
-                NvimTreeVertSplit = { fg = "#313244" },
+                NvimTreeNormal = { bg = colors.base },
+                NormalFloat = { bg = colors.base },
+                VertSplit = { fg = colors.surface0 },
+                NvimTreeVertSplit = { fg = colors.surface0 },
+                Folded = { bg = colors.base },
+                -- recoloring of bufferline main frame color
+                BufferLineIndicatorSelected = { fg = colors.mauve },
+                BufferLineFill = { bg = colors.mantle },
+                -- nice current line highlight
+                LineNr = { fg = colors.mauve },
+                LineNrAbove = { fg = colors.surface1 },
+                LineNrBelow = { fg = colors.surface1 },
             },
+        },
+        custom_highlights = {
+            AlphaButtonText = { fg = colors.lavender, style = { "bold" } },
+            AlphaButtonShortcut = { fg = colors.rosewater, style = { "bold", "italic" } },
+            AlphaHeader = { fg = colors.lavender, style = { "bold" } },
+            AlphaFooter = { fg = colors.surface2, style = { "italic" } },
         },
     })
 gtk:

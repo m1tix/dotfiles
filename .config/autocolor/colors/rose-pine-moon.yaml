@@ -23,7 +23,16 @@ colors:
   accent: "ea9a97"
 nvim:
   name: rose-pine
-  extra: require('rose-pine').setup({dark_variant = 'moon', disable_italics = true})
+  extra: |-
+    require("rose-pine").setup({
+        dark_variant = "moon",
+        disable_italics = true,
+        disable_float_background = true,
+    })
+    vim.cmd("highlight AlphaHeader guifg=#9ccfd8")
+    vim.cmd("highlight AlphaButtonText gui=bold guifg=#9ccfd8")
+    vim.cmd("highlight AlphaButtonShortcut gui=italic,bold guifg=#eb6f92")
+    vim.cmd("highlight AlphaFooter guifg=#6e6a86")
 gtk:
   theme: rose-pine-moon-gtk
   icon: default

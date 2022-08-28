@@ -13,6 +13,7 @@ items = {
         "picom",
         "polybar",
         "rofi",
+        "autocolor",
     ],
     "": [".zshrc"],
 }
