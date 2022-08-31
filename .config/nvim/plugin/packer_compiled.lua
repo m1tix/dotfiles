@@ -269,6 +269,11 @@ _G.packer_plugins = {
     path = "/home/mitix/.local/share/nvim/site/pack/packer/start/rose-pine",
     url = "https://github.com/rose-pine/neovim"
   },
+  ["symbols-outline.nvim"] = {
+    loaded = true,
+    path = "/home/mitix/.local/share/nvim/site/pack/packer/start/symbols-outline.nvim",
+    url = "https://github.com/simrat39/symbols-outline.nvim"
+  },
   tabout = {
     loaded = true,
     path = "/home/mitix/.local/share/nvim/site/pack/packer/start/tabout",

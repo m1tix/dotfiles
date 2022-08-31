@@ -1,6 +1,9 @@
 -- SOME INFO:
 -- DO NOT update neovim automatically before PR #17446,
 -- instead: edit src/nvim/screen.c around line 1931.
+---------------------
+-- [TODO)
+-- seperate files might be faster... lmao
 --------------------------------------------------
 -- Packer (Stolen from nvim-lua/kickstart.nvim) --
 --------------------------------------------------
@@ -105,7 +108,9 @@ packer.startup(function(use)
         as = "tabout",
         requires = "nvim-treesitter/nvim-treesitter",
     })
-    use("stevearc/dressing.nvim")
+    use("stevearc/dressing.nvim") -- nice ui changes
+    -- for go, https://github.com/crusj/structrue-go.nvim is nicer?
+    use("simrat39/symbols-outline.nvim") -- Code overview (find this better than aerial).
     -------------------
     -- Lsp/complete  --
     -------------------
@@ -165,10 +170,10 @@ vim.o.hidden = true -- hidden buffers begone
 vim.o.mouse = "a" -- some mouse support (can delete tbh, never use it)
 vim.o.breakindent = true -- breakindent on line wrapping
 vim.opt.undofile = true -- undofile
-vim.wo.signcolumn = "yes:2"
+vim.wo.signcolumn = "yes:2" -- width of sign column
 vim.o.completeopt = "menuone,noselect"
 vim.opt.autoindent = true -- autoindent
-vim.o.ignorecase = true
+vim.o.ignorecase = true -- ignore case while searching
 
 -- General tab settings
 -- For specific filetypes, use ftplugin
@@ -196,6 +201,10 @@ vim.o.background = "dark"
 vim.g.catppuccin_flavour = "mocha"
 local colors = require("catppuccin.palettes").get_palette()
 require("catppuccin").setup({
+    compile = {
+        enabled = true,
+        path = vim.fn.stdpath("cache") .. "/catppuccin",
+    },
     highlight_overrides = {
         mocha = {
             NvimTreeNormal = { bg = colors.base },
@@ -224,7 +233,7 @@ vim.cmd("hi EndOfBuffer guifg=#1E1E2E")
 -- End autocolor
 
 --------------------------------------------------
--- Dressing (ui)                                --
+-- Dressing (UI)                                --
 --------------------------------------------------
 require("dressing").setup({
     input = {
@@ -347,14 +356,9 @@ require("nvim-treesitter.configs").setup({
 })
 
 --------------------------------------------------
--- Telescope                                    --
+-- Telescope (with its extensions)              --
 --------------------------------------------------
---
 
-require("neoclip").setup({
-    default_register = { '"', "+", "*" },
-})
-require("telescope").load_extension("neoclip")
 require("telescope").setup({
     -- ignore packages from Go in workspace folders while searching
     -- not sure if this breaks some lsp functionality, who knows?
@@ -366,8 +370,49 @@ require("telescope").setup({
         lsp_document_symbols = {
             theme = "dropdown",
         },
+        diagnostics = {
+            theme = "dropdown",
+        },
     },
 })
+
+require("neoclip").setup({
+    default_register = { '"', "+", "*" },
+})
+require("telescope").load_extension("neoclip")
+--------------------------------------------------
+-- Symbol outline                               --
+--------------------------------------------------
+require("symbols-outline").setup({
+    symbols = {
+        -- same symbols as lpskind
+        Text = { icon = "" },
+        Method = { icon = "" },
+        Function = { icon = "" },
+        Constructor = { icon = "" },
+        Field = { icon = "ﰠ" },
+        Variable = { icon = "" },
+        Class = { icon = "ﴯ" },
+        Interface = { icon = "" },
+        Module = { icon = "" },
+        Property = { icon = "ﰠ" },
+        Unit = { icon = "塞" },
+        Value = { icon = "" },
+        Enum = { icon = "" },
+        Keyword = { icon = "" },
+        Snippet = { icon = "" },
+        Color = { icon = "" },
+        File = { icon = "" },
+        Reference = { icon = "" },
+        Folder = { icon = "" },
+        EnumMember = { icon = "" },
+        Constant = { icon = "" },
+        Struct = { icon = "פּ" },
+        Event = { icon = "" },
+        Operator = { icon = "" },
+    },
+})
+
 --------------------------------------------------
 -- lspconfig                                    --
 --------------------------------------------------
@@ -526,10 +571,7 @@ null_ls.setup({
             extra_args = { "--max-line-length=88", "--select=C,E,F,W,B,B950", "--extend-ignore=E203" },
         }),
         -- Markdown, tex etc
-        diagnostics.markdownlint.with({
-            -- disable line length in markdown; its bullshit imo
-            extra_args = { "--disable MD013" },
-        }),
+        diagnostics.markdownlint,
         formatting.prettier.with({
             filetypes = { "markdown" },
         }),
@@ -821,12 +863,13 @@ vim.api.nvim_set_keymap( -- run current file with code-runner
     { noremap = true, silent = false, desc = "[R]un [C]urrent file" }
 ) -- run file with code_runner
 map("n", "<C-n>", ":NvimTreeToggle<CR>", "Toggle NvimTree") -- toggle tree
-map("n", "<leader>zn", ":TZAtaraxis<CR>", "Toggle [Z]e[n]") -- toggle zen mode
-map("n", "<leader>t", ":ToggleTerm<CR>", "Toggle [T]erminal") -- toggle built-in terminal
+map("n", "<leader>tz", ":TZAtaraxis<CR>", "[T]oggle [Z]en") -- toggle zen mode
+map("n", "<leader>tt", ":ToggleTerm<CR>", "[T]oggle [T]erminal") -- toggle built-in terminal
 map("n", "<leader>wk", ":WhichKey<CR>", "[W]hich[K]ey") -- whichkey
 map("t", "<esc>", [[<C-\><C-n>]], "Switch to normal mode") -- bind esc to normal mode in terminal mode
 map("n", "<leader>ff", ":Telescope find_files<CR>", "[F]ind [F]iles") -- open fuzzy finding of files in current directory
 map("n", "<leader>or", ":Telescope oldfiles<CR>", "[O]pen [R]ecent") -- fuzzy find in recent opened files
+map("n", "<leader>ts", ":SymbolsOutline<CR>", "[T]oggle [S]ymbolsOutline")
 
 -- Some tabout keybinding
 map("i", "<A-k>", "<Plug>(TaboutMulti)", "Tabout next")

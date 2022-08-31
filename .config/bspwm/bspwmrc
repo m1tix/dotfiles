@@ -3,7 +3,7 @@
 pgrep -x sxhkd > /dev/null || sxhkd &
 
 # some apps
-feh --bg-scale "$HOME/Images/Wallpapers/spirited-away1.jpg" &
+feh --bg-scale "$HOME/Images/Wallpapers/current.png" &
 dunst --config "$HOME/.config/dunst/dunstrc" &
 picom &
 xsettingsd &
