@@ -52,6 +52,7 @@ packer.startup(function(use)
     use({ -- CATPPUCCIN!
         "catppuccin/nvim",
         as = "catppuccin",
+        run = ":CatppuccinCompile",
     })
     -------------------
     -- Other plugins --
@@ -76,14 +77,6 @@ packer.startup(function(use)
         "nvim-lualine/lualine.nvim",
         requires = { "kyazdani42/nvim-web-devicons", opt = true },
     })
-    -- disabled this, empty files give error since cant jump to that, really annoying
-    -- use({ -- summary of errors
-    --     "folke/trouble.nvim",
-    --     requires = "kyazdani42/nvim-web-devicons",
-    --     config = function()
-    --         require("trouble").setup({})
-    --     end,
-    -- })
     use("lewis6991/impatient.nvim") --increase startuptime
     use({ -- Running code while in files
         "CRAG666/code_runner.nvim",
@@ -93,8 +86,6 @@ packer.startup(function(use)
     use("Pocco81/true-zen.nvim") -- focus mode
     use("folke/which-key.nvim") -- which key
     use({ "akinsho/toggleterm.nvim", tag = "v2.*" }) -- nice terminal
-    -- use("gbprod/cutlass.nvim") -- overwrite neovim copy yoinks etc
-    --
     use("ellisonleao/glow.nvim") -- markdown render inside neovim
     use("dstein64/vim-startuptime") -- timing
     use({ -- improved folding (also edited screen.c in source code for better folds)
@@ -110,7 +101,14 @@ packer.startup(function(use)
     })
     use("stevearc/dressing.nvim") -- nice ui changes
     -- for go, https://github.com/crusj/structrue-go.nvim is nicer?
-    use("simrat39/symbols-outline.nvim") -- Code overview (find this better than aerial).
+    -- use({ "preservim/tagbar", ft = { "go", "python", "lua" } })
+    use("m1tix/vista.vim")
+    use({
+        "stevearc/aerial.nvim",
+        config = function()
+            require("aerial").setup()
+        end,
+    })
     -------------------
     -- Lsp/complete  --
     -------------------
@@ -307,12 +305,22 @@ alpha.setup(dashboard.opts)
 --------------------------------------------------
 -- Statusbar                                    --
 --------------------------------------------------
+local lualine_vista = {
+    sections = { lualine_a = {
+        function()
+            return vim.g.vista.provider
+        end,
+    } },
+    filetypes = {
+        "vista",
+    },
+}
 require("lualine").setup({
     options = {
         icons_enabled = true,
         theme = "auto",
-        component_separators = { left = "", right = "" },
-        section_separators = { left = "", right = "" },
+        component_separators = { left = "│", right = "│"},
+        section_separators = "",
         disabled_filetypes = { "alpha", "packer" },
         always_divide_middle = true,
         globalstatus = true, -- single line for all windows
@@ -322,12 +330,12 @@ require("lualine").setup({
         lualine_b = { "branch", "diff", "diagnostics" },
         lualine_c = { "filename" },
         lualine_x = { "filetype" },
-        lualine_y = {},
+        lualine_y = { },
         lualine_z = { "location" },
     },
     inactive_sections = {},
     tabline = {},
-    extensions = { "nvim-tree", "toggleterm" },
+    extensions = { "nvim-tree", "toggleterm", lualine_vista },
 })
 vim.opt.laststatus = 3 -- single line for all windows, dont think this is necessary since globalstatus is on
 
@@ -381,38 +389,70 @@ require("neoclip").setup({
 })
 require("telescope").load_extension("neoclip")
 --------------------------------------------------
--- Symbol outline                               --
+-- Symbol outline (or any bar...)               --
 --------------------------------------------------
-require("symbols-outline").setup({
-    symbols = {
-        -- same symbols as lpskind
-        Text = { icon = "" },
-        Method = { icon = "" },
-        Function = { icon = "" },
-        Constructor = { icon = "" },
-        Field = { icon = "ﰠ" },
-        Variable = { icon = "" },
-        Class = { icon = "ﴯ" },
-        Interface = { icon = "" },
-        Module = { icon = "" },
-        Property = { icon = "ﰠ" },
-        Unit = { icon = "塞" },
-        Value = { icon = "" },
-        Enum = { icon = "" },
-        Keyword = { icon = "" },
-        Snippet = { icon = "" },
-        Color = { icon = "" },
-        File = { icon = "" },
-        Reference = { icon = "" },
-        Folder = { icon = "" },
-        EnumMember = { icon = "" },
-        Constant = { icon = "" },
-        Struct = { icon = "פּ" },
-        Event = { icon = "" },
-        Operator = { icon = "" },
-    },
-})
-
+-- There is no better outline than tagbar/vista tbh:
+-- symboloutline is too buggy, half the keys do not work;
+-- aerial is not detailed enough for go: I need an ordering by struct/type.
+-- vim.g.tagbar_compact = 1 -- compact viewing
+-- vim.g.tagbar_show_visibility = 0 -- dont show accessibility of variables
+-- vim.g.tagbar_iconchars = { " ", " " }
+-- vim.g.tagbar_no_status_line = 1
+-- vim.g.tagbar_type_go = {
+--     ["ctagstype"] = "go",
+--     ["kinds"] = {
+--         "p:package",
+--         "i:imports:1",
+--         "c:constants",
+--         "v:variables",
+--         "t:types",
+--         "n:interfaces",
+--         "w:fields",
+--         "e:embedded",
+--         "m:methods",
+--         "r:constructor",
+--         "f:functions",
+--     },
+--     ["sro"] = ".",
+--     ["kind2scope"] = {
+--         ["t"] = "ctype",
+--         ["n"] = "ntype",
+--     },
+--     ["scope2kind"] = {
+--         ["ctype"] = "t",
+--         ["ntype"] = "n",
+--     },
+--     ["ctagsbin"] = "gotags",
+--     ["ctagsargs"] = "-sort -silent",
+-- }
+require("aerial").setup()
+vim.cmd([[hi link VistaFloat NormalFloat]])
+vim.g["vista#renderer#icons"] = {
+    ["text"] = "",
+    ["method"] = "",
+    ["function"] = "",
+    ["constructor"] = "",
+    ["field"] = "ﰠ",
+    ["var"] = "",
+    ["variable"] = "",
+    ["variables"] = "",
+    ["class"] = "ﴯ",
+    ["type"] = "ﴯ",
+    ["types"] = "ﴯ",
+    ["typedef"] = "ﴯ",
+    ["interface"] = "",
+    ["module"] = "",
+    ["package"] = "",
+    ["property"] = "ﰠ",
+    ["struct"] = "פּ",
+    ["color"] = "",
+    ["file"] = "",
+    ["reference"] = "",
+    ["constant"] = "",
+    ["const"] = "",
+    ["operator"] = "",
+}
+vim.g.vista_highlight_whole_line = 1
 --------------------------------------------------
 -- lspconfig                                    --
 --------------------------------------------------
@@ -459,7 +499,7 @@ end
 local capabilities = require("cmp_nvim_lsp").update_capabilities(vim.lsp.protocol.make_client_capabilities())
 
 -- enabled servers
-local servers = { "sumneko_lua", "pyright", "bashls", "gopls" }
+local servers = { "sumneko_lua", "pyright", "bashls", "gopls", "vimls", "clangd" }
 
 -- Mason config
 require("mason-lspconfig").setup({
@@ -534,6 +574,7 @@ vim.diagnostic.config({
     virtual_text = false,
     signs = true,
     severity_sort = true,
+    update_in_insert = true,
     float = {
         focusable = false,
         style = "minimal",
@@ -573,7 +614,7 @@ null_ls.setup({
         -- Markdown, tex etc
         diagnostics.markdownlint,
         formatting.prettier.with({
-            filetypes = { "markdown" },
+            filetypes = { "markdown", "json" },
         }),
         -- Go
         formatting.goimports,
@@ -748,7 +789,11 @@ require("true-zen").setup({
 --------------------------------------------------
 -- fidget nvim                                  --
 --------------------------------------------------
-require("fidget").setup()
+require("fidget").setup({
+    window = {
+        blend = 0,
+    }
+})
 
 --------------------------------------------------
 -- which-key                                    --
@@ -869,7 +914,7 @@ map("n", "<leader>wk", ":WhichKey<CR>", "[W]hich[K]ey") -- whichkey
 map("t", "<esc>", [[<C-\><C-n>]], "Switch to normal mode") -- bind esc to normal mode in terminal mode
 map("n", "<leader>ff", ":Telescope find_files<CR>", "[F]ind [F]iles") -- open fuzzy finding of files in current directory
 map("n", "<leader>or", ":Telescope oldfiles<CR>", "[O]pen [R]ecent") -- fuzzy find in recent opened files
-map("n", "<leader>ts", ":SymbolsOutline<CR>", "[T]oggle [S]ymbolsOutline")
+map("n", "<leader>ts", ":Vista!!<CR>", "[T]oggle [S]ymbols")
 
 -- Some tabout keybinding
 map("i", "<A-k>", "<Plug>(TaboutMulti)", "Tabout next")
