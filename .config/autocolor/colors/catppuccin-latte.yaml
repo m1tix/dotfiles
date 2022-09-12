@@ -1,0 +1,59 @@
+info:
+  scheme: "Catppuccin Latte"
+  author: "https://github.com/catppuccin/catppuccin"
+  type: light 
+colors:
+
+  base00: "eff1f5" # base
+  base01: "e6e9ef" # mantle
+  base02: "ccd0da" # surface0
+  base03: "bcc0cc" # surface1
+  base04: "acb0be" # surface2
+  base05: "4c4f69" # text
+  base06: "dc8a78" # rosewater
+  base07: "7287fd" # lavender
+  base08: "d20f39" # red
+  base09: "fe640b" # peach
+  base0A: "df8e1d" # yellow
+  base0B: "40a02b" # green
+  base0C: "179299" # teal
+  base0D: "1e66f5" # blue
+  base0E: "8839ef" # mauve
+  base0F: "dd7878" # flamingo
+  accent: "8839ef"
+nvim:
+  name: catppuccin
+  extra: |-
+    vim.g.catppuccin_flavour = "latte"
+    local colors = require("catppuccin.palettes").get_palette()
+    require("catppuccin").setup({
+        compile = {
+            enabled = true,
+            path = vim.fn.stdpath("cache") .. "/catppuccin",
+        },
+        highlight_overrides = {
+            mocha = {
+                NvimTreeNormal = { bg = colors.base },
+                NormalFloat = { bg = colors.base },
+                VertSplit = { fg = colors.surface0 },
+                NvimTreeVertSplit = { fg = colors.surface0 },
+                Folded = { bg = colors.base },
+                -- recoloring of bufferline main frame color
+                BufferLineIndicatorSelected = { fg = colors.mauve },
+                BufferLineFill = { bg = colors.mantle },
+                -- nice current line highlight
+                LineNr = { fg = colors.mauve },
+                LineNrAbove = { fg = colors.surface1 },
+                LineNrBelow = { fg = colors.surface1 },
+            },
+        },
+        custom_highlights = {
+            AlphaButtonText = { fg = colors.lavender, style = { "bold" } },
+            AlphaButtonShortcut = { fg = colors.rosewater, style = { "bold", "italic" } },
+            AlphaHeader = { fg = colors.lavender, style = { "bold" } },
+            AlphaFooter = { fg = colors.surface2, style = { "italic" } },
+        },
+    })
+gtk:
+  theme: Catppuccin-Mocha-Mauve
+  icon: default

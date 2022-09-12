@@ -103,12 +103,6 @@ packer.startup(function(use)
     -- for go, https://github.com/crusj/structrue-go.nvim is nicer?
     -- use({ "preservim/tagbar", ft = { "go", "python", "lua" } })
     use("m1tix/vista.vim")
-    use({
-        "stevearc/aerial.nvim",
-        config = function()
-            require("aerial").setup()
-        end,
-    })
     -------------------
     -- Lsp/complete  --
     -------------------
@@ -192,6 +186,7 @@ local borderstyle = "rounded" -- borderstyle of all windows
 --------------------------------------------------
 -- Cool other themes:
 -- aquarium-vim, rose-pine, catppuccin, everforest, iceberg
+-- embark.vim
 vim.o.termguicolors = true
 
 -- Start autocolor
@@ -394,38 +389,6 @@ require("telescope").load_extension("neoclip")
 -- There is no better outline than tagbar/vista tbh:
 -- symboloutline is too buggy, half the keys do not work;
 -- aerial is not detailed enough for go: I need an ordering by struct/type.
--- vim.g.tagbar_compact = 1 -- compact viewing
--- vim.g.tagbar_show_visibility = 0 -- dont show accessibility of variables
--- vim.g.tagbar_iconchars = { " ", " " }
--- vim.g.tagbar_no_status_line = 1
--- vim.g.tagbar_type_go = {
---     ["ctagstype"] = "go",
---     ["kinds"] = {
---         "p:package",
---         "i:imports:1",
---         "c:constants",
---         "v:variables",
---         "t:types",
---         "n:interfaces",
---         "w:fields",
---         "e:embedded",
---         "m:methods",
---         "r:constructor",
---         "f:functions",
---     },
---     ["sro"] = ".",
---     ["kind2scope"] = {
---         ["t"] = "ctype",
---         ["n"] = "ntype",
---     },
---     ["scope2kind"] = {
---         ["ctype"] = "t",
---         ["ntype"] = "n",
---     },
---     ["ctagsbin"] = "gotags",
---     ["ctagsargs"] = "-sort -silent",
--- }
-require("aerial").setup()
 vim.cmd([[hi link VistaFloat NormalFloat]])
 vim.g["vista#renderer#icons"] = {
     ["text"] = "",
@@ -458,9 +421,21 @@ vim.g.vista_highlight_whole_line = 1
 --------------------------------------------------
 
 local on_attach = function(client, bufnr)
-    -- Eyo this works, but think will be temporary
+    -- disable formatting if multiple soures are active (null-ls vs lsp)
     if client.name == "sumneko_lua" then
         client.server_capabilities.documentFormattingProvider = false
+    end
+    -- enable formatting on save for go files.
+    if  client.name == "gopls" then
+        local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
+        vim.api.nvim_clear_autocmds({ group = augroup, buffer = bufnr })
+        vim.api.nvim_create_autocmd("BufWritePre", {
+            group = augroup,
+            buffer = bufnr,
+            callback = function()
+                vim.lsp.buf.format({bufnr = bufnr})
+            end,
+        })
     end
     local nmap = function(keys, func, desc)
         if desc then
@@ -557,10 +532,17 @@ require("lspconfig").gopls.setup({
     capabilities = capabilities,
     settings = {
         gopls = {
+            experimentalPostfixCompletions = true,
+            analyses = {
+                unusedparams = true,
+            },
             staticcheck = true,
             gofumpt = true,
         },
     },
+    init_options = {
+        usePlaceholders = true,
+    }
 })
 
 local signs = { Error = " ", Warn = " ", Hint = " ", Info = " " }
@@ -574,7 +556,7 @@ vim.diagnostic.config({
     virtual_text = false,
     signs = true,
     severity_sort = true,
-    update_in_insert = true,
+    update_in_insert = false,
     float = {
         focusable = false,
         style = "minimal",
@@ -805,6 +787,11 @@ require("which-key").setup({
     },
     window = {
         border = borderstyle,
+    },
+    icons = {
+        breadcrumb = "»", -- symbol used in the command line area that shows your active key combo
+        separator = "", -- symbol used between a key and it's label
+        group = "+", -- symbol prepended to a group
     },
 })
 
