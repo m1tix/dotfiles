@@ -20,6 +20,7 @@ export MYVIMRC="$HOME/.config/nvim/init.lua"
 alias ls='ls -hl --color'
 alias dirs='dirs -v'
 alias tree='tree -C'
+alias tlmgr='/usr/share/texmf-dist/scripts/texlive/tlmgr.pl --usermode'
 # Extract program
 function extract()
 {

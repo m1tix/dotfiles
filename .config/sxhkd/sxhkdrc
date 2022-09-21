@@ -124,7 +124,10 @@ super + {Left,Down,Up,Right}
 #
 # Custom keybindings
 #
-
+super + {alt, shift +} g
+    { bspc config -d focused window_gap $(( $(bspc config -d focused window_gap) + 4 )), \
+    [ $(bspc config -d focused window_gap) -ge 4 ] && \
+    bspc config -d focused window_gap $(( $(bspc config -d focused window_gap) - 4 )) }
 ## brightness
 XF86MonBrightness{Down,Up}
 	sh $HOME/.scripts/change-brightness {down,up}

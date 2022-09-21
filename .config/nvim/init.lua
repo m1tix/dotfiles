@@ -59,9 +59,13 @@ packer.startup(function(use)
     -------------------
     use("elkowar/yuck.vim") -- .yuck highlighting
     -- Might need to add some neovim variants of these, but atm not missing them
-    -- surround seems quite interesting tho
-    -- use("tpope/vim-surround") -- brackets
     -- use("tpope/vim-fugitive") -- git
+    use("windwp/nvim-autopairs") -- autopair brackets etc
+    use({ -- tabout of a pairing (brackets, quotations etc). (see keybindings [ALT+j])
+        "abecodes/tabout.nvim",
+        as = "tabout",
+        requires = "nvim-treesitter/nvim-treesitter",
+    })
     use("numToStr/Comment.nvim") -- easy commenting with gc/gcc
     use("kyazdani42/nvim-tree.lua") -- tree explorer
     use({ -- Bufferline
@@ -93,16 +97,16 @@ packer.startup(function(use)
         requires = "kevinhwang91/promise-async",
     })
     use("goolord/alpha-nvim") -- dashboard
-    use("windwp/nvim-autopairs") -- trying out autopairs again...
-    use({ -- tabout of a pairing (brackets, quotations etc).
-        "abecodes/tabout.nvim",
-        as = "tabout",
-        requires = "nvim-treesitter/nvim-treesitter",
-    })
     use("stevearc/dressing.nvim") -- nice ui changes
     -- for go, https://github.com/crusj/structrue-go.nvim is nicer?
     -- use({ "preservim/tagbar", ft = { "go", "python", "lua" } })
-    use("m1tix/vista.vim")
+    use("m1tix/vista.vim") -- patch of vista; view symbols of buffer/workspace
+    use("lervag/vimtex") -- best plugin for tex, even if its in vim
+    use("petertriho/nvim-scrollbar") -- scrollbar with diagnostics
+    use("folke/trouble.nvim") -- honey wake up, trouble is back
+    -- cool plugins which are not of use as of yet:
+    -- windows.nvim
+
     -------------------
     -- Lsp/complete  --
     -------------------
@@ -166,6 +170,7 @@ vim.wo.signcolumn = "yes:2" -- width of sign column
 vim.o.completeopt = "menuone,noselect"
 vim.opt.autoindent = true -- autoindent
 vim.o.ignorecase = true -- ignore case while searching
+vim.opt.cmdheight = 0 -- have no commandline if possible (new feature pog)
 
 -- General tab settings
 -- For specific filetypes, use ftplugin
@@ -270,6 +275,7 @@ local function button(sc, txt, keybind, keybind_opts)
 end
 dashboard.section.buttons.val = {
     button("e", "  > New file", ":ene <BAR> startinsert <CR>"),
+    -- might edit this one to current directory, for now its fine though.
     button("f", "  > Find file", ":cd $HOME/Programming | Telescope find_files<CR>"),
     button("r", "  > Recent", ":Telescope oldfiles<CR>"),
     button("s", "  > Settings", ":e $MYVIMRC<CR>"),
@@ -314,7 +320,7 @@ require("lualine").setup({
     options = {
         icons_enabled = true,
         theme = "auto",
-        component_separators = { left = "│", right = "│"},
+        component_separators = { left = "│", right = "│" },
         section_separators = "",
         disabled_filetypes = { "alpha", "packer" },
         always_divide_middle = true,
@@ -325,7 +331,7 @@ require("lualine").setup({
         lualine_b = { "branch", "diff", "diagnostics" },
         lualine_c = { "filename" },
         lualine_x = { "filetype" },
-        lualine_y = { },
+        lualine_y = {},
         lualine_z = { "location" },
     },
     inactive_sections = {},
@@ -341,7 +347,10 @@ require("nvim-treesitter.configs").setup({
     -- Add languages to be installed here that you want installed for treesitter
     ensure_installed = { "lua", "python", "go" },
     auto_install = true,
-    highlight = { enable = true },
+    highlight = {
+        enable = true,
+        disable = { "latex" },
+    },
     incremental_selection = {
         enable = true,
         keymaps = {
@@ -354,7 +363,7 @@ require("nvim-treesitter.configs").setup({
     },
     indent = {
         enable = true,
-        disable = { "python" }, -- python indent still seems to suck
+        disable = { "python", "latex" }, -- python indent still seems to suck
     },
 })
 
@@ -366,7 +375,7 @@ require("telescope").setup({
     -- ignore packages from Go in workspace folders while searching
     -- not sure if this breaks some lsp functionality, who knows?
     defaults = {
-        file_ignore_patterns = { "Go/pkg/*" },
+        file_ignore_patterns = { "go/pkg/*" },
         initial_mode = "normal",
     },
     pickers = {
@@ -426,22 +435,21 @@ local on_attach = function(client, bufnr)
         client.server_capabilities.documentFormattingProvider = false
     end
     -- enable formatting on save for go files.
-    if  client.name == "gopls" then
+    if client.name == "gopls" then
         local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
         vim.api.nvim_clear_autocmds({ group = augroup, buffer = bufnr })
         vim.api.nvim_create_autocmd("BufWritePre", {
             group = augroup,
             buffer = bufnr,
             callback = function()
-                vim.lsp.buf.format({bufnr = bufnr})
+                vim.lsp.buf.format({ bufnr = bufnr })
             end,
         })
     end
     local nmap = function(keys, func, desc)
-        if desc then
-            desc = "LSP: " .. desc
-        end
-
+        -- if desc then
+        --     desc = "LSP: " .. desc
+        -- end
         vim.keymap.set("n", keys, func, { buffer = bufnr, desc = desc })
     end
     nmap("<leader>rn", vim.lsp.buf.rename, "[R]e[n]ame")
@@ -462,19 +470,13 @@ local on_attach = function(client, bufnr)
     -- Lesser used LSP functionality
     nmap("gD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
     nmap("<leader>D", vim.lsp.buf.type_definition, "Type Definition")
-    vim.api.nvim_buf_create_user_command(
-        bufnr,
-        "Format",
-        -- Might need to change this to formatting-seq-sync or whatever
-        vim.lsp.buf.format or vim.lsp.buf.formatting,
-        { desc = "Format current buffer" }
-    )
+    nmap("<leader>fc", vim.lsp.buf.format, "[F]ormat [C]urrent buffer")
 end
 
 local capabilities = require("cmp_nvim_lsp").update_capabilities(vim.lsp.protocol.make_client_capabilities())
 
 -- enabled servers
-local servers = { "sumneko_lua", "pyright", "bashls", "gopls", "vimls", "clangd" }
+local servers = { "sumneko_lua", "pylsp", "bashls", "gopls", "vimls", "clangd", "texlab" }
 
 -- Mason config
 require("mason-lspconfig").setup({
@@ -542,7 +544,20 @@ require("lspconfig").gopls.setup({
     },
     init_options = {
         usePlaceholders = true,
-    }
+    },
+})
+
+require("lspconfig").pylsp.setup({
+    settings = {
+        pylsp = {
+            plugins = {
+                pycodestyle = {
+                    ignore = { "W391" },
+                    maxLineLength = 88, -- teehehe, we do a little trolling
+                },
+            },
+        },
+    },
 })
 
 local signs = { Error = " ", Warn = " ", Hint = " ", Info = " " }
@@ -587,12 +602,6 @@ null_ls.setup({
     sources = {
         -- Lua
         formatting.stylua.with({ extra_args = { "--indent-type", "Spaces" } }),
-        -- Python
-        formatting.isort,
-        formatting.black,
-        diagnostics.flake8.with({
-            extra_args = { "--max-line-length=88", "--select=C,E,F,W,B,B950", "--extend-ignore=E203" },
-        }),
         -- Markdown, tex etc
         diagnostics.markdownlint,
         formatting.prettier.with({
@@ -616,7 +625,9 @@ if not snip_status_ok then
 end
 
 -- Autopairs and tabout
-require("nvim-autopairs").setup()
+local npairs = require("nvim-autopairs")
+npairs.setup()
+
 require("tabout").setup({
     tabkey = "<C-k>",
     backwards_tabkey = "<C-j>",
@@ -631,6 +642,7 @@ require("tabout").setup({
         { open = "(", close = ")" },
         { open = "[", close = "]" },
         { open = "{", close = "}" },
+        { open = "$", close = "$" },
     },
 })
 local cmp_autopairs = require("nvim-autopairs.completion.cmp")
@@ -694,8 +706,9 @@ cmp.setup({
 --------------------------------------------------
 -- LuaSnip                                      --
 --------------------------------------------------
--- I dont like so many snippets tbh
--- require("luasnip.loaders.from_vscode").lazy_load()
+-- I dont like so many snippets tbh, just tex is enough ;)
+-- also using c for a course, dont know enough syntax
+require("luasnip.loaders.from_vscode").lazy_load({ include = { "tex", "c" } })
 
 --------------------------------------------------
 -- Bufferline/barbar                            --
@@ -774,7 +787,7 @@ require("true-zen").setup({
 require("fidget").setup({
     window = {
         blend = 0,
-    }
+    },
 })
 
 --------------------------------------------------
@@ -816,9 +829,22 @@ require("glow").setup({
 require("Comment").setup()
 
 --------------------------------------------------
+-- scrollbar with diagnostics                   --
+--------------------------------------------------
+require("scrollbar").setup()
+
+--------------------------------------------------
+-- Vimtex                                       --
+--------------------------------------------------
+vim.cmd([[let g:vimtex_quickfix_open_on_warning=0]])
+vim.cmd([[let g:vimtex_syntax_enabled = 0]])
+vim.cmd([[let g:vimtex_syntax_conceal_disable = 1]])
+
+--------------------------------------------------
 -- Folding with Ufo                             --
 --------------------------------------------------
-vim.o.fillchars = [[eob: ,fold: ,foldopen:,foldsep: ,foldclose:]] -- folding symbols
+-- folding symbols and othe
+vim.opt.fillchars = [[eob: ,fold: ,foldopen:,foldsep: ,foldclose:]]
 vim.o.foldcolumn = "1" -- width of foldcolumn
 vim.o.foldlevel = 99 -- Using ufo provider need a large value, feel free to decrease the value
 vim.o.foldlevelstart = 99 -- see ^
@@ -827,7 +853,7 @@ vim.opt.viewoptions = { "folds", "cursor" } -- remember folds/cursor on leave wi
 
 require("ufo").setup({
     provider_selector = function(_, filetype, _)
-        if filetype == "markdown" then
+        if filetype == "markdown" or filetype == "tex" then
             return ""
         end
         return { "treesitter", "indent" }
@@ -880,13 +906,12 @@ create_autocmd("BufWinEnter", {
     desc = "Load view on entering buffer",
 })
 
--- Rebind all delete options to black hole register
--- require("cutlass").setup()
+-- might want to switch with C-Tab and C-S-Tab
 map("n", "b]", ":BufferLineCycleNext<CR>", "Next buffer") -- next buffer
 map("n", "b[", ":BufferLineCyclePrev<CR>", "Prev buffer") -- previous buffer
 map("n", "<leader>q", ":bdelete<CR>", "[Q]uit current buffer") -- delete current buffer
-map("n", "<leader>wd", ":Telescope diagnostics<CR>", "[W]orkspace [D]iagnostics") -- no trouble.nvim, too buggy
-map("n", "<leader>fc", ":Format<CR>", "[F]ormat [C]urrent buffer") -- format current file with lsp/null-ls
+map("n", "<leader>dd", ":TroubleToggle document_diagnostics<CR>", "[D]ocument [D]iagnostics")
+map("n", "<leader>wd", ":TroubleToggle workspace_diagnostics<CR>", "[W]orkspace [D]iagnostics")
 map("n", "<leader>cb", ":Telescope neoclip<CR>", "[C]lip[B]oard manager")
 vim.api.nvim_set_keymap( -- run current file with code-runner
     "n",
@@ -904,10 +929,10 @@ map("n", "<leader>or", ":Telescope oldfiles<CR>", "[O]pen [R]ecent") -- fuzzy fi
 map("n", "<leader>ts", ":Vista!!<CR>", "[T]oggle [S]ymbols")
 
 -- Some tabout keybinding
-map("i", "<A-k>", "<Plug>(TaboutMulti)", "Tabout next")
-map("i", "<A-j>", "<Plug>(TaboutBackMulti)", "Tabout prev")
+map("i", "<A-l>", "<Plug>(TaboutMulti)", "Tabout next")
+map("i", "<A-h>", "<Plug>(TaboutBackMulti)", "Tabout prev")
 -- Jump in-and-out of snippets
-map("i", "<C-k>", "<cmd>lua require'luasnip'.jump(1)<CR>", "Jump forwards in snippet")
-map("s", "<C-k>", "<cmd>lua require'luasnip'.jump(1)<CR>", "Jump forwards in snippet")
-map("i", "<C-j>", "<cmd>lua require'luasnip'.jump(-1)<CR>", "Jump backwards in snippet")
-map("s", "<C-j>", "<cmd>lua require'luasnip'.jump(-1)<CR>", "Jump backwards in snippet")
+map("i", "<C-l>", "<cmd>lua require'luasnip'.jump(1)<CR>", "Jump forwards in snippet")
+map("s", "<C-l>", "<cmd>lua require'luasnip'.jump(1)<CR>", "Jump forwards in snippet")
+map("i", "<C-h>", "<cmd>lua require'luasnip'.jump(-1)<CR>", "Jump backwards in snippet")
+map("s", "<C-h>", "<cmd>lua require'luasnip'.jump(-1)<CR>", "Jump backwards in snippet")
