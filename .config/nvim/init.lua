@@ -55,13 +55,20 @@ packer.startup(function(use)
         run = ":CatppuccinCompile",
     })
     -------------------
+    -- Treesitter    --
+    -------------------
+    use({
+        "nvim-treesitter/nvim-treesitter",
+        run = ":TSUpdate",
+    })
+    use("nvim-treesitter/nvim-treesitter-context")
+    -------------------
     -- Other plugins --
     -------------------
-    use("elkowar/yuck.vim") -- .yuck highlighting
     -- Might need to add some neovim variants of these, but atm not missing them
     -- use("tpope/vim-fugitive") -- git
     use("windwp/nvim-autopairs") -- autopair brackets etc
-    use({ -- tabout of a pairing (brackets, quotations etc). (see keybindings [ALT+j])
+    use({ -- tabout of a pairing (brackets, quotations etc). (see keybindings [ALT+h/l])
         "abecodes/tabout.nvim",
         as = "tabout",
         requires = "nvim-treesitter/nvim-treesitter",
@@ -72,10 +79,6 @@ packer.startup(function(use)
         "akinsho/bufferline.nvim",
         tag = "v2.*",
         requires = "kyazdani42/nvim-web-devicons",
-    })
-    use({ -- highlighting/indentation etc (GOAT plugin)
-        "nvim-treesitter/nvim-treesitter",
-        run = ":TSUpdate",
     })
     use({ -- lua statusbar
         "nvim-lualine/lualine.nvim",
@@ -102,7 +105,6 @@ packer.startup(function(use)
     -- use({ "preservim/tagbar", ft = { "go", "python", "lua" } })
     use("m1tix/vista.vim") -- patch of vista; view symbols of buffer/workspace
     use("lervag/vimtex") -- best plugin for tex, even if its in vim
-    use("petertriho/nvim-scrollbar") -- scrollbar with diagnostics
     use("folke/trouble.nvim") -- honey wake up, trouble is back
     -- cool plugins which are not of use as of yet:
     -- windows.nvim
@@ -127,7 +129,7 @@ packer.startup(function(use)
     -- Other lsp things
     use("onsails/lspkind.nvim") -- some icons
     use("j-hui/fidget.nvim") -- status of lsp
-    use({
+    use({ -- telescope: basically everything for searching
         "nvim-telescope/telescope.nvim",
         requires = { "nvim-lua/plenary.nvim" },
     })
@@ -158,6 +160,7 @@ require("impatient")
 -- Testing whether packer_installed works now
 vim.cmd("source $HOME/.config/nvim/plugin/packer_compiled.lua")
 vim.cmd("set clipboard+=unnamedplus,unnamed")
+vim.cmd([[let g:python3_host_prog = '/usr/bin/python3']])
 vim.o.inccommand = "nosplit"
 vim.o.hlsearch = true -- highlight searched object
 vim.wo.number = true -- set numbers on the side
@@ -165,12 +168,12 @@ vim.wo.relativenumber = true -- set them relative to cursor
 vim.o.hidden = true -- hidden buffers begone
 vim.o.mouse = "a" -- some mouse support (can delete tbh, never use it)
 vim.o.breakindent = true -- breakindent on line wrapping
+vim.o.wrap = false -- Wrap text long line; not sure....
 vim.opt.undofile = true -- undofile
 vim.wo.signcolumn = "yes:2" -- width of sign column
 vim.o.completeopt = "menuone,noselect"
 vim.opt.autoindent = true -- autoindent
 vim.o.ignorecase = true -- ignore case while searching
-vim.opt.cmdheight = 0 -- have no commandline if possible (new feature pog)
 
 -- General tab settings
 -- For specific filetypes, use ftplugin
@@ -221,7 +224,7 @@ require("catppuccin").setup({
     },
     custom_highlights = {
         AlphaButtonText = { fg = colors.lavender, style = { "bold" } },
-        AlphaButtonShortcut = { fg = colors.rosewater, style = { "bold", "italic" } },
+        AlphaButtonShortcut = { fg = colors.mauve, style = { "bold", "italic" } },
         AlphaHeader = { fg = colors.lavender, style = { "bold" } },
         AlphaFooter = { fg = colors.surface2, style = { "italic" } },
     },
@@ -303,6 +306,7 @@ dashboard.config.layout = {
     dashboard.section.footer,
 }
 alpha.setup(dashboard.opts)
+
 --------------------------------------------------
 -- Statusbar                                    --
 --------------------------------------------------
@@ -338,7 +342,8 @@ require("lualine").setup({
     tabline = {},
     extensions = { "nvim-tree", "toggleterm", lualine_vista },
 })
-vim.opt.laststatus = 3 -- single line for all windows, dont think this is necessary since globalstatus is on
+-- single line for all windows, dont think this is necessary since globalstatus is on
+vim.opt.laststatus = 3
 
 --------------------------------------------------
 -- treesitter                                   --
@@ -367,64 +372,6 @@ require("nvim-treesitter.configs").setup({
     },
 })
 
---------------------------------------------------
--- Telescope (with its extensions)              --
---------------------------------------------------
-
-require("telescope").setup({
-    -- ignore packages from Go in workspace folders while searching
-    -- not sure if this breaks some lsp functionality, who knows?
-    defaults = {
-        file_ignore_patterns = { "go/pkg/*" },
-        initial_mode = "normal",
-    },
-    pickers = {
-        lsp_document_symbols = {
-            theme = "dropdown",
-        },
-        diagnostics = {
-            theme = "dropdown",
-        },
-    },
-})
-
-require("neoclip").setup({
-    default_register = { '"', "+", "*" },
-})
-require("telescope").load_extension("neoclip")
---------------------------------------------------
--- Symbol outline (or any bar...)               --
---------------------------------------------------
--- There is no better outline than tagbar/vista tbh:
--- symboloutline is too buggy, half the keys do not work;
--- aerial is not detailed enough for go: I need an ordering by struct/type.
-vim.cmd([[hi link VistaFloat NormalFloat]])
-vim.g["vista#renderer#icons"] = {
-    ["text"] = "",
-    ["method"] = "",
-    ["function"] = "",
-    ["constructor"] = "",
-    ["field"] = "ﰠ",
-    ["var"] = "",
-    ["variable"] = "",
-    ["variables"] = "",
-    ["class"] = "ﴯ",
-    ["type"] = "ﴯ",
-    ["types"] = "ﴯ",
-    ["typedef"] = "ﴯ",
-    ["interface"] = "",
-    ["module"] = "",
-    ["package"] = "",
-    ["property"] = "ﰠ",
-    ["struct"] = "פּ",
-    ["color"] = "",
-    ["file"] = "",
-    ["reference"] = "",
-    ["constant"] = "",
-    ["const"] = "",
-    ["operator"] = "",
-}
-vim.g.vista_highlight_whole_line = 1
 --------------------------------------------------
 -- lspconfig                                    --
 --------------------------------------------------
@@ -474,9 +421,14 @@ local on_attach = function(client, bufnr)
 end
 
 local capabilities = require("cmp_nvim_lsp").update_capabilities(vim.lsp.protocol.make_client_capabilities())
+capabilities.textDocument.foldingRange = {
+    dynamicRegistration = false,
+    lineFoldingOnly = true,
+}
 
--- enabled servers
-local servers = { "sumneko_lua", "pylsp", "bashls", "gopls", "vimls", "clangd", "texlab" }
+-- enabled servers with mason
+-- servers which are not installed via mason are not in this!
+local servers = { "sumneko_lua", "bashls", "gopls", "vimls", "texlab" }
 
 -- Mason config
 require("mason-lspconfig").setup({
@@ -546,20 +498,47 @@ require("lspconfig").gopls.setup({
         usePlaceholders = true,
     },
 })
+require("lspconfig").clangd.setup({
+    init_options = {
+        clangdFileStatus = true,
+    },
+    on_attach = on_attach,
+    capabilities = capabilities,
+})
 
 require("lspconfig").pylsp.setup({
+    on_attach = on_attach,
+    capabilities = capabilities,
     settings = {
         pylsp = {
             plugins = {
                 pycodestyle = {
                     ignore = { "W391" },
-                    maxLineLength = 88, -- teehehe, we do a little trolling
+                    maxLineLength = 88,
+                },
+                jedi_completion = {
+                    enabled = true,
+                    eager = false,
                 },
             },
         },
     },
 })
 
+require("lspconfig").texlab.setup({
+    on_attach = on_attach,
+    capabilities = capabilities,
+    settings = {
+        texlab = {
+            chktex = {
+                onOpenAndSave = true,
+            },
+            latexindent = {
+                modifyLineBreaks = false,
+            },
+        },
+    },
+})
 local signs = { Error = " ", Warn = " ", Hint = " ", Info = " " }
 for type, icon in pairs(signs) do
     local hl = "DiagnosticSign" .. type
@@ -606,6 +585,9 @@ null_ls.setup({
         diagnostics.markdownlint,
         formatting.prettier.with({
             filetypes = { "markdown", "json" },
+            diagnostic_config = {
+                update_in_insert = false,
+            },
         }),
         -- Go
         formatting.goimports,
@@ -691,16 +673,12 @@ cmp.setup({
     },
     -- Use symbols as formatting in completion window
     formatting = {
-        fields = { "kind", "abbr" },
-        format = function(entry, vim_item)
-            local kind = require("lspkind").cmp_format({ mode = "symbol_text", maxwidth = 30 })(entry, vim_item)
-            local strings = vim.split(kind.kind, "%s", { trimempty = true })
-            kind.kind = "" .. strings[1] .. ""
-            return kind
-        end,
-        -- format = lspkind.cmp_format({
-        --     mode = "symbol",
-        -- }),
+        fields = { "abbr", "kind", "menu" },
+        format = require("lspkind").cmp_format({
+            mode = "symbol_text",
+            maxwidth = 25,
+            preset = "codicons",
+        }),
     },
 })
 --------------------------------------------------
@@ -708,8 +686,66 @@ cmp.setup({
 --------------------------------------------------
 -- I dont like so many snippets tbh, just tex is enough ;)
 -- also using c for a course, dont know enough syntax
-require("luasnip.loaders.from_vscode").lazy_load({ include = { "tex", "c" } })
+require("luasnip.loaders.from_vscode").lazy_load({ include = { "tex", "c", "markdown" } })
 
+--------------------------------------------------
+-- Telescope (with its extensions)              --
+--------------------------------------------------
+
+require("telescope").setup({
+    -- ignore packages from Go in workspace folders while searching
+    -- not sure if this breaks some lsp functionality, who knows?
+    defaults = {
+        file_ignore_patterns = { "go/pkg/*" },
+        initial_mode = "normal",
+    },
+    pickers = {
+        lsp_document_symbols = {
+            theme = "dropdown",
+        },
+        diagnostics = {
+            theme = "dropdown",
+        },
+    },
+})
+
+require("neoclip").setup({
+    default_register = { '"', "+", "*" },
+})
+require("telescope").load_extension("neoclip")
+--------------------------------------------------
+-- Symbol outline (or any bar...)               --
+--------------------------------------------------
+-- There is no better outline than tagbar/vista tbh:
+-- symboloutline is too buggy, half the keys do not work;
+-- aerial is not detailed enough for go: I need an ordering by struct/type.
+vim.cmd([[hi link VistaFloat NormalFloat]])
+vim.g["vista#renderer#icons"] = {
+    ["text"] = "",
+    ["method"] = "",
+    ["function"] = "",
+    ["constructor"] = "",
+    ["field"] = "ﰠ",
+    ["var"] = "",
+    ["variable"] = "",
+    ["variables"] = "",
+    ["class"] = "ﴯ",
+    ["type"] = "ﴯ",
+    ["types"] = "ﴯ",
+    ["typedef"] = "ﴯ",
+    ["interface"] = "",
+    ["module"] = "",
+    ["package"] = "",
+    ["property"] = "ﰠ",
+    ["struct"] = "פּ",
+    ["color"] = "",
+    ["file"] = "",
+    ["reference"] = "",
+    ["constant"] = "",
+    ["const"] = "",
+    ["operator"] = "",
+}
+vim.g.vista_highlight_whole_line = 1
 --------------------------------------------------
 -- Bufferline/barbar                            --
 --------------------------------------------------
@@ -738,6 +774,7 @@ require("code_runner").setup({
     filetype = {
         python = "python3 -u",
         go = "go run",
+        c = "cd $dir && gcc -o $fileNameWithoutExt $fileName && $dir/$fileNameWithoutExt",
     },
     -- use global border for the floating window
     float = {
@@ -829,11 +866,6 @@ require("glow").setup({
 require("Comment").setup()
 
 --------------------------------------------------
--- scrollbar with diagnostics                   --
---------------------------------------------------
-require("scrollbar").setup()
-
---------------------------------------------------
 -- Vimtex                                       --
 --------------------------------------------------
 vim.cmd([[let g:vimtex_quickfix_open_on_warning=0]])
@@ -853,10 +885,13 @@ vim.opt.viewoptions = { "folds", "cursor" } -- remember folds/cursor on leave wi
 
 require("ufo").setup({
     provider_selector = function(_, filetype, _)
-        if filetype == "markdown" or filetype == "tex" then
+        if filetype == "markdown" then
             return ""
+        elseif filetype == "tex" then
+            return { "lsp", "indent" }
+        else
+            return { "treesitter", "indent" }
         end
-        return { "treesitter", "indent" }
     end,
 })
 
@@ -927,6 +962,8 @@ map("t", "<esc>", [[<C-\><C-n>]], "Switch to normal mode") -- bind esc to normal
 map("n", "<leader>ff", ":Telescope find_files<CR>", "[F]ind [F]iles") -- open fuzzy finding of files in current directory
 map("n", "<leader>or", ":Telescope oldfiles<CR>", "[O]pen [R]ecent") -- fuzzy find in recent opened files
 map("n", "<leader>ts", ":Vista!!<CR>", "[T]oggle [S]ymbols")
+-- toggle wrap
+map("n", "<A-z>", ":set wrap!<CR>", "Toggle wrap")
 
 -- Some tabout keybinding
 map("i", "<A-l>", "<Plug>(TaboutMulti)", "Tabout next")

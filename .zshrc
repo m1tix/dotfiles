@@ -21,6 +21,8 @@ alias ls='ls -hl --color'
 alias dirs='dirs -v'
 alias tree='tree -C'
 alias tlmgr='/usr/share/texmf-dist/scripts/texlive/tlmgr.pl --usermode'
+# small alias while learning C
+alias gcc='gcc -Wall -std=c99 -g'
 # Extract program
 function extract()
 {

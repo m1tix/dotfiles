@@ -11,7 +11,7 @@ from neovim import attach
 
 CONFIG_FILE = os.path.expanduser("~/.config/autocolor/config.yaml")
 COLORS_LOC = os.path.expanduser("~/.config/autocolor/colors/")
-TEMPLATE_LOC = os.path.expanduser("~/Programming/Python/autocolor/templates/")
+TEMPLATE_LOC = os.path.expanduser("~/.config/autocolor/templates/")
 
 # TODO
 # bspwm
@@ -81,7 +81,8 @@ def change_colorscheme_nvim(scheme):
     with open(nvim_cfg, "r") as f:
         old_content = f.read()
     pattern = rf"{start}(.*?){end}\n"
-    new_content = re.sub(pattern, insertion, old_content, 1, re.DOTALL | re.MULTILINE)
+    new_content = re.sub(pattern, insertion, old_content,
+                         1, re.DOTALL | re.MULTILINE)
     with open(nvim_cfg, "w") as f:
         f.write(new_content)
     reload_nvim()
@@ -163,7 +164,8 @@ def get_args():
     arg.add_argument(
         "--list", action="store_true", help="print available themes and exits"
     )
-    arg.add_argument("--theme", metavar="theme_name", help="which colorscheme to use")
+    arg.add_argument("--theme", metavar="theme_name",
+                     help="which colorscheme to use")
     arg.add_argument(
         "-novim", action="store_true", help="Do not change colorscheme of nvim"
     )
