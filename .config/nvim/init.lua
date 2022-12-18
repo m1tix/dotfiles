@@ -44,11 +44,7 @@ packer.startup(function(use)
         as = "rose-pine",
         tag = "v1.*",
     })
-    use("shaunsingh/nord.nvim") -- nord ported to nvim
-    use("rebelot/kanagawa.nvim") -- kanagawa
     use("sainnhe/everforest") -- everforest
-    use("Shatur/neovim-ayu") -- ayu
-    use("EdenEast/nightfox.nvim")
     use({ -- CATPPUCCIN!
         "catppuccin/nvim",
         as = "catppuccin",
@@ -194,7 +190,7 @@ local borderstyle = "rounded" -- borderstyle of all windows
 --------------------------------------------------
 -- Cool other themes:
 -- aquarium-vim, rose-pine, catppuccin, everforest, iceberg
--- embark.vim
+-- embark.vim, ayu, nightfox, kanagawa
 vim.o.termguicolors = true
 
 -- Start autocolor
@@ -216,6 +212,7 @@ require("catppuccin").setup({
             -- recoloring of bufferline main frame color
             BufferLineIndicatorSelected = { fg = colors.mauve },
             BufferLineFill = { bg = colors.mantle },
+            BufferLineSeparator = { fg = colors.mantle, bg = colors.mantle },
             -- nice current line highlight
             LineNr = { fg = colors.mauve },
             LineNrAbove = { fg = colors.surface1 },
@@ -236,11 +233,7 @@ vim.cmd("hi EndOfBuffer guifg=#1E1E2E")
 --------------------------------------------------
 -- Dressing (UI)                                --
 --------------------------------------------------
-require("dressing").setup({
-    input = {
-        winblend = 0,
-    },
-})
+require("dressing").setup({})
 --------------------------------------------------
 -- Dashboard                                    --
 --------------------------------------------------
@@ -420,7 +413,7 @@ local on_attach = function(client, bufnr)
     nmap("<leader>fc", vim.lsp.buf.format, "[F]ormat [C]urrent buffer")
 end
 
-local capabilities = require("cmp_nvim_lsp").update_capabilities(vim.lsp.protocol.make_client_capabilities())
+local capabilities = require("cmp_nvim_lsp").default_capabilities(vim.lsp.protocol.make_client_capabilities())
 capabilities.textDocument.foldingRange = {
     dynamicRegistration = false,
     lineFoldingOnly = true,
@@ -476,7 +469,10 @@ require("lspconfig").sumneko_lua.setup({
             diagnostics = {
                 globals = { "vim" },
             },
-            workspace = { library = vim.api.nvim_get_runtime_file("", true) },
+            workspace = {
+                library = vim.api.nvim_get_runtime_file("", true),
+                checkThirdParty = false,
+            },
         },
     },
 })
@@ -530,16 +526,13 @@ require("lspconfig").texlab.setup({
     capabilities = capabilities,
     settings = {
         texlab = {
-            chktex = {
-                onOpenAndSave = true,
-            },
             latexindent = {
                 modifyLineBreaks = false,
             },
         },
     },
 })
-local signs = { Error = " ", Warn = " ", Hint = " ", Info = " " }
+local signs = { Error = " ", Warn = " ", Hint = " ", Info = " " }
 for type, icon in pairs(signs) do
     local hl = "DiagnosticSign" .. type
     vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
@@ -746,21 +739,26 @@ vim.g["vista#renderer#icons"] = {
     ["operator"] = "",
 }
 vim.g.vista_highlight_whole_line = 1
+vim.g.vista_executive_for = {
+    c = "nvim_lsp",
+}
 --------------------------------------------------
 -- Bufferline/barbar                            --
 --------------------------------------------------
 require("bufferline").setup({
+    highlights = require("catppuccin.groups.integrations.bufferline").get(),
     options = {
         -- disable all icons (I dont use mouse)
         show_close_icon = false,
         show_buffer_close_icons = false,
+        -- change icons to better icons
+        modified_icon = "",
+        left_trunc_marker = "",
+        right_trunc_marker = "",
         -- Only show bufferline for 2+ buffers
         always_show_bufferline = false,
         -- If NvimTree is called, offet the bufferline
         offsets = { { filetype = "NvimTree", text = "File Explorer", text_align = "center" } },
-        indicator = {
-            style = "icon",
-        },
     },
 })
 
@@ -774,7 +772,8 @@ require("code_runner").setup({
     filetype = {
         python = "python3 -u",
         go = "go run",
-        c = "cd $dir && gcc -o $fileNameWithoutExt $fileName && $dir/$fileNameWithoutExt",
+        -- this assumes we have a compile_flags.txt file!
+        c = "cd $dir && gcc -o $fileNameWithoutExt $fileName @compile_flags.txt && $dir/$fileNameWithoutExt",
     },
     -- use global border for the floating window
     float = {
@@ -942,8 +941,9 @@ create_autocmd("BufWinEnter", {
 })
 
 -- might want to switch with C-Tab and C-S-Tab
-map("n", "b]", ":BufferLineCycleNext<CR>", "Next buffer") -- next buffer
-map("n", "b[", ":BufferLineCyclePrev<CR>", "Prev buffer") -- previous buffer
+map("n", "<leader>b]", ":BufferLineCycleNext<CR>", "[B]uffer next") -- next buffer
+map("n", "<leader>b[", ":BufferLineCyclePrev<CR>", "[B]uffer prev]") -- previous buffer
+map("n", "<leader>ob", ":BufferLinePick<CR>", "[O]pen [B]uffer") -- Open a currently opened buffer
 map("n", "<leader>q", ":bdelete<CR>", "[Q]uit current buffer") -- delete current buffer
 map("n", "<leader>dd", ":TroubleToggle document_diagnostics<CR>", "[D]ocument [D]iagnostics")
 map("n", "<leader>wd", ":TroubleToggle workspace_diagnostics<CR>", "[W]orkspace [D]iagnostics")
@@ -953,7 +953,7 @@ vim.api.nvim_set_keymap( -- run current file with code-runner
     "<leader>rc",
     ":RunFile<CR>",
     { noremap = true, silent = false, desc = "[R]un [C]urrent file" }
-) -- run file with code_runner
+)
 map("n", "<C-n>", ":NvimTreeToggle<CR>", "Toggle NvimTree") -- toggle tree
 map("n", "<leader>tz", ":TZAtaraxis<CR>", "[T]oggle [Z]en") -- toggle zen mode
 map("n", "<leader>tt", ":ToggleTerm<CR>", "[T]oggle [T]erminal") -- toggle built-in terminal
