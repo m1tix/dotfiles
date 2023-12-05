@@ -21,6 +21,7 @@ rule Gpick                  state=floating
 rule firefox:Places         state=floating
 rule Zathura                state=tiled
 rule mpv                    state=floating
+rule pywindow               state=floating
 
 config border_width          0
 config border_radius         15

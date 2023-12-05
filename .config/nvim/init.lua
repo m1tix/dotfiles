@@ -73,7 +73,7 @@ packer.startup(function(use)
     use("kyazdani42/nvim-tree.lua") -- tree explorer
     use({ -- Bufferline
         "akinsho/bufferline.nvim",
-        tag = "v2.*",
+        tag = "*",
         requires = "kyazdani42/nvim-web-devicons",
     })
     use({ -- lua statusbar
@@ -85,7 +85,10 @@ packer.startup(function(use)
         "CRAG666/code_runner.nvim",
         requires = "nvim-lua/plenary.nvim",
     })
-    use("lukas-reineke/indent-blankline.nvim") -- nice indentline
+    use({ -- nice indentline
+        "lukas-reineke/indent-blankline.nvim",
+        tag = "v2.20.8"
+    })
     use("Pocco81/true-zen.nvim") -- focus mode
     use("folke/which-key.nvim") -- which key
     use({ "akinsho/toggleterm.nvim", tag = "v2.*" }) -- nice terminal
@@ -124,7 +127,10 @@ packer.startup(function(use)
     use("rafamadriz/friendly-snippets")
     -- Other lsp things
     use("onsails/lspkind.nvim") -- some icons
-    use("j-hui/fidget.nvim") -- status of lsp
+    use({ -- status of lsp
+        "j-hui/fidget.nvim",
+        tag = "legacy",
+    })
     use({ -- telescope: basically everything for searching
         "nvim-telescope/telescope.nvim",
         requires = { "nvim-lua/plenary.nvim" },
@@ -170,6 +176,12 @@ vim.wo.signcolumn = "yes:2" -- width of sign column
 vim.o.completeopt = "menuone,noselect"
 vim.opt.autoindent = true -- autoindent
 vim.o.ignorecase = true -- ignore case while searching
+
+vim.cmd([[
+    augroup filetypedetect
+    au! BufRead,BufNewFile *.sage,*.spyx,*.pyx setfiletype python
+    augroup END
+]])
 
 -- General tab settings
 -- For specific filetypes, use ftplugin
@@ -371,7 +383,7 @@ require("nvim-treesitter.configs").setup({
 
 local on_attach = function(client, bufnr)
     -- disable formatting if multiple soures are active (null-ls vs lsp)
-    if client.name == "sumneko_lua" then
+    if client.name == "lua_ls" then
         client.server_capabilities.documentFormattingProvider = false
     end
     -- enable formatting on save for go files.
@@ -421,11 +433,12 @@ capabilities.textDocument.foldingRange = {
 
 -- enabled servers with mason
 -- servers which are not installed via mason are not in this!
-local servers = { "sumneko_lua", "bashls", "gopls", "vimls", "texlab" }
+local servers = { "lua_ls", "bashls", "gopls", "vimls", "texlab", "pyright" }
 
 -- Mason config
 require("mason-lspconfig").setup({
-    ensure_installed = servers,
+    -- this shit is bugged?
+    -- ensure_installed = servers,
 })
 require("mason").setup({
     ui = {
@@ -455,7 +468,7 @@ local runtime_path = vim.split(package.path, ";")
 table.insert(runtime_path, "lua/?.lua")
 table.insert(runtime_path, "lua/?/init.lua")
 
-require("lspconfig").sumneko_lua.setup({
+require("lspconfig").lua_ls.setup({
     on_attach = on_attach,
     capabilities = capabilities,
     settings = {
@@ -476,7 +489,6 @@ require("lspconfig").sumneko_lua.setup({
         },
     },
 })
-
 require("lspconfig").gopls.setup({
     on_attach = on_attach,
     capabilities = capabilities,
@@ -501,26 +513,25 @@ require("lspconfig").clangd.setup({
     on_attach = on_attach,
     capabilities = capabilities,
 })
-
-require("lspconfig").pylsp.setup({
-    on_attach = on_attach,
-    capabilities = capabilities,
-    settings = {
-        pylsp = {
-            plugins = {
-                pycodestyle = {
-                    ignore = { "W391" },
-                    maxLineLength = 88,
-                },
-                jedi_completion = {
-                    enabled = true,
-                    eager = false,
-                },
-            },
-        },
-    },
-})
-
+-- require("lspconfig").pylsp.setup({
+--     on_attach = on_attach,
+--     capabilities = capabilities,
+--     settings = {
+--         pylsp = {
+--             plugins = {
+--                 pycodestyle = {
+--                     ignore = { "W391" },
+--                     maxLineLength = 88,
+--                 },
+--                 jedi_completion = {
+--                     enabled = true,
+--                     eager = false,
+--                     fuzzy = true,
+--                 },
+--             },
+--         },
+--     },
+-- })
 require("lspconfig").texlab.setup({
     on_attach = on_attach,
     capabilities = capabilities,
@@ -532,6 +543,7 @@ require("lspconfig").texlab.setup({
         },
     },
 })
+
 local signs = { Error = " ", Warn = " ", Hint = " ", Info = " " }
 for type, icon in pairs(signs) do
     local hl = "DiagnosticSign" .. type
@@ -582,6 +594,9 @@ null_ls.setup({
                 update_in_insert = false,
             },
         }),
+        -- Python
+        formatting.isort,
+        formatting.yapf,
         -- Go
         formatting.goimports,
         formatting.golines,
@@ -679,7 +694,7 @@ cmp.setup({
 --------------------------------------------------
 -- I dont like so many snippets tbh, just tex is enough ;)
 -- also using c for a course, dont know enough syntax
-require("luasnip.loaders.from_vscode").lazy_load({ include = { "tex", "c", "markdown" } })
+require("luasnip.loaders.from_vscode").lazy_load({ include = { "tex", "c", "markdown", "python" } })
 
 --------------------------------------------------
 -- Telescope (with its extensions)              --
@@ -962,6 +977,7 @@ map("t", "<esc>", [[<C-\><C-n>]], "Switch to normal mode") -- bind esc to normal
 map("n", "<leader>ff", ":Telescope find_files<CR>", "[F]ind [F]iles") -- open fuzzy finding of files in current directory
 map("n", "<leader>or", ":Telescope oldfiles<CR>", "[O]pen [R]ecent") -- fuzzy find in recent opened files
 map("n", "<leader>ts", ":Vista!!<CR>", "[T]oggle [S]ymbols")
+map("n", "<leader>cd", ":cd %:p:h<CR>", "[C]hange [D]irectory")
 -- toggle wrap
 map("n", "<A-z>", ":set wrap!<CR>", "Toggle wrap")
 
