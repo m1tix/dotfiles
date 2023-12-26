@@ -11,16 +11,17 @@ autoload -Uz compinit
 compinit
 
 # End of lines added by compinstall
+
 # Export
-# export PYTHONPATH=/usr/lib64/python3.5/site-packages
 export EDITOR=nvim
-export MYVIMRC="$HOME/.config/nvim/init.lua"
+export TEXMFHOME=$HOME/.texmf
 
 # Aliases
+alias rm='rm -i'
 alias ls='ls -hl --color'
 alias dirs='dirs -v'
 alias tree='tree -C'
-alias tlmgr='/usr/share/texmf-dist/scripts/texlive/tlmgr.pl --usermode'
+# alias tlmgr='/usr/share/texmf-dist/scripts/texlive/tlmgr.pl --usermode'
 # small alias while learning C
 alias gcc='gcc -Wall -g'
 alias clang='clang -Wall -g'
@@ -48,7 +49,3 @@ function extract()
 
 
 PROMPT=$'%F{yellow}%~%f\n%F{red}%f '
-# PS1="\[\033[38;5;3m\]λ\[$(tput sgr0)\]\[\033[38;5;15m\] \[$(tput sgr0)\]\[\033[38;5;2m\]\W\[$(tput sgr0)\]\[\033[38;5;15m\] \[$(tput sgr0)\]"
-#
-# source ~/.config/zsh/catppuccin-highlight.zsh
-# source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh

@@ -16,7 +16,6 @@ super + alt + @space
 # make sxhkd reload its configuration files:
 super + Escape
 	pkill -USR1 -x sxhkd
-
 #
 # bspwm hotkeys
 #
@@ -40,9 +39,11 @@ super + y
 # swap the current node and the biggest window
 super + g
 	bspc node -s biggest.window
+
 #
 # state/flags
 #
+
 # set the window state
 super + {t,shift + t,s,f}
 	bspc node -t {tiled,pseudo_tiled,floating,fullscreen}
@@ -130,16 +131,16 @@ super + {alt, shift +} g
     bspc config -d focused window_gap $(( $(bspc config -d focused window_gap) - 4 )) }
 ## brightness
 XF86MonBrightness{Down,Up}
-	sh $HOME/.scripts/change-brightness {down,up}
+	sh $HOME/.local/bin/change-brightness {down,up}
 ## Audio
 XF86Audio{Mute,RaiseVolume,LowerVolume}
-        sh $HOME/.scripts/change-volume {mute,up,down}
+        sh $HOME/.local/bin/change-volume {mute,up,down}
 ##Screenshots
 Print
         DATE=$(date '+%b%d-%H-%M.png'); \
-        maim -us "${HOME}/Images/Screenshots/$DATE"; \
-        sh $HOME/.scripts/notify-screenshot $HOME/Images/Screenshots/$DATE
+        maim -us "${HOME}/Pictures/screenshots/$DATE"; \
+        sh $HOME/.local/bin/notify-screenshot $HOME/Pictures/screenshots/$DATE
 ctrl + Print
         DATE=$(date '+%b%d-%H-%M.png'); \
-        maim -u "${HOME}/Images/Screenshots/$DATE"; \
-        sh $HOME/.scripts/notify-screenshot $HOME/Images/Screenshots/$DATE
+        maim -u "${HOME}/Pictures/screenshots/$DATE"; \
+        sh $HOME/.local/bin/notify-screenshot $HOME/Pictures/screenshots/$DATE

@@ -1,168 +1,82 @@
--- SOME INFO:
--- DO NOT update neovim automatically before PR #17446,
--- instead: edit src/nvim/screen.c around line 1931.
----------------------
--- [TODO)
--- seperate files might be faster... lmao
 --------------------------------------------------
--- Packer (Stolen from nvim-lua/kickstart.nvim) --
+-- Package manager                              --
 --------------------------------------------------
-
-local install_path = vim.fn.stdpath("data") .. "/site/pack/packer/start/packer.nvim"
-local is_bootstrap = false
-if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
-    is_bootstrap = true
-    vim.fn.execute("!git clone https://github.com/wbthomason/packer.nvim " .. install_path)
-    vim.cmd([[packadd packer.nvim]])
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not vim.loop.fs_stat(lazypath) then
+    vim.fn.system({
+        "git",
+        "clone",
+        "--filter=blob:none",
+        "https://github.com/folke/lazy.nvim.git",
+        "--branch=stable", -- latest stable release
+        lazypath,
+    })
 end
-
-local status_ok, packer = pcall(require, "packer")
-if not status_ok then
-    return
-end
-
--- Let packer use a float for its information popups
-packer.init({
-    display = {
-        open_fn = function()
-            return require("packer.util").float({ border = "rounded" })
-        end,
-    },
-})
+vim.opt.rtp:prepend(lazypath)
 
 -- Setup plugins
-packer.startup(function(use)
-    use("wbthomason/packer.nvim") -- Package manager
-
-    -------------------
-    -- Colorschemes  --
-    -------------------
-    use("folke/tokyonight.nvim") -- Tokyo night
-    use("marko-cerovac/material.nvim") -- material
-    use({ -- rose-pine
-        "rose-pine/neovim",
-        as = "rose-pine",
-        tag = "v1.*",
-    })
-    use("sainnhe/everforest") -- everforest
-    use({ -- CATPPUCCIN!
-        "catppuccin/nvim",
-        as = "catppuccin",
-        run = ":CatppuccinCompile",
-    })
-    -------------------
-    -- Treesitter    --
-    -------------------
-    use({
-        "nvim-treesitter/nvim-treesitter",
-        run = ":TSUpdate",
-    })
-    use("nvim-treesitter/nvim-treesitter-context")
-    -------------------
-    -- Other plugins --
-    -------------------
-    -- Might need to add some neovim variants of these, but atm not missing them
-    -- use("tpope/vim-fugitive") -- git
-    use("windwp/nvim-autopairs") -- autopair brackets etc
-    use({ -- tabout of a pairing (brackets, quotations etc). (see keybindings [ALT+h/l])
-        "abecodes/tabout.nvim",
-        as = "tabout",
-        requires = "nvim-treesitter/nvim-treesitter",
-    })
-    use("numToStr/Comment.nvim") -- easy commenting with gc/gcc
-    use("kyazdani42/nvim-tree.lua") -- tree explorer
-    use({ -- Bufferline
-        "akinsho/bufferline.nvim",
-        tag = "*",
-        requires = "kyazdani42/nvim-web-devicons",
-    })
-    use({ -- lua statusbar
-        "nvim-lualine/lualine.nvim",
-        requires = { "kyazdani42/nvim-web-devicons", opt = true },
-    })
-    use("lewis6991/impatient.nvim") --increase startuptime
-    use({ -- Running code while in files
-        "CRAG666/code_runner.nvim",
-        requires = "nvim-lua/plenary.nvim",
-    })
-    use({ -- nice indentline
-        "lukas-reineke/indent-blankline.nvim",
-        tag = "v2.20.8"
-    })
-    use("Pocco81/true-zen.nvim") -- focus mode
-    use("folke/which-key.nvim") -- which key
-    use({ "akinsho/toggleterm.nvim", tag = "v2.*" }) -- nice terminal
-    use("ellisonleao/glow.nvim") -- markdown render inside neovim
-    use("dstein64/vim-startuptime") -- timing
-    use({ -- improved folding (also edited screen.c in source code for better folds)
-        "kevinhwang91/nvim-ufo",
-        requires = "kevinhwang91/promise-async",
-    })
-    use("goolord/alpha-nvim") -- dashboard
-    use("stevearc/dressing.nvim") -- nice ui changes
-    -- for go, https://github.com/crusj/structrue-go.nvim is nicer?
-    -- use({ "preservim/tagbar", ft = { "go", "python", "lua" } })
-    use("m1tix/vista.vim") -- patch of vista; view symbols of buffer/workspace
-    use("lervag/vimtex") -- best plugin for tex, even if its in vim
-    use("folke/trouble.nvim") -- honey wake up, trouble is back
-    -- cool plugins which are not of use as of yet:
-    -- windows.nvim
-
-    -------------------
-    -- Lsp/complete  --
-    -------------------
-    use("neovim/nvim-lspconfig") -- its lsp time
-    use("williamboman/mason.nvim") -- nvim-lsp-installer replacement
-    use("williamboman/mason-lspconfig.nvim") -- better integration mason with lspconfig
-    use("jose-elias-alvarez/null-ls.nvim") -- linting/formatting
-    use("hrsh7th/nvim-cmp") -- its completion time
+-- PLUGINS NOT INSTALLED YET:
+---- Colorschemes such as tokyonight, everforest, rose pine, material
+---- Vista
+---- Toggle term
+require("lazy").setup({
+    -----------------
+    -- Colorscheme --
+    -----------------
+    { "catppuccin/nvim", name = "catppuccin", priority = 1000 },
+    ----------------
+    -- TS and LSP --
+    ----------------
+    { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate" },
+    "nvim-treesitter/nvim-treesitter-context",
+    -- Lsp things
+    "neovim/nvim-lspconfig",
+    "williamboman/mason.nvim", -- nvim-lsp-installer replacement
+    "williamboman/mason-lspconfig.nvim", -- integration with lspconfig
+    "jose-elias-alvarez/null-ls.nvim", -- linting/formatting. Should be replaced
+    "hrsh7th/nvim-cmp", -- completions
     -- Completion plugins
-    use("hrsh7th/cmp-nvim-lsp")
-    use("hrsh7th/cmp-buffer")
-    use("hrsh7th/cmp-path")
-    use("saadparwaiz1/cmp_luasnip")
-    use("hrsh7th/cmp-nvim-lua")
-    -- Snippets!
-    use("L3MON4D3/LuaSnip")
-    use("rafamadriz/friendly-snippets")
-    -- Other lsp things
-    use("onsails/lspkind.nvim") -- some icons
-    use({ -- status of lsp
-        "j-hui/fidget.nvim",
-        tag = "legacy",
-    })
-    use({ -- telescope: basically everything for searching
-        "nvim-telescope/telescope.nvim",
-        requires = { "nvim-lua/plenary.nvim" },
-    })
-    use({ --clipboard testing instead of cutlass
-        "AckslD/nvim-neoclip.lua",
-        requires = { "nvim-telescope/telescope.nvim" },
-        as = "neoclip",
-    })
-    if is_bootstrap then
-        require("packer").sync()
-    end
-end)
+    "hrsh7th/cmp-nvim-lsp",
+    "hrsh7th/cmp-buffer",
+    "hrsh7th/cmp-path",
+    "hrsh7th/cmp-nvim-lua",
+    "saadparwaiz1/cmp_luasnip",
+    -- Snippets
+    "L3MON4D3/LuaSnip",
+    "rafamadriz/friendly-snippets",
+    -- Funky icons
+    "onsails/lspkind.nvim",
+    -- Status
+    "j-hui/fidget.nvim",
+    -- Warning/error overview
+    "folke/trouble.nvim",
+    --------
+    -- UI --
+    --------
+    "kyazdani42/nvim-tree.lua", -- filetree
+    "nvim-lualine/lualine.nvim", -- lualine, no icons 'cause kinda finicky?
+    { "akinsho/bufferline.nvim", version = "*", dependencies = "kyazdani42/nvim-web-devicons" },
+    { "lukas-reineke/indent-blankline.nvim", main = "ibl" },
+    "goolord/alpha-nvim", -- dashboard
+    "stevearc/dressing.nvim", -- nice windows
+    { "kevinhwang91/nvim-ufo", dependencies = "kevinhwang91/promise-async" }, -- folding time
 
-if is_bootstrap then
-    print("==================================")
-    print("    Plugins are being installed")
-    print("    Wait until Packer completes,")
-    print("       then restart nvim")
-    print("==================================")
-    return
-end
-
-require("impatient")
-
+    ----------
+    -- Misc --
+    ----------
+    "windwp/nvim-autopairs", -- Autopair brackets etc
+    { "abecodes/tabout.nvim", name = "tabout", dependencies = "nvim-treesitter/nvim-treesitter" },
+    "numToStr/Comment.nvim",
+    "folke/which-key.nvim", -- key map, goated plugin
+    { "nvim-telescope/telescope.nvim", tag = "0.1.5", dependencies = "nvim-lua/plenary.nvim" }, -- teli
+    { "CRAG666/code_runner.nvim", dependencies = "nvim-lua/plenary.nvim" }, -- code running
+    "lervag/vimtex",
+})
 --------------------------------------------------
--- Vim options                                  --
+-- vim options                                  --
 --------------------------------------------------
--- Testing whether packer_installed works now
-vim.cmd("source $HOME/.config/nvim/plugin/packer_compiled.lua")
 vim.cmd("set clipboard+=unnamedplus,unnamed")
-vim.cmd([[let g:python3_host_prog = '/usr/bin/python3']])
+-- vim.cmd([[let g:python3_host_prog = '/usr/bin/python3']])
 vim.o.inccommand = "nosplit"
 vim.o.hlsearch = true -- highlight searched object
 vim.wo.number = true -- set numbers on the side
@@ -170,7 +84,7 @@ vim.wo.relativenumber = true -- set them relative to cursor
 vim.o.hidden = true -- hidden buffers begone
 vim.o.mouse = "a" -- some mouse support (can delete tbh, never use it)
 vim.o.breakindent = true -- breakindent on line wrapping
-vim.o.wrap = false -- Wrap text long line; not sure....
+vim.o.wrap = false -- wrap text long line; not sure....
 vim.opt.undofile = true -- undofile
 vim.wo.signcolumn = "yes:2" -- width of sign column
 vim.o.completeopt = "menuone,noselect"
@@ -179,22 +93,22 @@ vim.o.ignorecase = true -- ignore case while searching
 
 vim.cmd([[
     augroup filetypedetect
-    au! BufRead,BufNewFile *.sage,*.spyx,*.pyx setfiletype python
-    augroup END
+    au! bufread,bufnewfile *.sage,*.spyx,*.pyx setfiletype python
+    augroup end
 ]])
 
--- General tab settings
--- For specific filetypes, use ftplugin
+-- general tab settings
+-- for specific filetypes, use ftplugin
 vim.opt.tabstop = 8
 vim.opt.expandtab = true
 vim.opt.softtabstop = 4
 vim.opt.shiftwidth = 4
 vim.opt.shiftround = true
 
--- Which key setting
+-- which key setting
 vim.opt.timeoutlen = 500
 
--- Global options
+-- global options
 local borderstyle = "rounded" -- borderstyle of all windows
 
 --------------------------------------------------
@@ -205,7 +119,6 @@ local borderstyle = "rounded" -- borderstyle of all windows
 -- embark.vim, ayu, nightfox, kanagawa
 vim.o.termguicolors = true
 
--- Start autocolor
 vim.o.background = "dark"
 vim.g.catppuccin_flavour = "mocha"
 local colors = require("catppuccin.palettes").get_palette()
@@ -240,142 +153,6 @@ require("catppuccin").setup({
 })
 vim.cmd("colorscheme catppuccin")
 vim.cmd("hi EndOfBuffer guifg=#1E1E2E")
--- End autocolor
-
---------------------------------------------------
--- Dressing (UI)                                --
---------------------------------------------------
-require("dressing").setup({})
---------------------------------------------------
--- Dashboard                                    --
---------------------------------------------------
--- Yoinked from one of the config files listed in github discussion
-local alpha = require("alpha")
-local dashboard = require("alpha.themes.dashboard")
--- Header
--- shoutout to my dog toby <3
-dashboard.section.header.val = {
-    "⠀⠀⠀⠀⠀⠀⠀⢀⣠⣤⣠⣶⠚⠛⠿⠷⠶⣤⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
-    "⠀⠀⠀⠀⠀⢀⣴⠟⠉⠀⠀⢠⡄⠀⠀⠀⠀⠀⠉⠙⠳⣄⠀⠀⠀⠀⠀⠀⠀⠀",
-    "⠀⠀⠀⢀⡴⠛⠁⠀⠀⠀⠀⠘⣷⣴⠏⠀⠀⣠⡄⠀⠀⢨⡇⠀⠀⠀⠀⠀⠀⠀",
-    "⠀⠀⠀⠺⣇⠀⠀⠀⠀⠀⠀⠀⠘⣿⠀⠀⠘⣻⣻⡆⠀⠀⠙⠦⣄⣀⠀⠀⠀⠀",
-    "⠀⠀⠀⢰⡟⢷⡄⠀⠀⠀⠀⠀⠀⢸⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⢻⠶⢤⡀",
-    "⠀⠀⠀⣾⣇⠀⠻⣄⠀⠀⠀⠀⠀⢸⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠸⣀⣴⣿",
-    "⠀⠀⢸⡟⠻⣆⠀⠈⠳⢄⡀⠀⠀⡼⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠶⠶⢤⣬⡿⠁",
-    "⠀⢀⣿⠃⠀⠹⣆⠀⠀⠀⠙⠓⠿⢧⡀⠀⢠⡴⣶⣶⣒⣋⣀⣀⣤⣶⣶⠟⠁⠀",
-    "⠀⣼⡏⠀⠀⠀⠙⠀⠀⠀⠀⠀⠀⠀⠙⠳⠶⠤⠵⣶⠒⠚⠻⠿⠋⠁⠀⠀⠀⠀",
-    "⢰⣿⡇⠀⠀⠀⠀⠀⠀⠀⣆⠀⠀⠀⠀⠀⠀⠀⢠⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
-    "⢿⡿⠁⠀⠀⠀⠀⠀⠀⠀⠘⣦⡀⠀⠀⠀⠀⠀⢸⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
-    "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠻⣷⡄⠀⠀⠀⠀⣿⣧⠀⠀⠀⠀⠀⠀⠀⠀⠀",
-    "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢷⡀⠀⠀⠀⢸⣿⡄⠀⠀⠀⠀⠀⠀⠀⠀",
-    "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠸⣿⠇⠀⠀⠀⠀⠀⠀⠀⠀",
-}
-dashboard.section.header.opts.hl = "AlphaHeader"
-
--- Buttons of dashboard
-local function button(sc, txt, keybind, keybind_opts)
-    local db = dashboard.button(sc, txt, keybind, keybind_opts)
-    db.opts.hl = "AlphaButtonText"
-    db.opts.hl_shortcut = "AlphaButtonShortcut"
-    db.opts.width = 33
-    db.opts.cursor = 5
-    return db
-end
-dashboard.section.buttons.val = {
-    button("e", "  > New file", ":ene <BAR> startinsert <CR>"),
-    -- might edit this one to current directory, for now its fine though.
-    button("f", "  > Find file", ":cd $HOME/Programming | Telescope find_files<CR>"),
-    button("r", "  > Recent", ":Telescope oldfiles<CR>"),
-    button("s", "  > Settings", ":e $MYVIMRC<CR>"),
-    button("u", "  > Update plugins", ":PackerSync<CR>"),
-    button("q", "ﰌ  > Quit", ":qa<CR>"),
-}
--- Footer: display version and total packages
-local function footer()
-    local total_plugins = #vim.tbl_keys(packer_plugins)
-    -- Kinda wanna use nvim --version | head -1, but cant figure it out
-    local version = vim.version()
-    local nvim_version = "  Neovim v" .. version.major .. "." .. version.minor .. "." .. version.patch
-    return " " .. total_plugins .. " plugins" .. nvim_version
-end
-dashboard.section.footer.val = footer()
-dashboard.section.footer.opts.hl = "AlphaFooter"
--- Spacing and layout of dashboard
-dashboard.section.buttons.opts.spacing = 0
-dashboard.config.layout = {
-    { type = "padding", val = 1 },
-    dashboard.section.header,
-    { type = "padding", val = 1 },
-    dashboard.section.buttons,
-    { type = "padding", val = 0 },
-    dashboard.section.footer,
-}
-alpha.setup(dashboard.opts)
-
---------------------------------------------------
--- Statusbar                                    --
---------------------------------------------------
-local lualine_vista = {
-    sections = { lualine_a = {
-        function()
-            return vim.g.vista.provider
-        end,
-    } },
-    filetypes = {
-        "vista",
-    },
-}
-require("lualine").setup({
-    options = {
-        icons_enabled = true,
-        theme = "auto",
-        component_separators = { left = "│", right = "│" },
-        section_separators = "",
-        disabled_filetypes = { "alpha", "packer" },
-        always_divide_middle = true,
-        globalstatus = true, -- single line for all windows
-    },
-    sections = {
-        lualine_a = { "mode" },
-        lualine_b = { "branch", "diff", "diagnostics" },
-        lualine_c = { "filename" },
-        lualine_x = { "filetype" },
-        lualine_y = {},
-        lualine_z = { "location" },
-    },
-    inactive_sections = {},
-    tabline = {},
-    extensions = { "nvim-tree", "toggleterm", lualine_vista },
-})
--- single line for all windows, dont think this is necessary since globalstatus is on
-vim.opt.laststatus = 3
-
---------------------------------------------------
--- treesitter                                   --
---------------------------------------------------
-require("nvim-treesitter.configs").setup({
-    -- Add languages to be installed here that you want installed for treesitter
-    ensure_installed = { "lua", "python", "go" },
-    auto_install = true,
-    highlight = {
-        enable = true,
-        disable = { "latex" },
-    },
-    incremental_selection = {
-        enable = true,
-        keymaps = {
-            init_selection = "<c-space>",
-            node_incremental = "<c-space>",
-            -- TODO: I'm not sure on this one.
-            scope_incremental = "<c-s>",
-            node_decremental = "<c-backspace>",
-        },
-    },
-    indent = {
-        enable = true,
-        disable = { "python", "latex" }, -- python indent still seems to suck
-    },
-})
 
 --------------------------------------------------
 -- lspconfig                                    --
@@ -433,7 +210,7 @@ capabilities.textDocument.foldingRange = {
 
 -- enabled servers with mason
 -- servers which are not installed via mason are not in this!
-local servers = { "lua_ls", "bashls", "gopls", "vimls", "texlab", "pyright" }
+local servers = { "lua_ls", "texlab", "pyright" }
 
 -- Mason config
 require("mason-lspconfig").setup({
@@ -450,7 +227,6 @@ require("mason").setup({
         border = borderstyle,
     },
 })
-
 require("mason-lspconfig").setup({
     ensure_installed = servers,
 })
@@ -513,25 +289,7 @@ require("lspconfig").clangd.setup({
     on_attach = on_attach,
     capabilities = capabilities,
 })
--- require("lspconfig").pylsp.setup({
---     on_attach = on_attach,
---     capabilities = capabilities,
---     settings = {
---         pylsp = {
---             plugins = {
---                 pycodestyle = {
---                     ignore = { "W391" },
---                     maxLineLength = 88,
---                 },
---                 jedi_completion = {
---                     enabled = true,
---                     eager = false,
---                     fuzzy = true,
---                 },
---             },
---         },
---     },
--- })
+
 require("lspconfig").texlab.setup({
     on_attach = on_attach,
     capabilities = capabilities,
@@ -597,11 +355,9 @@ null_ls.setup({
         -- Python
         formatting.isort,
         formatting.yapf,
-        -- Go
-        formatting.goimports,
-        formatting.golines,
     },
 })
+
 --------------------------------------------------
 -- completion                                   --
 --------------------------------------------------
@@ -689,6 +445,7 @@ cmp.setup({
         }),
     },
 })
+
 --------------------------------------------------
 -- LuaSnip                                      --
 --------------------------------------------------
@@ -697,83 +454,136 @@ cmp.setup({
 require("luasnip.loaders.from_vscode").lazy_load({ include = { "tex", "c", "markdown", "python" } })
 
 --------------------------------------------------
--- Telescope (with its extensions)              --
+-- Dashboard                                    --
 --------------------------------------------------
-
-require("telescope").setup({
-    -- ignore packages from Go in workspace folders while searching
-    -- not sure if this breaks some lsp functionality, who knows?
-    defaults = {
-        file_ignore_patterns = { "go/pkg/*" },
-        initial_mode = "normal",
-    },
-    pickers = {
-        lsp_document_symbols = {
-            theme = "dropdown",
-        },
-        diagnostics = {
-            theme = "dropdown",
-        },
-    },
-})
-
-require("neoclip").setup({
-    default_register = { '"', "+", "*" },
-})
-require("telescope").load_extension("neoclip")
---------------------------------------------------
--- Symbol outline (or any bar...)               --
---------------------------------------------------
--- There is no better outline than tagbar/vista tbh:
--- symboloutline is too buggy, half the keys do not work;
--- aerial is not detailed enough for go: I need an ordering by struct/type.
-vim.cmd([[hi link VistaFloat NormalFloat]])
-vim.g["vista#renderer#icons"] = {
-    ["text"] = "",
-    ["method"] = "",
-    ["function"] = "",
-    ["constructor"] = "",
-    ["field"] = "ﰠ",
-    ["var"] = "",
-    ["variable"] = "",
-    ["variables"] = "",
-    ["class"] = "ﴯ",
-    ["type"] = "ﴯ",
-    ["types"] = "ﴯ",
-    ["typedef"] = "ﴯ",
-    ["interface"] = "",
-    ["module"] = "",
-    ["package"] = "",
-    ["property"] = "ﰠ",
-    ["struct"] = "פּ",
-    ["color"] = "",
-    ["file"] = "",
-    ["reference"] = "",
-    ["constant"] = "",
-    ["const"] = "",
-    ["operator"] = "",
+require("dressing").setup({})
+-- Yoinked from one of the config files listed in github discussion
+local alpha = require("alpha")
+local dashboard = require("alpha.themes.dashboard")
+-- Header
+-- shoutout to my dog toby <3
+dashboard.section.header.val = {
+    "⠀⠀⠀⠀⠀⠀⠀⢀⣠⣤⣠⣶⠚⠛⠿⠷⠶⣤⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
+    "⠀⠀⠀⠀⠀⢀⣴⠟⠉⠀⠀⢠⡄⠀⠀⠀⠀⠀⠉⠙⠳⣄⠀⠀⠀⠀⠀⠀⠀⠀",
+    "⠀⠀⠀⢀⡴⠛⠁⠀⠀⠀⠀⠘⣷⣴⠏⠀⠀⣠⡄⠀⠀⢨⡇⠀⠀⠀⠀⠀⠀⠀",
+    "⠀⠀⠀⠺⣇⠀⠀⠀⠀⠀⠀⠀⠘⣿⠀⠀⠘⣻⣻⡆⠀⠀⠙⠦⣄⣀⠀⠀⠀⠀",
+    "⠀⠀⠀⢰⡟⢷⡄⠀⠀⠀⠀⠀⠀⢸⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⢻⠶⢤⡀",
+    "⠀⠀⠀⣾⣇⠀⠻⣄⠀⠀⠀⠀⠀⢸⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠸⣀⣴⣿",
+    "⠀⠀⢸⡟⠻⣆⠀⠈⠳⢄⡀⠀⠀⡼⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠶⠶⢤⣬⡿⠁",
+    "⠀⢀⣿⠃⠀⠹⣆⠀⠀⠀⠙⠓⠿⢧⡀⠀⢠⡴⣶⣶⣒⣋⣀⣀⣤⣶⣶⠟⠁⠀",
+    "⠀⣼⡏⠀⠀⠀⠙⠀⠀⠀⠀⠀⠀⠀⠙⠳⠶⠤⠵⣶⠒⠚⠻⠿⠋⠁⠀⠀⠀⠀",
+    "⢰⣿⡇⠀⠀⠀⠀⠀⠀⠀⣆⠀⠀⠀⠀⠀⠀⠀⢠⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
+    "⢿⡿⠁⠀⠀⠀⠀⠀⠀⠀⠘⣦⡀⠀⠀⠀⠀⠀⢸⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
+    "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠻⣷⡄⠀⠀⠀⠀⣿⣧⠀⠀⠀⠀⠀⠀⠀⠀⠀",
+    "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢷⡀⠀⠀⠀⢸⣿⡄⠀⠀⠀⠀⠀⠀⠀⠀",
+    "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠸⣿⠇⠀⠀⠀⠀⠀⠀⠀⠀",
 }
-vim.g.vista_highlight_whole_line = 1
-vim.g.vista_executive_for = {
-    c = "nvim_lsp",
+dashboard.section.header.opts.hl = "AlphaHeader"
+
+-- Buttons of dashboard
+local function button(sc, txt, keybind, keybind_opts)
+    local db = dashboard.button(sc, txt, keybind, keybind_opts)
+    db.opts.hl = "AlphaButtonText"
+    db.opts.hl_shortcut = "AlphaButtonShortcut"
+    db.opts.width = 33
+    db.opts.cursor = 5
+    return db
+end
+dashboard.section.buttons.val = {
+    button("e", "  > New file", ":ene <BAR> startinsert <CR>"),
+    -- might edit this one to current directory, for now its fine though.
+    button("f", "  > Find file", ":cd $HOME/Programming | Telescope find_files<CR>"),
+    button("r", "  > Recent", ":Telescope oldfiles<CR>"),
+    button("s", "  > Settings", ":e $MYVIMRC<CR>"),
+    button("u", "  > Update plugins", ":Lazy update<CR>"),
+    button("q", "ﰌ  > Quit", ":qa<CR>"),
 }
+-- Footer: display version and total packages
+local function footer()
+    local total_plugins = require("lazy").stats().count
+    -- Kinda wanna use nvim --version | head -1, but cant figure it out
+    local version = vim.version()
+    local nvim_version = "  Neovim v" .. version.major .. "." .. version.minor .. "." .. version.patch
+    return " " .. total_plugins .. " plugins" .. nvim_version
+end
+dashboard.section.footer.val = footer()
+dashboard.section.footer.opts.hl = "AlphaFooter"
+-- Spacing and layout of dashboard
+dashboard.section.buttons.opts.spacing = 0
+dashboard.config.layout = {
+    { type = "padding", val = 1 },
+    dashboard.section.header,
+    { type = "padding", val = 1 },
+    dashboard.section.buttons,
+    { type = "padding", val = 0 },
+    dashboard.section.footer,
+}
+alpha.setup(dashboard.opts)
+
 --------------------------------------------------
--- Bufferline/barbar                            --
+-- Statusbar                                    --
 --------------------------------------------------
-require("bufferline").setup({
-    highlights = require("catppuccin.groups.integrations.bufferline").get(),
+local lualine_vista = {
+    sections = { lualine_a = {
+        function()
+            return vim.g.vista.provider
+        end,
+    } },
+    filetypes = {
+        "vista",
+    },
+}
+require("lualine").setup({
     options = {
-        -- disable all icons (I dont use mouse)
-        show_close_icon = false,
-        show_buffer_close_icons = false,
-        -- change icons to better icons
-        modified_icon = "",
-        left_trunc_marker = "",
-        right_trunc_marker = "",
-        -- Only show bufferline for 2+ buffers
-        always_show_bufferline = false,
-        -- If NvimTree is called, offet the bufferline
-        offsets = { { filetype = "NvimTree", text = "File Explorer", text_align = "center" } },
+        icons_enabled = false,
+        theme = "auto",
+        component_separators = { left = "│", right = "│" },
+        section_separators = "",
+        disabled_filetypes = { "alpha", "packer" },
+        always_divide_middle = true,
+        globalstatus = true, -- single line for all windows
+    },
+    sections = {
+        lualine_a = { "mode" },
+        lualine_b = { "branch", "diff", "diagnostics" },
+        lualine_c = { "filename" },
+        lualine_x = { "filetype" },
+        lualine_y = {},
+        lualine_z = { "location" },
+    },
+    inactive_sections = {},
+    tabline = {},
+    extensions = { "nvim-tree", "toggleterm", lualine_vista },
+})
+-- single line for all windows, dont think this is necessary since globalstatus is on
+vim.opt.laststatus = 3
+
+--------------------------------------------------
+-- treesitter                                   --
+--------------------------------------------------
+require("nvim-treesitter.configs").setup({
+    -- Add languages to be installed here that you want installed for treesitter
+    ensure_installed = { "lua", "python", "go" },
+    sync_install = false,
+    auto_install = true,
+    ignore_install = {},
+    highlight = {
+        enable = true,
+        disable = { "latex" },
+    },
+    incremental_selection = {
+        enable = true,
+        keymaps = {
+            init_selection = "<c-space>",
+            node_incremental = "<c-space>",
+            -- TODO: I'm not sure on this one.
+            scope_incremental = "<c-s>",
+            node_decremental = "<c-backspace>",
+        },
+    },
+    indent = {
+        enable = true,
+        disable = { "python", "latex" }, -- python indent still seems to suck
     },
 })
 
@@ -795,6 +605,7 @@ require("code_runner").setup({
         border = borderstyle,
     },
 })
+
 --------------------------------------------------
 -- nvim tree lua                                --
 --------------------------------------------------
@@ -815,29 +626,16 @@ require("nvim-tree").setup({
 })
 
 --------------------------------------------------
--- indent blankline                             --
---------------------------------------------------
-require("indent_blankline").setup({
-    show_first_indent_level = false, -- dont show first indent
-    char_blankline = " ", -- remove blankline indent
-})
-
---------------------------------------------------
--- truezen mode                                 --
---------------------------------------------------
-require("true-zen").setup({
-    integrations = {
-        lualine = true,
-        twilight = false,
-    },
-})
-
---------------------------------------------------
 -- fidget nvim                                  --
 --------------------------------------------------
 require("fidget").setup({
-    window = {
-        blend = 0,
+    notification = {
+        window = {
+            winblend = 100,
+        },
+    },
+    progress = {
+        suppress_on_insert = true, -- why the fuck is false default?
     },
 })
 
@@ -860,18 +658,44 @@ require("which-key").setup({
 })
 
 --------------------------------------------------
--- toggleterm                                   --
+-- Bufferline/barbar                            --
 --------------------------------------------------
-require("toggleterm").setup({
-    -- use regular background
-    shade_terminals = false,
+require("bufferline").setup({
+    highlights = require("catppuccin.groups.integrations.bufferline").get(),
+    options = {
+        -- disable all icons (I dont use mouse)
+        show_close_icon = false,
+        show_buffer_close_icons = false,
+        -- change icons to better icons
+        modified_icon = "",
+        left_trunc_marker = "",
+        right_trunc_marker = "",
+        -- Only show bufferline for 2+ buffers
+        always_show_bufferline = false,
+        -- If NvimTree is called, offet the bufferline
+        offsets = { { filetype = "NvimTree", text = "File Explorer", text_align = "center" } },
+    },
 })
+
 --------------------------------------------------
--- Glow (markdown inside neovim)                --
+-- Telescope (with its extensions)              --
 --------------------------------------------------
-require("glow").setup({
-    -- global border
-    border = borderstyle,
+
+require("telescope").setup({
+    -- ignore packages from Go in workspace folders while searching
+    -- not sure if this breaks some lsp functionality, who knows?
+    defaults = {
+        file_ignore_patterns = { "go/pkg/*" },
+        initial_mode = "normal",
+    },
+    pickers = {
+        lsp_document_symbols = {
+            theme = "dropdown",
+        },
+        diagnostics = {
+            theme = "dropdown",
+        },
+    },
 })
 
 --------------------------------------------------
@@ -885,6 +709,25 @@ require("Comment").setup()
 vim.cmd([[let g:vimtex_quickfix_open_on_warning=0]])
 vim.cmd([[let g:vimtex_syntax_enabled = 0]])
 vim.cmd([[let g:vimtex_syntax_conceal_disable = 1]])
+
+--------------------------------------------------
+-- indent blankline                             --
+--------------------------------------------------
+-- require("indent_blankline").setup({
+--     show_first_indent_level = false, -- dont show first indent
+--     char_blankline = " ", -- remove blankline indent
+-- })
+local hooks = require("ibl.hooks")
+hooks.register(hooks.type.WHITESPACE, hooks.builtin.hide_first_space_indent_level)
+require("ibl").setup({
+    indent = {
+        char = "▏", -- This is a slightly thinner char than the default one, check :help ibl.config.indent.char
+    },
+    scope = {
+        show_start = false,
+        show_end = false,
+    },
+})
 
 --------------------------------------------------
 -- Folding with Ufo                             --
@@ -924,6 +767,7 @@ local map = function(mode, keys, func, desc)
     }
     vim.api.nvim_set_keymap(mode, keys, func, opt)
 end
+
 -- Highlight on yank (copy). It will do a nice highlight blink of the thing you just copied.
 vim.api.nvim_exec(
     [[
@@ -955,37 +799,34 @@ create_autocmd("BufWinEnter", {
     desc = "Load view on entering buffer",
 })
 
--- might want to switch with C-Tab and C-S-Tab
+-- Bufferline bindings
 map("n", "<leader>b]", ":BufferLineCycleNext<CR>", "[B]uffer next") -- next buffer
 map("n", "<leader>b[", ":BufferLineCyclePrev<CR>", "[B]uffer prev]") -- previous buffer
 map("n", "<leader>ob", ":BufferLinePick<CR>", "[O]pen [B]uffer") -- Open a currently opened buffer
 map("n", "<leader>q", ":bdelete<CR>", "[Q]uit current buffer") -- delete current buffer
+
+-- Trouble
 map("n", "<leader>dd", ":TroubleToggle document_diagnostics<CR>", "[D]ocument [D]iagnostics")
 map("n", "<leader>wd", ":TroubleToggle workspace_diagnostics<CR>", "[W]orkspace [D]iagnostics")
-map("n", "<leader>cb", ":Telescope neoclip<CR>", "[C]lip[B]oard manager")
+
+-- Tabout
+map("i", "<A-l>", "<Plug>(TaboutMulti)", "Tabout next")
+map("i", "<A-h>", "<Plug>(TaboutBackMulti)", "Tabout prev")
+
+-- Snippets
+map("i", "<C-l>", "<cmd>lua require'luasnip'.jump(1)<CR>", "Jump forwards in snippet")
+map("s", "<C-l>", "<cmd>lua require'luasnip'.jump(1)<CR>", "Jump forwards in snippet")
+map("i", "<C-h>", "<cmd>lua require'luasnip'.jump(-1)<CR>", "Jump backwards in snippet")
+map("s", "<C-h>", "<cmd>lua require'luasnip'.jump(-1)<CR>", "Jump backwards in snippet")
+
+-- Misc
+map("n", "<C-n>", ":NvimTreeToggle<CR>", "Toggle NvimTree") -- toggle tree
+map("n", "<leader>wk", ":WhichKey<CR>", "[W]hich[K]ey") -- whichkey
+map("n", "<leader>ff", ":Telescope find_files<CR>", "[F]ind [F]iles") -- open fuzzy finding of files in current directory
+map("n", "<leader>or", ":Telescope oldfiles<CR>", "[O]pen [R]ecent") -- fuzzy find in recent opened files
 vim.api.nvim_set_keymap( -- run current file with code-runner
     "n",
     "<leader>rc",
     ":RunFile<CR>",
     { noremap = true, silent = false, desc = "[R]un [C]urrent file" }
 )
-map("n", "<C-n>", ":NvimTreeToggle<CR>", "Toggle NvimTree") -- toggle tree
-map("n", "<leader>tz", ":TZAtaraxis<CR>", "[T]oggle [Z]en") -- toggle zen mode
-map("n", "<leader>tt", ":ToggleTerm<CR>", "[T]oggle [T]erminal") -- toggle built-in terminal
-map("n", "<leader>wk", ":WhichKey<CR>", "[W]hich[K]ey") -- whichkey
-map("t", "<esc>", [[<C-\><C-n>]], "Switch to normal mode") -- bind esc to normal mode in terminal mode
-map("n", "<leader>ff", ":Telescope find_files<CR>", "[F]ind [F]iles") -- open fuzzy finding of files in current directory
-map("n", "<leader>or", ":Telescope oldfiles<CR>", "[O]pen [R]ecent") -- fuzzy find in recent opened files
-map("n", "<leader>ts", ":Vista!!<CR>", "[T]oggle [S]ymbols")
-map("n", "<leader>cd", ":cd %:p:h<CR>", "[C]hange [D]irectory")
--- toggle wrap
-map("n", "<A-z>", ":set wrap!<CR>", "Toggle wrap")
-
--- Some tabout keybinding
-map("i", "<A-l>", "<Plug>(TaboutMulti)", "Tabout next")
-map("i", "<A-h>", "<Plug>(TaboutBackMulti)", "Tabout prev")
--- Jump in-and-out of snippets
-map("i", "<C-l>", "<cmd>lua require'luasnip'.jump(1)<CR>", "Jump forwards in snippet")
-map("s", "<C-l>", "<cmd>lua require'luasnip'.jump(1)<CR>", "Jump forwards in snippet")
-map("i", "<C-h>", "<cmd>lua require'luasnip'.jump(-1)<CR>", "Jump backwards in snippet")
-map("s", "<C-h>", "<cmd>lua require'luasnip'.jump(-1)<CR>", "Jump backwards in snippet")

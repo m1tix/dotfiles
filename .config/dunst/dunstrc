@@ -80,7 +80,7 @@
     max_icon_size = 48
 
     # Icon path
-    icon_path = /home/mitix/.config/dunst/icons/
+    icon_path = /home/mitix/.config/dunst/icons
 
     # Define the corner radius of the notification window
     # in pixel size. If the radius is 0, you have no rounded
@@ -109,7 +109,4 @@
     background = "#181825"
     foreground = "#CDD6F4"
 # End autocolor
-
-[Spotify]
-    appname = Spotify
 # vim: ft=cfg
