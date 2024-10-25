@@ -1,3 +1,9 @@
+-- TODO
+--- Automatic theme switcher from dark to light (dark annoying outside)
+--- Switch to vim? Development goes too fast for me
+--- want more stable experience, not plugins breaking
+--- every update...
+
 --------------------------------------------------
 -- Package manager                              --
 --------------------------------------------------
@@ -17,7 +23,6 @@ vim.opt.rtp:prepend(lazypath)
 -- Setup plugins
 -- PLUGINS NOT INSTALLED YET:
 ---- Colorschemes such as tokyonight, everforest, rose pine, material
----- Vista
 ---- Toggle term
 require("lazy").setup({
     -----------------
@@ -33,7 +38,8 @@ require("lazy").setup({
     "neovim/nvim-lspconfig",
     "williamboman/mason.nvim", -- nvim-lsp-installer replacement
     "williamboman/mason-lspconfig.nvim", -- integration with lspconfig
-    "jose-elias-alvarez/null-ls.nvim", -- linting/formatting. Should be replaced
+    -- "jose-elias-alvarez/null-ls.nvim", -- linting/formatting. Should be replaced
+    "nvimtools/none-ls.nvim",
     "hrsh7th/nvim-cmp", -- completions
     -- Completion plugins
     "hrsh7th/cmp-nvim-lsp",
@@ -60,7 +66,8 @@ require("lazy").setup({
     "goolord/alpha-nvim", -- dashboard
     "stevearc/dressing.nvim", -- nice windows
     { "kevinhwang91/nvim-ufo", dependencies = "kevinhwang91/promise-async" }, -- folding time
-
+    "luukvbaal/statuscol.nvim", -- testing, s.t. editing drawline.c is unnecessary...
+    { 'stevearc/aerial.nvim', dependencies = { "nvim-treesitter/nvim-treesitter", "nvim-tree/nvim-web-devicons" }},
     ----------
     -- Misc --
     ----------
@@ -70,7 +77,8 @@ require("lazy").setup({
     "folke/which-key.nvim", -- key map, goated plugin
     { "nvim-telescope/telescope.nvim", tag = "0.1.5", dependencies = "nvim-lua/plenary.nvim" }, -- teli
     { "CRAG666/code_runner.nvim", dependencies = "nvim-lua/plenary.nvim" }, -- code running
-    "lervag/vimtex",
+    "lervag/vimtex", -- latex
+    "ellisonleao/glow.nvim", --markdown preview
 })
 --------------------------------------------------
 -- vim options                                  --
@@ -123,6 +131,10 @@ vim.o.background = "dark"
 vim.g.catppuccin_flavour = "mocha"
 local colors = require("catppuccin.palettes").get_palette()
 require("catppuccin").setup({
+    transparent_background = true,
+    integrations = {
+        fidget = true,
+    },
     compile = {
         enabled = true,
         path = vim.fn.stdpath("cache") .. "/catppuccin",
@@ -162,6 +174,9 @@ local on_attach = function(client, bufnr)
     -- disable formatting if multiple soures are active (null-ls vs lsp)
     if client.name == "lua_ls" then
         client.server_capabilities.documentFormattingProvider = false
+    end
+    if client.name == "ruff" then
+        client.server_capabilities.hoverProvider = false
     end
     -- enable formatting on save for go files.
     if client.name == "gopls" then
@@ -209,8 +224,8 @@ capabilities.textDocument.foldingRange = {
 }
 
 -- enabled servers with mason
--- servers which are not installed via mason are not in this!
-local servers = { "lua_ls", "texlab", "pyright" }
+-- servers that are not installed through mason are not in this!
+local servers = { "lua_ls", "texlab", "glsl_analyzer", "ruff", "pyright", "rust_analyzer"}
 
 -- Mason config
 require("mason-lspconfig").setup({
@@ -302,6 +317,22 @@ require("lspconfig").texlab.setup({
     },
 })
 
+-- waiting for hover support in ruff :)
+require('lspconfig').pyright.setup {
+  settings = {
+    pyright = {
+      -- Using Ruff's import organizer
+      disableOrganizeImports = true,
+    },
+    python = {
+      analysis = {
+        -- Ignore all files for analysis to exclusively use Ruff for linting
+        ignore = { '*' },
+      },
+    },
+  },
+}
+
 local signs = { Error = " ", Warn = " ", Hint = " ", Info = " " }
 for type, icon in pairs(signs) do
     local hl = "DiagnosticSign" .. type
@@ -352,9 +383,9 @@ null_ls.setup({
                 update_in_insert = false,
             },
         }),
-        -- Python
-        formatting.isort,
-        formatting.yapf,
+        -- Python (ruff has these built-in)
+        -- formatting.isort,
+        -- formatting.yapf,
     },
 })
 
@@ -583,15 +614,16 @@ require("nvim-treesitter.configs").setup({
     },
     indent = {
         enable = true,
-        disable = { "python", "latex" }, -- python indent still seems to suck
+        disable = { "latex" }, -- python indent still seems to suck (testing for now)
     },
+    textobjects = { enable = true},
 })
 
 --------------------------------------------------
 -- code_runner                                  --
 --------------------------------------------------
 require("code_runner").setup({
-    -- let code be ran in floating window
+    -- let code run in floating window
     mode = "float",
     -- add "<filetype> = <command>" here for code_runner to be enabled in said filetype
     filetype = {
@@ -599,6 +631,7 @@ require("code_runner").setup({
         go = "go run",
         -- this assumes we have a compile_flags.txt file!
         c = "cd $dir && gcc -o $fileNameWithoutExt $fileName @compile_flags.txt && $dir/$fileNameWithoutExt",
+        rust = "cd $dir && cargo run"
     },
     -- use global border for the floating window
     float = {
@@ -620,7 +653,7 @@ require("nvim-tree").setup({
     },
     actions = {
         open_file = {
-            quit_on_open = true,
+            quit_on_open = false,
         },
     },
 })
@@ -631,7 +664,7 @@ require("nvim-tree").setup({
 require("fidget").setup({
     notification = {
         window = {
-            winblend = 100,
+            winblend = 0,
         },
     },
     progress = {
@@ -644,17 +677,15 @@ require("fidget").setup({
 --------------------------------------------------
 require("which-key").setup({
     -- use global borderstyle
-    presets = {
-        operators = true,
-    },
-    window = {
+    preset = "helix",
+    win = {
         border = borderstyle,
     },
-    icons = {
-        breadcrumb = "»", -- symbol used in the command line area that shows your active key combo
-        separator = "", -- symbol used between a key and it's label
-        group = "+", -- symbol prepended to a group
-    },
+    plugins = {
+        presets = {
+            operators = true,
+        },
+    }
 })
 
 --------------------------------------------------
@@ -724,6 +755,7 @@ require("ibl").setup({
         char = "▏", -- This is a slightly thinner char than the default one, check :help ibl.config.indent.char
     },
     scope = {
+        enabled = false,
         show_start = false,
         show_end = false,
     },
@@ -732,7 +764,7 @@ require("ibl").setup({
 --------------------------------------------------
 -- Folding with Ufo                             --
 --------------------------------------------------
--- folding symbols and othe
+-- folding symbols and other
 vim.opt.fillchars = [[eob: ,fold: ,foldopen:,foldsep: ,foldclose:]]
 vim.o.foldcolumn = "1" -- width of foldcolumn
 vim.o.foldlevel = 99 -- Using ufo provider need a large value, feel free to decrease the value
@@ -752,6 +784,39 @@ require("ufo").setup({
     end,
 })
 
+local builtin = require("statuscol.builtin")
+require("statuscol").setup({
+    relculright = true,
+    segments = {
+        { text = { builtin.foldfunc }, click = "v:lua.ScFa" },
+        { text = { "%s" }, click = "v:lua.ScSa" },
+        { text = { builtin.lnumfunc, " " }, click = "v:lua.ScLa" },
+    },
+})
+
+--------------------------------------------------
+-- Trouble                                      --
+--------------------------------------------------
+require("trouble").setup({
+    warn_no_results = false,
+})
+--------------------------------------------------
+-- Aerial                                       --
+--------------------------------------------------
+
+require("aerial").setup({
+    layout = {
+        default_direction = "prefer_right",
+    },
+})
+
+--------------------------------------------------
+-- Glow                                         --
+--------------------------------------------------
+require("glow").setup({
+    border = "rounded",
+})
+
 --------------------------------------------------
 -- Keybindings                                  --
 --------------------------------------------------
@@ -768,16 +833,6 @@ local map = function(mode, keys, func, desc)
     vim.api.nvim_set_keymap(mode, keys, func, opt)
 end
 
--- Highlight on yank (copy). It will do a nice highlight blink of the thing you just copied.
-vim.api.nvim_exec(
-    [[
-  augroup YankHighlight
-    autocmd!
-    autocmd TextYankPost * silent! lua vim.highlight.on_yank()
-  augroup end
-]],
-    false
-)
 
 -- Overwrite default fold bindings
 vim.keymap.set("n", "zR", require("ufo").openAllFolds)
@@ -806,8 +861,8 @@ map("n", "<leader>ob", ":BufferLinePick<CR>", "[O]pen [B]uffer") -- Open a curre
 map("n", "<leader>q", ":bdelete<CR>", "[Q]uit current buffer") -- delete current buffer
 
 -- Trouble
-map("n", "<leader>dd", ":TroubleToggle document_diagnostics<CR>", "[D]ocument [D]iagnostics")
-map("n", "<leader>wd", ":TroubleToggle workspace_diagnostics<CR>", "[W]orkspace [D]iagnostics")
+map("n", "<leader>dd", ":Trouble diagnostics toggle filter.buf=0<CR>", "[D]ocument [D]iagnostics")
+map("n", "<leader>wd", ":Trouble diagnostics toggle<CR>", "[W]orkspace [D]iagnostics")
 
 -- Tabout
 map("i", "<A-l>", "<Plug>(TaboutMulti)", "Tabout next")
@@ -824,6 +879,8 @@ map("n", "<C-n>", ":NvimTreeToggle<CR>", "Toggle NvimTree") -- toggle tree
 map("n", "<leader>wk", ":WhichKey<CR>", "[W]hich[K]ey") -- whichkey
 map("n", "<leader>ff", ":Telescope find_files<CR>", "[F]ind [F]iles") -- open fuzzy finding of files in current directory
 map("n", "<leader>or", ":Telescope oldfiles<CR>", "[O]pen [R]ecent") -- fuzzy find in recent opened files
+map("n", "<leader>lg", ":Telescope live_grep<CR>", "[L]ive [G]rep") -- Grep string in current directory
+map("n", "<leader>ts", ":AerialToggle<CR>", "[T]ree [S]ymbols") -- Symbols
 vim.api.nvim_set_keymap( -- run current file with code-runner
     "n",
     "<leader>rc",

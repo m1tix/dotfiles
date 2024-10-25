@@ -22,7 +22,7 @@ rule pywindow               state=floating
 
 config border_width         0
 config border_radius       15
-config window_gap          12
+config window_gap          16
 
 config split_ratio          0.50
 config borderless_monocle   true

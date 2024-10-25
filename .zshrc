@@ -17,8 +17,7 @@ export EDITOR=nvim
 export TEXMFHOME=$HOME/.texmf
 
 # Aliases
-alias rm='rm -i'
-alias ls='ls -hl --color'
+alias ls='ls -hl --color --group-directories-first'
 alias dirs='dirs -v'
 alias tree='tree -C'
 # alias tlmgr='/usr/share/texmf-dist/scripts/texlive/tlmgr.pl --usermode'
@@ -40,6 +39,7 @@ function extract()
             *.zip)      unzip $1        ;;
             *.Z)        uncompress $1   ;;
             *.7z)       7z x $1         ;;
+            *.gz)       gzip -d $1      ;;
             *)          echo "'$1' cannot be extracted via >extract<" ;;
         esac
     else
@@ -49,3 +49,4 @@ function extract()
 
 
 PROMPT=$'%F{yellow}%~%f\n%F{red}%f '
+eval "$(direnv hook zsh)"
